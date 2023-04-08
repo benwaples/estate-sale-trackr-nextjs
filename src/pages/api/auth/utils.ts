@@ -28,12 +28,13 @@ export function checkAuthMiddleware(route: (req: NextApiReq, res: NextApiRespons
 			res.status(401).json({ error: 'no authorization found' });
 			return;
 		}
-
+		console.log('token', token)
 		let payload = null;
 		try {
 			payload = verify(token);
 		}
 		catch (err) {
+			console.error(err)
 			// this code runs with verify fails
 			res.status(401).json({ error: 'invalid token' });
 			return;
