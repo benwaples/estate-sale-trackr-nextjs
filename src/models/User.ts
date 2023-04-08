@@ -49,9 +49,10 @@ export default class User {
 	}
 
 	static async addFavoriteSale(userId: number, saleId: number) {
+		// TODO: check if value already exists in array before inserting it
 		const { rows } = await pg.query<User>(`
 		UPDATE users
-		SET saved_sales = array_append(, $1)
+		SET saved_sales = array_append(saved_sales, $1)
 		WHERE id = $2
 		RETURNING *
 		`, [saleId, userId])

@@ -10,14 +10,15 @@ async function addFavoriteSale(
 	req: NextApiReq<ReqBody>,
 	res: NextApiRes
 ) {
-	if (req.method !== 'POST') return res.status(404);
-	const { saleId } = req.body;
+	if (!req.user?.id) return res.status(401).end()
+	if (req.method !== 'POST') return res.status(404).end()
 
-	if (!req.user?.id) return res.status(401)
+	const { saleId } = req.body;
+	if (!saleId || isNaN(Number(saleId))) return res.status(400).end()
 
 	try {
 		await User.addFavoriteSale(req.user.id, saleId);
-		return res.status(200)
+		return res.status(200).end()
 	} catch (e: any) {
 		console.error(addFavoriteSale.name, e.message)
 		res.status(500).send(e.message)
