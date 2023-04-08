@@ -25,6 +25,7 @@ export default async function signIn(
 		}
 
 		const user = await User.signIn(username, password)
+		console.log(`${username} has signed in`)
 
 		return res.send(profileAsToken(user))
 	} catch (e: any) {

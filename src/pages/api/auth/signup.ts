@@ -23,6 +23,7 @@ export default async function signUp(
 		}
 
 		const user = await User.signUp(username, password)
+		console.log(`${username} has signed up`)
 
 		return res.send(profileAsToken(user))
 	} catch (e: any) {
