@@ -1,10 +1,14 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import User from "../../../models/User";
-import { NextApiReq } from "@/types";
+import { NextApiReq, NextApiRes } from "@/types";
+import { checkAuthMiddleware } from "../auth/utils";
 
-export default async function addFavoriteSale(
-	req: NextApiReq<{ saleId: number }>,
-	res: NextApiResponse
+interface ReqBody {
+	saleId: number;
+}
+
+async function addFavoriteSale(
+	req: NextApiReq<ReqBody>,
+	res: NextApiRes
 ) {
 	if (req.method !== 'POST') return res.status(404);
 	const { saleId } = req.body;
@@ -18,5 +22,6 @@ export default async function addFavoriteSale(
 		console.error(addFavoriteSale.name, e.message)
 		res.status(500).send(e.message)
 	}
-
 }
+
+export default checkAuthMiddleware(addFavoriteSale)

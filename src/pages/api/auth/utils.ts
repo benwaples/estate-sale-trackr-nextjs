@@ -20,7 +20,7 @@ export function profileAsToken(user: User) {
 	};
 }
 
-export function checkAuthMiddleware(route: (req: NextApiReq, res: NextApiResponse<{ error: string }>) => any) {
+export function checkAuthMiddleware(route: (req: NextApiReq<any>, res: NextApiResponse<{ error: string }>) => any) {
 	return (req: NextApiReq, res: NextApiResponse) => {
 		// middleware
 		const token = req.headers.authorization
