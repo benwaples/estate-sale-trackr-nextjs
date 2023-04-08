@@ -1,7 +1,7 @@
 import { Dictionary, NextApiReq, NextApiRes } from "@/types";
 import { parseResponseBodyIntoDom, parseSaleAddress, parseSaleDateString, removeTabsAndNewLines } from "./utils";
 import { NextApiRequest, NextApiResponse } from "next";
-import User from "../model/User";
+import User from "../../../models/User";
 import { checkAuthMiddleware } from "../auth/utils";
 
 export async function allUpcomingSalesIds() {

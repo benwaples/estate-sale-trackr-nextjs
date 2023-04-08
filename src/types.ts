@@ -1,6 +1,6 @@
 import { Request } from 'express'
 import { NextApiRequest, NextApiResponse } from 'next'
-import User from './pages/api/model/User'
+import User from './models/User'
 export interface Dictionary {
 	[key: string | number]: any
 }

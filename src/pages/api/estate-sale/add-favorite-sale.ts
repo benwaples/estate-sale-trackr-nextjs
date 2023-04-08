@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import User from "../model/User";
+import User from "../../../models/User";
 import { NextApiReq } from "@/types";
 
 export default async function addFavoriteSale(

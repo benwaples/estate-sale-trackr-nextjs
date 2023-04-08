@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import User from "../model/User";
+import User from "../../../models/User";
 import jwt from 'jsonwebtoken';
 import { NextApiReq } from "@/types";
 const APP_SECRET = process.env.APP_SECRET || 'CHANGEMENOW';

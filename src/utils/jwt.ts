@@ -1,6 +1,6 @@
 
 import jwt from 'jsonwebtoken';
-import User from '../pages/api/model/User';
+import User from '../models/User';
 const APP_SECRET = process.env.APP_SECRET || 'CHANGEMENOW';
 
 export function sign(user: Omit<User, 'password'>) {

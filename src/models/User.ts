@@ -1,4 +1,4 @@
-import pg from "../../../utils/pg";
+import pg from "../utils/pg";
 import bcrypt from 'bcrypt'
 
 export default class User {
