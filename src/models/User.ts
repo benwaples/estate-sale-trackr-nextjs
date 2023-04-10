@@ -59,7 +59,7 @@ export default class User {
 			AND $3 != ANY(saved_sales)
 		RETURNING *
 		`, [saleId, userId, saleId])
-		console.log('rows[0]', rows[0])
+
 		if (!rows[0]) throw new Error('unable to add to saved sales')
 	}
 }
