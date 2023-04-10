@@ -49,14 +49,17 @@ export default class User {
 	}
 
 	static async addFavoriteSale(userId: number, saleId: number) {
-		// TODO: check if value already exists in array before inserting it
 		const { rows } = await pg.query<User>(`
-		UPDATE users
-		SET saved_sales = array_append(saved_sales, $1)
-		WHERE id = $2
+		UPDATE 
+			users
+		SET 
+			saved_sales = array_append(saved_sales, $1)
+		WHERE 
+			id = $2
+			AND $3 != ANY(saved_sales)
 		RETURNING *
-		`, [saleId, userId])
-
+		`, [saleId, userId, saleId])
+		console.log('rows[0]', rows[0])
 		if (!rows[0]) throw new Error('unable to add to saved sales')
 	}
 }
