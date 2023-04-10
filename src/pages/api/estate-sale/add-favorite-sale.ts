@@ -16,6 +16,7 @@ async function addFavoriteSale(
 	const { saleId } = req.body;
 	if (!saleId || isNaN(Number(saleId))) return res.status(400).end()
 
+	console.log(`saving sale ${saleId} for ${req.user.username}`)
 	try {
 		await User.addFavoriteSale(req.user.id, saleId);
 		return res.status(200).end()
