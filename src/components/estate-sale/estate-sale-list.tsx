@@ -13,6 +13,8 @@ function EstateSaleList(props: Props) {
 	const { saleInfo } = props
 
 	const sliderConfig: Settings = {}
+
+	// TODO: add current sale url and load that one if its present
 	return (
 		<div className={styles.estateSaleList}>
 			<Slider {...sliderConfig}>

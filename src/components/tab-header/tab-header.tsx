@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import cn from 'classnames'
+import styles from '../../styles/tab-header.module.scss'
 
 interface Props {
 	tabs: string[];
@@ -23,7 +24,7 @@ function TabHeader(props: Props) {
 	}
 
 	return (
-		<div className='tab-header'><ul>{tabs.map(generateTabButton)}</ul></div>
+		<div className={styles.tabHeader}><ul>{tabs.map(generateTabButton)}</ul></div>
 	)
 }
 

@@ -49,19 +49,22 @@ function SaleCard(props: Props) {
 	}
 
 	const sliderConfig: Settings = {
-		className: 'saleImages'
+		className: styles.saleImages,
+		dots: true,
+		lazyLoad: 'anticipated',
 	}
 
 	return (
 		<div className={styles.saleCard}>
 			<TabHeader tabs={tabs} onClick={handleTabChange} />
-			<div className="content">{content}</div>
+			<div className={styles.content}>{content}</div>
 			{sale.images?.length ? (
+				// max number of dots?
 				<Slider {...sliderConfig}>
-					{sale.images.map(img => <img src={img} />)}
+					{sale.images.map(img => <img className='saleImage' src={img} />)}
 				</Slider>
-			)
-				: null}
+			) : null // TODO: if no images, put some sort of place holder here
+			}
 		</div>
 	)
 }
