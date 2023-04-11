@@ -1,7 +1,6 @@
-import { Dictionary, NextApiReq, NextApiRes } from "@/types";
+import { Dictionary } from "@/types";
 import { parseResponseBodyIntoDom, parseSaleAddress, parseSaleDateString, removeTabsAndNewLines } from "./utils";
 import { NextApiRequest, NextApiResponse } from "next";
-import User from "../../../models/User";
 import { checkAuthMiddleware } from "../auth/utils";
 
 export async function allUpcomingSalesIds() {
@@ -65,6 +64,14 @@ export async function getSaleInfo(id: number) {
 	return data
 }
 
+export async function allUpcomingSalesHandler() {
+	const saleIds = await allUpcomingSalesIds();
+
+	const saleInfo = await Promise.all(saleIds.map(id => getSaleInfo(id)))
+
+	return saleInfo
+}
+
 async function allUpcomingSales(
 	req: NextApiRequest,
 	res: NextApiResponse
@@ -74,7 +81,7 @@ async function allUpcomingSales(
 	try {
 		const saleIds = await allUpcomingSalesIds();
 
-		const saleInfo = await Promise.all(saleIds.map(id => getSaleInfo(id)))
+		const saleInfo = await allUpcomingSalesHandler()
 
 		res.send(saleInfo)
 	} catch (e: any) {

@@ -8,3 +8,13 @@ export interface Dictionary {
 
 export type NextApiReq<T = {}> = Omit<NextApiRequest, 'body'> & { body: T } & { user: User };
 export type NextApiRes<T = {}> = NextApiResponse & T
+
+export interface Sale extends Dictionary {
+	id: number;
+	Dates: {
+		startTime: number;
+		endTime: number;
+		dayAndTime: string[]
+	} | string;
+	images: string[]
+}
