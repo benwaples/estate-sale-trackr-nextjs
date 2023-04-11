@@ -1,6 +1,12 @@
 .estateSaleList {
   max-width: 1440px;
   margin: auto;
-  padding: 0 130px;
+  padding: 20px 130px;
+}
+
+.saleCard {
+	margin: 20px auto;
+	height: 600px;
+	width: 300px;
 	box-shadow: 0 0 10px #ccc;
 }
