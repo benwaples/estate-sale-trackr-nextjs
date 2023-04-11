@@ -1,7 +1,11 @@
-import { Sale } from '@/types'
 import React, { useState } from 'react'
-import styles from '../../styles/estate-sale-list.module.scss'
+import Slider, { Settings } from 'react-slick';
+import { Sale } from '@/types'
 import TabHeader from '../tab-header/tab-header';
+
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import styles from '../../styles/estate-sale-list.module.scss'
 
 interface Props {
 	sale: Sale;
@@ -44,10 +48,20 @@ function SaleCard(props: Props) {
 		setContent(sale[tab])
 	}
 
+	const sliderConfig: Settings = {
+		className: 'saleImages'
+	}
+
 	return (
 		<div className={styles.saleCard}>
 			<TabHeader tabs={tabs} onClick={handleTabChange} />
 			<div className="content">{content}</div>
+			{sale.images?.length ? (
+				<Slider {...sliderConfig}>
+					{sale.images.map(img => <img src={img} />)}
+				</Slider>
+			)
+				: null}
 		</div>
 	)
 }
