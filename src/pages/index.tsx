@@ -3,7 +3,7 @@ import Nav from '@/components/nav/nav'
 import { useEffect, useState } from 'react'
 import EstateSaleList from '@/components/estate-sale/estate-sale-list'
 import { allUpcomingSalesHandler } from './api/estate-sale/all-upcoming-sales'
-import { Dictionary } from '@/types'
+import { Dictionary, Sale } from '@/types'
 const faviconOptions = [
   'https://openmoji.org/data/color/svg/1F92A.svg',
   'https://openmoji.org/data/color/svg/1F4B8.svg',
@@ -20,7 +20,7 @@ export const getServerSideProps = async () => {
 }
 
 interface Props {
-  saleInfo?: Dictionary[];
+  saleInfo?: Sale[];
 }
 
 export default function Home(props: Props) {
