@@ -2,6 +2,8 @@ import Head from 'next/head'
 import Nav from '@/components/nav/nav'
 import { useEffect, useState } from 'react'
 import EstateSaleList from '@/components/estate-sale/estate-sale-list'
+import { allUpcomingSalesHandler } from './api/estate-sale/all-upcoming-sales'
+import { Dictionary } from '@/types'
 const faviconOptions = [
   'https://openmoji.org/data/color/svg/1F92A.svg',
   'https://openmoji.org/data/color/svg/1F4B8.svg',
@@ -12,8 +14,17 @@ const faviconOptions = [
   'https://openmoji.org/data/color/svg/1F3DA.svg',
 ]
 
-export default function Home() {
+export const getServerSideProps = async () => {
+  const saleInfo = await allUpcomingSalesHandler()
+  return { props: { saleInfo } }; // will be passed to the page component as props
+}
 
+interface Props {
+  saleInfo?: Dictionary[];
+}
+
+export default function Home(props: Props) {
+  const { saleInfo } = props
   const [favicon, setFavicon] = useState(faviconOptions[0])
 
   useEffect(() => {
@@ -35,7 +46,7 @@ export default function Home() {
         <link rel="icon" href={favicon} />
       </Head>
       <Nav />
-      <EstateSaleList />
+      <EstateSaleList saleInfo={saleInfo ?? []} />
     </>
   )
 }
