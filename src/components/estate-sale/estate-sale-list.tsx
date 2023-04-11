@@ -1,16 +1,20 @@
-import { Dictionary } from '@/types'
-import { allUpcomingSalesHandler } from '@/pages/api/estate-sale/all-upcoming-sales'
+import Slider, { Settings } from 'react-slick';
+import { Sale } from '@/types'
+import SaleCard from './sale-card';
 
 interface Props {
-	saleInfo: Dictionary[];
+	saleInfo: Sale[];
 }
 
 function EstateSaleList(props: Props) {
 	const { saleInfo } = props
 
+	const sliderConfig: Settings = {}
 	return (
 		<div className="estate-sale-list">
-
+			<Slider {...sliderConfig}>
+				{saleInfo.map(sale => <SaleCard key={sale.id} sale={sale} />)}
+			</Slider>
 		</div>
 	)
 }
