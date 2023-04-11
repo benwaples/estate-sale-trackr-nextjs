@@ -45,8 +45,11 @@ function Home(props: Props) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href={favicon} />
       </Head>
-      <Nav />
-      <EstateSaleList saleInfo={saleInfo ?? []} />
+      <div style={{ minHeight: '100vh' }}>
+
+        <Nav />
+        <EstateSaleList saleInfo={saleInfo ?? []} />
+      </div>
     </>
   )
 }

@@ -3,6 +3,7 @@ import { Sale } from '@/types'
 import SaleCard from './sale-card';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import styles from '../../styles/estate-sale-list.module.scss'
 
 interface Props {
 	saleInfo: Sale[];
@@ -13,7 +14,7 @@ function EstateSaleList(props: Props) {
 
 	const sliderConfig: Settings = {}
 	return (
-		<div className="estate-sale-list">
+		<div className={styles.estateSaleList}>
 			<Slider {...sliderConfig}>
 				{saleInfo.map(sale => <SaleCard key={sale.id} sale={sale} />)}
 			</Slider>
