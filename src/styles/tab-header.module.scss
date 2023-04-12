@@ -10,6 +10,14 @@
 		white-space: nowrap;
 		padding: 10px;
 
+		.tabHeaderButton{
+			border-bottom: 1px solid transparent;
+			&.activeTab {
+				color: lightgreen;
+				border-bottom: 1px solid lightgreen;
+			}
+		}
+
 		&::-webkit-scrollbar {
 			display: none;
 		}

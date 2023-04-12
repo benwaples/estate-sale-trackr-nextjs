@@ -19,7 +19,7 @@ function TabHeader(props: Props) {
 			onClick(tab);
 		}
 		return (
-			<li className={cn('tabHeaderButton', isActive)} onClick={handleClick}>{tab}</li>
+			<li className={cn(styles.tabHeaderButton, { [styles.activeTab]: isActive })} onClick={handleClick}>{tab}</li>
 		)
 	}
 
