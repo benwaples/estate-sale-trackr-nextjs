@@ -7,19 +7,31 @@
 .saleCard {
 	margin: 20px auto;
 	height: 600px;
-	width: 300px;
+	width: 400px;
+	border-radius: 12px;
 	box-shadow: 0 0 10px #ccc;
 	display:flex;
 	flex-direction: column;
 	justify-content: flex-start;
+
+	.content {
+		padding: 10px;
+		height: 40%;
+		overflow: auto;
+	}
+
+	.saleImages {
+		height: 40%;
+		padding-top: 10px;
+
+		.slick-list {
+			height: 100%;
+		}
+		
+		.saleImage {
+			aspect-ratio: 16/9;
+			object-fit: contain;
+		}
+	}
 }
 
-.content {
-	padding: 10px;
-	max-height: 30%;
-	overflow: auto;
-}
-
-.saleImages {
-	max-height: 60%;
-}

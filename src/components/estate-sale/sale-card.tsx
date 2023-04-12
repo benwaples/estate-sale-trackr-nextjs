@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Slider, { Settings } from 'react-slick';
 import { Sale } from '@/types'
 import TabHeader from '../tab-header/tab-header';
@@ -9,6 +9,8 @@ import styles from '../../styles/estate-sale-list.module.scss'
 
 interface Props {
 	sale: Sale;
+	beforeChange?: () => void;
+	afterChange?: () => void;
 }
 
 function getDatesContent(dates: Sale["Dates"]) {
@@ -34,11 +36,10 @@ function getDatesContent(dates: Sale["Dates"]) {
 }
 
 function SaleCard(props: Props) {
-	const { sale } = props
+	const { sale, beforeChange, afterChange } = props
+
 	const tabs = Object.keys(sale).filter(key => !['id', 'images'].includes(key))
-
-	const [content, setContent] = useState(sale[tabs[0]])
-
+	const [content, setContent] = useState(sale["Sale Details"] ?? sale[tabs[0]])
 
 	const handleTabChange = (tab: string) => {
 		if (tab === 'Dates') {
@@ -50,8 +51,10 @@ function SaleCard(props: Props) {
 
 	const sliderConfig: Settings = {
 		className: styles.saleImages,
-		dots: true,
 		lazyLoad: 'anticipated',
+		customPaging(i: number) {
+			return <p>`${i}/${sale.images?.length}`</p>
+		},
 	}
 
 	return (
@@ -60,9 +63,11 @@ function SaleCard(props: Props) {
 			<div className={styles.content}>{content}</div>
 			{sale.images?.length ? (
 				// max number of dots?
-				<Slider {...sliderConfig}>
-					{sale.images.map(img => <img className='saleImage' src={img} />)}
-				</Slider>
+				<div onMouseEnter={beforeChange} onMouseLeave={afterChange}>
+					<Slider {...sliderConfig}>
+						{sale.images.map(img => <img key={img} className={styles.saleImage} src={img} />)}
+					</Slider>
+				</div>
 			) : null // TODO: if no images, put some sort of place holder here
 			}
 		</div>

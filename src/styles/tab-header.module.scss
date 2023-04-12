@@ -8,5 +8,10 @@
 		gap: 12px;
 		overflow-y: scroll;
 		white-space: nowrap;
+		padding: 10px;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
 	}
 }
