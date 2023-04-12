@@ -27,7 +27,6 @@ function EstateSaleList(props: Props) {
 	const handleAfterImageChange = () => {
 		setCanSwipe(true)
 	}
-	console.log('canSwipe', canSwipe)
 
 	// TODO: add current sale url and load that one if its present
 	return (

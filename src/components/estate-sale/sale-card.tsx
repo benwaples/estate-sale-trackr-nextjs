@@ -6,6 +6,7 @@ import TabHeader from '../tab-header/tab-header';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import styles from '../../styles/estate-sale-list.module.scss'
+import NoImage from '../empty-state/no-image';
 
 interface Props {
 	sale: Sale;
@@ -68,7 +69,7 @@ function SaleCard(props: Props) {
 					</Slider>
 					<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
 				</>
-			) : null // TODO: if no images, put some sort of place holder here
+			) : <NoImage description='Images have not been posted for this sale' /> // TODO: if no images, put some sort of place holder here
 			}
 		</div>
 	)
