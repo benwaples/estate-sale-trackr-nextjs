@@ -1,0 +1,25 @@
+.tabHeader {
+	ul {
+		list-style: none;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		flex-wrap: nowrap;
+		gap: 12px;
+		overflow-y: scroll;
+		white-space: nowrap;
+		padding: 10px;
+
+		.tabHeaderButton{
+			border-bottom: 1px solid transparent;
+			&.activeTab {
+				color: lightgreen;
+				border-bottom: 1px solid lightgreen;
+			}
+		}
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+	}
+}

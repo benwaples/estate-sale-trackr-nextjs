@@ -3,7 +3,7 @@ import Nav from '@/components/nav/nav'
 import { useEffect, useState } from 'react'
 import EstateSaleList from '@/components/estate-sale/estate-sale-list'
 import { allUpcomingSalesHandler } from './api/estate-sale/all-upcoming-sales'
-import { Dictionary, Sale } from '@/types'
+import { Sale } from '@/types'
 const faviconOptions = [
   'https://openmoji.org/data/color/svg/1F92A.svg',
   'https://openmoji.org/data/color/svg/1F4B8.svg',
@@ -23,7 +23,7 @@ interface Props {
   saleInfo?: Sale[];
 }
 
-export default function Home(props: Props) {
+function Home(props: Props) {
   const { saleInfo } = props
   const [favicon, setFavicon] = useState(faviconOptions[0])
 
@@ -45,8 +45,13 @@ export default function Home(props: Props) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href={favicon} />
       </Head>
-      <Nav />
-      <EstateSaleList saleInfo={saleInfo ?? []} />
+      <div style={{ minHeight: '100vh' }}>
+
+        <Nav />
+        <EstateSaleList saleInfo={saleInfo ?? []} />
+      </div>
     </>
   )
 }
+
+export default Home

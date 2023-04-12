@@ -1,0 +1,18 @@
+.noImage {
+	.imageWrapper {
+		background-color: #ccc;
+		width: 100px;
+		height: 100px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin: auto;
+		border-radius: 100px;
+	}
+
+	.noImageDescription  {
+		width: 100%;
+		text-align: center;
+		padding: 10px;
+	}
+}
