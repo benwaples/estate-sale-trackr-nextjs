@@ -55,6 +55,7 @@ function SaleCard(props: Props) {
 		className: styles.saleImages,
 		lazyLoad: 'anticipated',
 		afterChange(index: number) { setCurrentImageIndex(index + 1) }
+		// TODO: custom arrows
 	}
 
 	return (
@@ -62,7 +63,6 @@ function SaleCard(props: Props) {
 			<TabHeader tabs={tabs} onClick={handleTabChange} />
 			<div className={styles.content}>{content}</div>
 			{sale.images?.length ? (
-				// max number of dots?
 				<>
 					<div className={styles.imageSliderWrapper} onMouseEnter={beforeChange} onMouseLeave={afterChange}>
 						<Slider {...sliderConfig}>
