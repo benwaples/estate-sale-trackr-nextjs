@@ -40,6 +40,7 @@ function SaleCard(props: Props) {
 
 	const tabs = Object.keys(sale).filter(key => !['id', 'images'].includes(key))
 	const [content, setContent] = useState(sale["Sale Details"] ?? sale[tabs[0]])
+	const [currentImageIndex, setCurrentImageIndex] = useState(1)
 
 	const handleTabChange = (tab: string) => {
 		if (tab === 'Dates') {
@@ -52,9 +53,7 @@ function SaleCard(props: Props) {
 	const sliderConfig: Settings = {
 		className: styles.saleImages,
 		lazyLoad: 'anticipated',
-		customPaging(i: number) {
-			return <p>`${i}/${sale.images?.length}`</p>
-		},
+		afterChange(index: number) { setCurrentImageIndex(index + 1) }
 	}
 
 	return (
@@ -63,11 +62,12 @@ function SaleCard(props: Props) {
 			<div className={styles.content}>{content}</div>
 			{sale.images?.length ? (
 				// max number of dots?
-				<div onMouseEnter={beforeChange} onMouseLeave={afterChange}>
+				<>
 					<Slider {...sliderConfig}>
 						{sale.images.map(img => <img key={img} className={styles.saleImage} src={img} />)}
 					</Slider>
-				</div>
+					<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
+				</>
 			) : null // TODO: if no images, put some sort of place holder here
 			}
 		</div>
