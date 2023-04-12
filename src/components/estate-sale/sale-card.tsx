@@ -27,7 +27,7 @@ function getDatesContent(dates: Sale["Dates"]) {
 
 				{dates.dayAndTime.map(day => {
 					return (
-						<li>{day}</li>
+						<li key={day}>{day}</li>
 					)
 				})}
 
