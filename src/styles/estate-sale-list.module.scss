@@ -20,19 +20,26 @@
 		overflow: auto;
 	}
 
-	.saleImages {
-		height: 40%;
-		padding-top: 10px;
-
-		.slick-list {
-			height: 100%;
-		}
+	.imageSliderWrapper {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
 		
-		.saleImage {
-			aspect-ratio: 16/9;
-			object-fit: contain;
+		.saleImages {
+			height: 100%;
+			padding-top: 10px;
+			
+			.slick-list {
+				height: 100%;
+			}
+			
+			.saleImage {
+				aspect-ratio: 16/9;
+				object-fit: contain;
+			}
 		}
 	}
+
 	.sliderPagination {
 		margin-left: auto;
 		padding: 20px

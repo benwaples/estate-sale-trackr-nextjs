@@ -64,9 +64,11 @@ function SaleCard(props: Props) {
 			{sale.images?.length ? (
 				// max number of dots?
 				<>
-					<Slider {...sliderConfig}>
-						{sale.images.map(img => <img key={img} className={styles.saleImage} src={img} />)}
-					</Slider>
+					<div className={styles.imageSliderWrapper} onMouseEnter={beforeChange} onMouseLeave={afterChange}>
+						<Slider {...sliderConfig}>
+							{sale.images.map(img => <img key={img} className={styles.saleImage} src={img} />)}
+						</Slider>
+					</div>
 					<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
 				</>
 			) : <NoImage description='Images have not been posted for this sale' /> // TODO: if no images, put some sort of place holder here
