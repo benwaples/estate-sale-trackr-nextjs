@@ -35,11 +35,11 @@ function EstateSaleList(props: Props) {
 	const thumbnailSliderConfig: Settings = {
 		className: styles.thumbnailSlider,
 		slidesToShow: 10,
-		// centerMode: true,
 		swipe: canSwipe,
 		asNavFor: detailedSliderRef.current ?? undefined,
 		vertical: true,
 		swipeToSlide: true,
+		verticalSwiping: true,
 		focusOnSelect: true,
 		arrows: false,
 		afterChange(i: number) { setCurrentSlide(i) },
@@ -48,6 +48,10 @@ function EstateSaleList(props: Props) {
 	const detailedSliderConfig: Settings = {
 		className: styles.detailedSliderWrapper,
 		swipe: canSwipe,
+		vertical: true,
+		arrows: false,
+		swipeToSlide: true,
+		verticalSwiping: true,
 		asNavFor: thumbnailSliderRef.current ?? undefined,
 		afterChange(i: number) { setCurrentSlide(i) },
 	}

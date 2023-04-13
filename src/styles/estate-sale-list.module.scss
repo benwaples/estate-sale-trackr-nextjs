@@ -8,14 +8,14 @@
 	align-items: center;
 
 	.detailedSliderWrapper {
-		width: 80%;
+		width: 60%;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 	}
 
 	.thumbnailSliderWrapper {
-		width: 20%;
+		width: 40%;
 	}
 }
 
@@ -62,7 +62,12 @@
 }
 
 .thumbnailSale {
+	white-space: nowrap;
+	padding: 5px;
+	text-align: center;
+	border-radius: 5px;
+	
 	&.activeThumbnail {
-		background-color: pink;
+		background-color: green;
 	}
 }
