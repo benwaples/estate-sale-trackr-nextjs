@@ -1,3 +1,6 @@
+@import './mixins.scss';
+
+
 .estateSaleList {
   max-width: 1440px;
   margin: auto;
@@ -69,5 +72,16 @@
 	
 	&.activeThumbnail {
 		background-color: green;
+	}
+}
+
+@include mobile() {
+	.estateSaleList {
+		max-width: 100%;
+		padding: 25px;
+
+		.detailedSliderWrapper {
+			width: 100%;
+		}
 	}
 }
