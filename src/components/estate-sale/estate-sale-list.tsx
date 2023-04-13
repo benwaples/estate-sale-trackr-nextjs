@@ -14,13 +14,6 @@ interface IArrowProps {
 	onClick?: () => void;
 	className?: string;
 }
-
-function Arrow(props: IArrowProps) {
-	const { direction, onClick, className } = props;
-
-	return <div onClick={onClick} className={cn(className, styles.thumbnailArrow, styles[direction])}>&lt;</div>
-}
-
 interface Props {
 	saleInfo: Sale[];
 }
@@ -65,6 +58,7 @@ function EstateSaleList(props: Props) {
 
 			{isDesktop ? (
 				<div className={styles.thumbnailSliderWrapper}>
+					<h3 className={styles.thumbnailSliderTitle}>Upcoming Sales</h3>
 					<Slider {...thumbnailSliderConfig} ref={ref => thumbnailSliderRef.current = ref}>
 						{saleInfo.map((sale, i) => <ThumbnailSaleCard key={sale.id} sale={sale} isActive={i === currentSlide} />)}
 					</Slider>
