@@ -7,19 +7,13 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import styles from '../../styles/estate-sale-list.module.scss'
 import ThumbnailSaleCard from './thumbnail-sale-card';
+import useScreenQuery from '@/hooks/use-screen-query';
 
 interface IArrowProps {
 	direction: "up" | "down" | "right" | "left";
 	onClick?: () => void;
 	className?: string;
 }
-
-function Arrow(props: IArrowProps) {
-	const { direction, onClick, className } = props;
-
-	return <div onClick={onClick} className={cn(className, styles.thumbnailArrow, styles[direction])}>&lt;</div>
-}
-
 interface Props {
 	saleInfo: Sale[];
 }
@@ -31,6 +25,8 @@ function EstateSaleList(props: Props) {
 
 	const detailedSliderRef = useRef<Slider | null>(null);
 	const thumbnailSliderRef = useRef<Slider | null>(null);
+
+	const { isDesktop } = useScreenQuery();
 
 	const thumbnailSliderConfig: Settings = {
 		className: styles.thumbnailSlider,
@@ -60,15 +56,18 @@ function EstateSaleList(props: Props) {
 	return (
 		<div className={styles.estateSaleList}>
 
-			<div className={styles.thumbnailSliderWrapper}>
-				<Slider {...thumbnailSliderConfig} ref={ref => thumbnailSliderRef.current = ref}>
-					{saleInfo.map((sale, i) => <ThumbnailSaleCard key={sale.id} sale={sale} isActive={i === currentSlide} />)}
-				</Slider>
-				<div className={styles.prevNextContainer}>
-					<button onClick={() => thumbnailSliderRef.current?.slickPrev()}>Prev</button>
-					<button onClick={() => thumbnailSliderRef.current?.slickNext()}>next</button>
+			{isDesktop ? (
+				<div className={styles.thumbnailSliderWrapper}>
+					<h3 className={styles.thumbnailSliderTitle}>Upcoming Sales</h3>
+					<Slider {...thumbnailSliderConfig} ref={ref => thumbnailSliderRef.current = ref}>
+						{saleInfo.map((sale, i) => <ThumbnailSaleCard key={sale.id} sale={sale} isActive={i === currentSlide} />)}
+					</Slider>
+					<div className={styles.prevNextContainer}>
+						<button onClick={() => thumbnailSliderRef.current?.slickPrev()}>Prev</button>
+						<button onClick={() => thumbnailSliderRef.current?.slickNext()}>next</button>
+					</div>
 				</div>
-			</div>
+			) : null}
 
 			<Slider {...detailedSliderConfig} ref={ref => detailedSliderRef.current = ref}>
 				{saleInfo.map(sale => <DetailedSaleCard key={sale.id} sale={sale} onMouseEnter={() => setCanSwipe(false)} onMouseLeave={() => setCanSwipe(true)} />)}

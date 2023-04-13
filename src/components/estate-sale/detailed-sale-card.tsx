@@ -15,7 +15,7 @@ interface Props {
 }
 
 function getDatesContent(dates: Sale["Dates"]) {
-	// TODO: make this a calendar view
+	// TODO: include a calendar view
 	if (typeof dates === 'string') {
 		return dates
 	}
