@@ -5,12 +5,13 @@ import styles from '../../styles/tab-header.module.scss'
 interface Props {
 	tabs: string[];
 	onClick: (tab: string) => void;
+	initTab?: string;
 }
 
 function TabHeader(props: Props) {
-	const { tabs, onClick } = props;
+	const { tabs, onClick, initTab } = props;
 
-	const [activeTab, setActiveTab] = useState(tabs[0])
+	const [activeTab, setActiveTab] = useState(initTab ?? tabs[0])
 
 	const generateTabButton = (tab: string) => {
 		const isActive = activeTab === tab;

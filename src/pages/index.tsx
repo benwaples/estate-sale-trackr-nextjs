@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import EstateSaleList from '@/components/estate-sale/estate-sale-list'
 import { allUpcomingSalesHandler } from './api/estate-sale/all-upcoming-sales'
 import { Sale } from '@/types'
+
 const faviconOptions = [
   'https://openmoji.org/data/color/svg/1F92A.svg',
   'https://openmoji.org/data/color/svg/1F4B8.svg',
@@ -48,7 +49,9 @@ function Home(props: Props) {
       <div style={{ minHeight: '100vh' }}>
 
         <Nav />
+        {/* TODO: add support for a calendar view */}
         <EstateSaleList saleInfo={saleInfo ?? []} />
+
       </div>
     </>
   )
