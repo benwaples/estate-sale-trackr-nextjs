@@ -1,7 +1,22 @@
 .estateSaleList {
   max-width: 1440px;
   margin: auto;
-  padding: 20px 130px;
+  padding: 20px 80px;
+
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+
+	.detailedSliderWrapper {
+		width: 80%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.thumbnailSliderWrapper {
+		width: 20%;
+	}
 }
 
 .saleCard {
@@ -46,3 +61,8 @@
 	}
 }
 
+.thumbnailSale {
+	&.activeThumbnail {
+		background-color: pink;
+	}
+}

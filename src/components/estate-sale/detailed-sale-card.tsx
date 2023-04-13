@@ -10,8 +10,8 @@ import NoImage from '../empty-state/no-image';
 
 interface Props {
 	sale: Sale;
-	beforeChange?: () => void;
-	afterChange?: () => void;
+	onMouseEnter?: () => void;
+	onMouseLeave?: () => void;
 }
 
 function getDatesContent(dates: Sale["Dates"]) {
@@ -36,8 +36,8 @@ function getDatesContent(dates: Sale["Dates"]) {
 	)
 }
 
-function SaleCard(props: Props) {
-	const { sale, beforeChange, afterChange } = props
+function DetailedSaleCard(props: Props) {
+	const { sale, onMouseEnter, onMouseLeave } = props;
 
 	const tabs = Object.keys(sale).filter(key => !['id', 'images'].includes(key))
 	const [content, setContent] = useState(sale["Sale Details"] ?? sale[tabs[0]])
@@ -60,21 +60,22 @@ function SaleCard(props: Props) {
 
 	return (
 		<div className={styles.saleCard}>
-			<TabHeader tabs={tabs} onClick={handleTabChange} />
+			<TabHeader tabs={tabs} initTab={sale["Sale Details"] ? "Sale Details" : undefined} onClick={handleTabChange} />
 			<div className={styles.content}>{content}</div>
 			{sale.images?.length ? (
 				<>
-					<div className={styles.imageSliderWrapper} onMouseEnter={beforeChange} onMouseLeave={afterChange}>
+					<div className={styles.imageSliderWrapper} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 						<Slider {...sliderConfig}>
 							{sale.images.map(img => <img key={img} className={styles.saleImage} src={img} />)}
 						</Slider>
 					</div>
 					<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
 				</>
-			) : <NoImage description='Images have not been posted for this sale' /> // TODO: if no images, put some sort of place holder here
+			) : <NoImage description='Images have not been posted for this sale' />
 			}
+			<button>Follow Sale</button>
 		</div>
 	)
 }
 
-export default SaleCard
+export default DetailedSaleCard
