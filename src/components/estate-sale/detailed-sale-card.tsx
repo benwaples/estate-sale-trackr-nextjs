@@ -7,6 +7,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import styles from '../../styles/estate-sale-list.module.scss'
 import NoImage from '../empty-state/no-image';
+import useScreenQuery from '@/hooks/use-screen-query';
 
 interface Props {
 	sale: Sale;
@@ -24,7 +25,7 @@ function getDatesContent(dates: Sale["Dates"]) {
 			<ul>
 				<li>Start: {new Date(dates.startTime).toLocaleString()}</li>
 				<li>End: {new Date(dates.endTime).toLocaleString()}</li>
-
+				<br />
 				{dates.dayAndTime.map(day => {
 					return (
 						<li key={day}>{day}</li>
@@ -37,15 +38,25 @@ function getDatesContent(dates: Sale["Dates"]) {
 }
 
 function DetailedSaleCard(props: Props) {
+	const { isMobile, isDesktop } = useScreenQuery();
 	const { sale, onMouseEnter, onMouseLeave } = props;
 
-	const tabs = Object.keys(sale).filter(key => !['id', 'images'].includes(key))
-	const [content, setContent] = useState(sale["Sale Details"] ?? sale[tabs[0]])
-	const [currentImageIndex, setCurrentImageIndex] = useState(1)
+	const tabs = Object.keys(sale).filter(key => !['id', !isMobile && 'Images'].includes(key))
+	const hasImages = !!sale.Images?.length;
+	const initialDesktopTab = !!sale["Sale Details"] ? "Sale Details" : undefined
+	const initialMobileTab = (hasImages) ? 'Images' : undefined
+	const initialTab = isMobile ? initialMobileTab : initialDesktopTab;
+
+	const [content, setContent] = useState(initialTab ? sale[initialTab] : sale[tabs[0]])
+	const [currentImageIndex, setCurrentImageIndex] = useState(1);
 
 	const handleTabChange = (tab: string) => {
 		if (tab === 'Dates') {
 			setContent(getDatesContent(sale.Dates))
+			return;
+		}
+		if (tab === 'Images') {
+			setContent('')
 			return;
 		}
 		setContent(sale[tab])
@@ -54,26 +65,29 @@ function DetailedSaleCard(props: Props) {
 	const sliderConfig: Settings = {
 		className: styles.saleImages,
 		lazyLoad: 'anticipated',
-		afterChange(index: number) { setCurrentImageIndex(index + 1) }
-		// TODO: custom arrows
+		afterChange(index: number) { setCurrentImageIndex(index + 1) },
+		arrows: false,
 	}
 
 	return (
 		<div className={styles.saleCard} key={sale.id}>
-			<TabHeader tabs={tabs} initTab={sale["Sale Details"] ? "Sale Details" : undefined} onClick={handleTabChange} />
-			<div className={styles.content} key={sale.id}>{content}</div>
-			{sale.images?.length ? (
-				<>
-					<div className={styles.imageSliderWrapper} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-						<Slider {...sliderConfig}>
-							{sale.images.map(img => <img key={img} className={styles.saleImage} src={img} />)}
-						</Slider>
-					</div>
-					<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
-				</>
-			) : <NoImage description='Images have not been posted for this sale' />
-			}
-			<button>Follow Sale</button>
+			<TabHeader tabs={tabs} initTab={initialTab} onClick={handleTabChange} />
+			{content ? (
+				<div className={styles.content} key={sale.id}>{content}</div>
+			) : null}
+			{(isMobile && !content) || isDesktop ? (
+				hasImages ? (
+					<>
+						<div className={styles.imageSliderWrapper} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+							<Slider {...sliderConfig}>
+								{sale.Images.map(img => <img key={img} className={styles.saleImage} src={img} />)}
+							</Slider>
+						</div>
+						<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.Images?.length}`}</p>
+					</>
+				) : <NoImage description='Images have not been posted for this sale' />
+			) : null}
+			<button className={styles.followSale}>Follow Sale</button>
 		</div>
 	)
 }

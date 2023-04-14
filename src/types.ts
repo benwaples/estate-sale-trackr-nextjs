@@ -21,5 +21,5 @@ export interface Sale extends Dictionary {
 		endTime: number;
 		dayAndTime: string[]
 	} | string;
-	images: string[]
+	Images: string[]
 }

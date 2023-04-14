@@ -95,6 +95,28 @@
 		margin-left: auto;
 		padding: 20px
 	}
+
+	.followSale {
+		color: black;
+		background-color: lightgreen;
+		padding: 10px 20px;
+		border: none;
+		border-radius: 8px;
+		transition: all 0.3s ease-in-out;
+		width: 50%;
+		margin: 0 auto 5px;
+
+		&:hover {
+			transform: scale(1.05);
+			box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+		}
+
+		&:active {
+			transform: scale(0.95);
+			box-shadow: none;
+		}
+	}
+
 }
 
 .thumbnailSale {
@@ -110,23 +132,34 @@
 
 @include mobile() {
 	.saleCard {
-		width: 100%;
+		min-width: 100%;
+		max-height: 50%;
+		min-height: 50%;
+		padding: 10px;
+		justify-content: space-between;
+
+		.followSale {
+			margin-top: 10px;
+		}
+
+		.sliderPagination {
+			padding: 10px 20px;
+		}
 	}
 	.estateSaleList {
 		max-width: 100%;
 		padding: 25px;
 		flex-direction: column-reverse;
 		justify-content: flex-start;
-
+		gap: 40px;
 		margin: 0 auto;
 
-		.thumbnailSlider {
-			display: none;				
+		.content {
+			height: unset;
 		}
 
 		.detailedSliderWrapper, .thumbnailSliderWrapper {
 			width: 100%;
-
 		}
 	}
 }

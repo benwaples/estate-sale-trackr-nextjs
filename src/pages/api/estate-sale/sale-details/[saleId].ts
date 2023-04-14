@@ -40,10 +40,10 @@ async function getSaleInfo(req: NextApiRequest, res: NextApiResponse) {
 			if (!source) return;
 
 			const fullSource = `https://www.estatesale-finder.com/${source}`
-			if (!data.images) {
-				return data.images = [fullSource]
+			if (!data.Images) {
+				return data.Images = [fullSource]
 			} else {
-				data.images.push(fullSource)
+				data.Images.push(fullSource)
 			}
 		})
 

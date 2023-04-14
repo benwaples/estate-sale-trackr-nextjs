@@ -24,7 +24,7 @@ function EstateSaleList(props: Props) {
 	const detailedSliderRef = useRef<Slider | null>(null);
 	const thumbnailSliderRef = useRef<Slider | null>(null);
 
-	const { isDesktop } = useScreenQuery();
+	const { isMobile } = useScreenQuery();
 
 	useEffect(() => {
 		const getSaleDetails = async () => {
@@ -41,7 +41,7 @@ function EstateSaleList(props: Props) {
 
 	const thumbnailSliderConfig: Settings = {
 		className: cn(styles.thumbnailSlider),
-		slidesToShow: 10,
+		slidesToShow: isMobile ? 5 : 10,
 		swipe: canSwipe,
 		asNavFor: detailedSliderRef.current ?? undefined,
 		vertical: true,
