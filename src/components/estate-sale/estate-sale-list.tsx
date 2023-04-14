@@ -74,7 +74,7 @@ function EstateSaleList(props: Props) {
 				</Slider>
 				<div className={styles.prevNextContainer}>
 					<button onClick={() => thumbnailSliderRef.current?.slickPrev()}>Prev</button>
-					<button onClick={() => thumbnailSliderRef.current?.slickNext()}>next</button>
+					<button onClick={() => thumbnailSliderRef.current?.slickNext()}>Next</button>
 				</div>
 			</div>
 			{(detailedSale && !loadingSale) ? (
