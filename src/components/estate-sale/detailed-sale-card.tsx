@@ -59,9 +59,9 @@ function DetailedSaleCard(props: Props) {
 	}
 
 	return (
-		<div className={styles.saleCard}>
+		<div className={styles.saleCard} key={sale.id}>
 			<TabHeader tabs={tabs} initTab={sale["Sale Details"] ? "Sale Details" : undefined} onClick={handleTabChange} />
-			<div className={styles.content}>{content}</div>
+			<div className={styles.content} key={sale.id}>{content}</div>
 			{sale.images?.length ? (
 				<>
 					<div className={styles.imageSliderWrapper} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>

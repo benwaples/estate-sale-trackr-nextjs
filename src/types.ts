@@ -7,7 +7,12 @@ export interface Dictionary {
 
 
 export type NextApiReq<T = {}> = Omit<NextApiRequest, 'body'> & { body: T } & { user: User };
-export type NextApiRes<T = {}> = NextApiResponse & T
+export type NextApiRes<T = {}> = NextApiResponse & T;
+
+export interface BaseSaleData {
+	id: number;
+	address: string;
+}
 
 export interface Sale extends Dictionary {
 	id: number;
