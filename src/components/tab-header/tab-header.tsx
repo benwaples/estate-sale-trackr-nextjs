@@ -20,7 +20,7 @@ function TabHeader(props: Props) {
 			onClick(tab);
 		}
 		return (
-			<li className={cn(styles.tabHeaderButton, { [styles.activeTab]: isActive })} onClick={handleClick}>{tab}</li>
+			<li key={tab} className={cn(styles.tabHeaderButton, { [styles.activeTab]: isActive })} onClick={handleClick}>{tab}</li>
 		)
 	}
 
