@@ -2,8 +2,8 @@ import Head from 'next/head'
 import Nav from '@/components/nav/nav'
 import { useEffect, useState } from 'react'
 import EstateSaleList from '@/components/estate-sale/estate-sale-list'
-import { allUpcomingSalesHandler } from './api/estate-sale/all-upcoming-sales'
-import { Sale } from '@/types'
+import { allUpcomingSaleIds } from './api/estate-sale/all-upcoming-sales'
+import { BaseSaleData } from '@/types'
 
 const faviconOptions = [
   'https://openmoji.org/data/color/svg/1F92A.svg',
@@ -16,12 +16,12 @@ const faviconOptions = [
 ]
 
 export const getServerSideProps = async () => {
-  const saleInfo = await allUpcomingSalesHandler()
+  const saleInfo = await allUpcomingSaleIds()
   return { props: { saleInfo } }; // will be passed to the page component as props
 }
 
 interface Props {
-  saleInfo?: Sale[];
+  saleInfo?: BaseSaleData[];
 }
 
 function Home(props: Props) {
@@ -46,7 +46,7 @@ function Home(props: Props) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href={favicon} />
       </Head>
-      <div style={{ minHeight: '100vh' }}>
+      <div style={{ minHeight: '100vh', display: 'flex' }}>
 
         <Nav />
         {/* TODO: add support for a calendar view */}

@@ -1,9 +1,9 @@
 import cn from 'classnames'
-import { Sale } from '@/types';
+import { BaseSaleData, Sale } from '@/types';
 import styles from '../../styles/estate-sale-list.module.scss'
 
 interface Props {
-	sale: Sale;
+	sale: BaseSaleData;
 	isActive: boolean;
 }
 
@@ -11,7 +11,7 @@ interface Props {
 function ThumbnailSaleCard(props: Props) {
 	const { sale, isActive } = props
 
-	const address: string = sale["Address"]
+	const address: string = sale.address
 	const id = sale.id
 
 	const getThumbnailText = () => {
