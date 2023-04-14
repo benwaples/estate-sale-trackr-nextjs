@@ -9,7 +9,6 @@ export function toMap(array: Dictionary[], key: string) {
 
 export async function getHelper(endpoint: string) {
 	try {
-		console.log('endpoint', endpoint)
 		const response = await fetch(endpoint)
 		const body = await response.json();
 

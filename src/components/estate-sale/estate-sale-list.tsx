@@ -31,7 +31,7 @@ function EstateSaleList(props: Props) {
 			const firstId = saleInfo[currentSlide]?.id
 
 			setLoadingSale(true)
-			const firstSaleDetails = await getHelper(`${process.env.NEXT_PUBLIC_THIS_API}/api/estate-sale/sale-details/${firstId}`)
+			const firstSaleDetails = await getHelper(`/api/estate-sale/sale-details/${firstId}`)
 			setLoadingSale(false)
 
 			setDetailedSale(firstSaleDetails)
@@ -51,7 +51,7 @@ function EstateSaleList(props: Props) {
 		arrows: false,
 		afterChange: setCurrentSlide,
 	}
-	console.log('currentSlide', currentSlide)
+
 	// const detailedSliderConfig: Settings = {
 	// 	className: styles.detailedSliderWrapper,
 	// 	swipe: canSwipe,
