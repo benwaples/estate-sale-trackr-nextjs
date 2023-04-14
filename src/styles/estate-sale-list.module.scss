@@ -133,8 +133,7 @@
 @include mobile() {
 	.saleCard {
 		width: 100%;
-		max-height: 50%;
-		min-height: 50%;
+		height: 400px;
 		padding: 10px;
 		justify-content: space-between;
 
@@ -160,6 +159,10 @@
 
 		.detailedSliderWrapper, .thumbnailSliderWrapper {
 			width: 100%;
+		}
+
+		.detailedSliderWrapper {
+			max-height: 50%;
 		}
 	}
 }

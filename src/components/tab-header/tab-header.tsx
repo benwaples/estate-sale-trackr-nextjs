@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import styles from '../../styles/tab-header.module.scss'
 
@@ -12,6 +12,8 @@ function TabHeader(props: Props) {
 	const { tabs, onClick, initTab } = props;
 
 	const [activeTab, setActiveTab] = useState(initTab ?? tabs[0])
+
+	useEffect(() => { initTab && setActiveTab(initTab) }, [initTab])
 
 	const generateTabButton = (tab: string) => {
 		const isActive = activeTab === tab;

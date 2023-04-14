@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Slider, { Settings } from 'react-slick';
 import cn from 'classnames'
 import { BaseSaleData, Sale } from '@/types'
@@ -18,7 +18,7 @@ function EstateSaleList(props: Props) {
 	const { saleInfo } = props
 	const [canSwipe, setCanSwipe] = useState(true)
 	const [currentSlide, setCurrentSlide] = useState(0)
-	const [detailedSale, setDetailedSale] = useState<Sale | null>(null)
+	const [detailedSaleMap, setDetailedSaleMap] = useState<{ [key: Sale["id"]]: Sale } | null>(null)
 	const [loadingSale, setLoadingSale] = useState(true)
 
 	const detailedSliderRef = useRef<Slider | null>(null);
@@ -27,16 +27,42 @@ function EstateSaleList(props: Props) {
 	const { isMobile } = useScreenQuery();
 
 	useEffect(() => {
-		const getSaleDetails = async () => {
-			const firstId = saleInfo[currentSlide]?.id
-
+		const getSaleDetails = async (saleIds: number[]) => {
 			setLoadingSale(true)
-			const firstSaleDetails = await getHelper(`/api/estate-sale/sale-details/${firstId}`)
+			const saleDetails = await getHelper(`/api/estate-sale/sale-details${saleIds.map(id => '/' + id).join('')}`)
+			const saleMap = toMap(saleDetails, 'id')
 			setLoadingSale(false)
 
-			setDetailedSale(firstSaleDetails)
+			setDetailedSaleMap(prev => ({ ...prev, ...saleMap }))
 		};
-		getSaleDetails();
+
+		const getSaleIds = () => {
+			let saleIds = null;
+			if (currentSlide === 0 && !detailedSaleMap) {
+				console.log('init')
+				saleIds = saleInfo.slice(0, 5).map(({ id }) => id);
+			}
+
+			// is current slide null? then get that + 1 prev and 1 ahead
+			if (!saleIds && !detailedSaleMap?.[saleInfo[currentSlide].id]) {
+				console.log('missing current')
+				saleIds = saleInfo.slice(currentSlide - 1, currentSlide + 1).map(({ id }) => id)
+			}
+
+			// look ahead
+			const lookahead = currentSlide + 2
+			if (!saleIds && !detailedSaleMap?.[saleInfo[lookahead].id]) {
+				console.log('adding future')
+				saleIds = saleInfo.slice(lookahead, lookahead + 3).map(({ id }) => id)
+			}
+
+			return saleIds;
+		}
+
+		const saleIds = getSaleIds()
+		if (!saleIds) return;
+
+		getSaleDetails(saleIds);
 	}, [currentSlide])
 
 	const thumbnailSliderConfig: Settings = {
@@ -52,16 +78,16 @@ function EstateSaleList(props: Props) {
 		afterChange: setCurrentSlide,
 	}
 
-	// const detailedSliderConfig: Settings = {
-	// 	className: styles.detailedSliderWrapper,
-	// 	swipe: canSwipe,
-	// 	vertical: true,
-	// 	arrows: false,
-	// 	swipeToSlide: true,
-	// 	verticalSwiping: true,
-	// 	asNavFor: thumbnailSliderRef.current ?? undefined,
-	// 	afterChange(i: number) { setCurrentSlide(i) },
-	// }
+	const detailedSliderConfig: Settings = {
+		className: styles.detailedSliderWrapper,
+		swipe: canSwipe,
+		vertical: true,
+		arrows: false,
+		swipeToSlide: true,
+		verticalSwiping: true,
+		asNavFor: thumbnailSliderRef.current ?? undefined,
+		afterChange: setCurrentSlide,
+	}
 
 	// TODO: add current sale to url and load that one if its present
 	return (
@@ -77,14 +103,20 @@ function EstateSaleList(props: Props) {
 					<button onClick={() => thumbnailSliderRef.current?.slickNext()}>Next</button>
 				</div>
 			</div>
-			{(detailedSale && !loadingSale) ? (
+			{/* {(detailedSale && !loadingSale) ? (
 				<DetailedSaleCard sale={detailedSale} onMouseEnter={() => setCanSwipe(false)} onMouseLeave={() => setCanSwipe(true)} />
 				// placeholder while fetching
-			) : 'Loading...'}
+			) : 'Loading...'} */}
 			{/* still need this for mobile */}
-			{/* <Slider {...detailedSliderConfig} ref={ref => detailedSliderRef.current = ref}>
-				{saleInfo.map(sale => <DetailedSaleCard key={sale.id} sale={sale} onMouseEnter={() => setCanSwipe(false)} onMouseLeave={() => setCanSwipe(true)} />)}
-			</Slider> */}
+			{detailedSaleMap ? (
+				<Slider {...detailedSliderConfig} ref={ref => detailedSliderRef.current = ref}>
+					{saleInfo.map(sale => {
+						return (
+							<DetailedSaleCard key={sale.id} saleId={sale.id} sale={detailedSaleMap[sale.id]} onMouseEnter={() => setCanSwipe(false)} onMouseLeave={() => setCanSwipe(true)} />
+						)
+					})}
+				</Slider>
+			) : "Loading..."}
 		</div>
 	)
 }
