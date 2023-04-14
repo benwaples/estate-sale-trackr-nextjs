@@ -48,7 +48,7 @@ function Home(props: Props) {
       </Head>
       <div style={{ minHeight: '100vh', display: 'flex' }}>
 
-        <Nav />
+        {/* <Nav /> */}
         {/* TODO: add support for a calendar view */}
         <EstateSaleList saleInfo={saleInfo ?? []} />
 
