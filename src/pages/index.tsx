@@ -46,7 +46,7 @@ function Home(props: Props) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href={favicon} />
       </Head>
-      <div style={{ minHeight: '100vh', maxHeight: '100vh', display: 'flex' }}>
+      <div style={{ minHeight: '100vh', display: 'flex' }}>
 
         {/* <Nav /> */}
         {/* TODO: add support for a calendar view */}

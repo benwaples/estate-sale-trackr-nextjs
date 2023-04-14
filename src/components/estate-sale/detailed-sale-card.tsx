@@ -46,7 +46,7 @@ function DetailedSaleCard(props: Props) {
 	const tabs = Object.keys(sale ?? {}).filter(key => !['id', !isMobile && 'Images'].includes(key)).reverse()
 	const hasImages = !!sale?.Images?.length;
 	const initialDesktopTab = !!sale?.["Sale Details"] ? "Sale Details" : undefined
-	const initialMobileTab = (hasImages) ? 'Images' : undefined
+	const initialMobileTab = (hasImages && isMobile) ? 'Images' : undefined
 	const initialTab = tabs.includes('Images') ? initialMobileTab : initialDesktopTab;
 
 	const [content, setContent] = useState<string | JSX.Element>(initialMobileTab ? '' : sale?.[initialDesktopTab ?? tabs[0]])
@@ -67,10 +67,10 @@ function DetailedSaleCard(props: Props) {
 			return;
 		}
 		if (tab === 'Images') {
-			setContent('')
+			setContent(<></>)
 			return;
 		}
-		setContent(sale?.[tab])
+		setContent(<p>{sale?.[tab]}</p>)
 	}
 
 	const sliderConfig: Settings = {
