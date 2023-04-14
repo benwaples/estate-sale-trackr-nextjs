@@ -10,12 +10,14 @@ import NoImage from '../empty-state/no-image';
 import useScreenQuery from '@/hooks/use-screen-query';
 
 interface Props {
-	sale: Sale;
+	saleId: number;
+	sale: Sale | undefined;
 	onMouseEnter?: () => void;
 	onMouseLeave?: () => void;
 }
 
-function getDatesContent(dates: Sale["Dates"]) {
+function getDatesContent(dates: Sale["Dates"] | undefined) {
+	if (!dates) return;
 	// TODO: include a calendar view
 	if (typeof dates === 'string') {
 		return dates
@@ -39,27 +41,35 @@ function getDatesContent(dates: Sale["Dates"]) {
 
 function DetailedSaleCard(props: Props) {
 	const { isMobile, isDesktop } = useScreenQuery();
-	const { sale, onMouseEnter, onMouseLeave } = props;
+	const { saleId, sale, onMouseEnter, onMouseLeave } = props;
 
-	const tabs = Object.keys(sale).filter(key => !['id', !isMobile && 'Images'].includes(key)).reverse()
-	const hasImages = !!sale.Images?.length;
-	const initialDesktopTab = !!sale["Sale Details"] ? "Sale Details" : undefined
+	const tabs = Object.keys(sale ?? {}).filter(key => !['id', !isMobile && 'Images'].includes(key)).reverse()
+	const hasImages = !!sale?.Images?.length;
+	const initialDesktopTab = !!sale?.["Sale Details"] ? "Sale Details" : undefined
 	const initialMobileTab = (hasImages) ? 'Images' : undefined
 	const initialTab = isMobile ? initialMobileTab : initialDesktopTab;
 
-	const [content, setContent] = useState(initialTab ? sale[initialTab] : sale[tabs[0]])
+	const [content, setContent] = useState(initialTab ? sale?.[initialTab] : sale?.[tabs[0]])
 	const [currentImageIndex, setCurrentImageIndex] = useState(1);
+
+	useEffect(() => {
+		if (isMobile && hasImages) {
+			setContent('')
+			return;
+		};
+		setContent(initialTab ? sale?.[initialTab] : sale?.[tabs[0]])
+	}, [sale])
 
 	const handleTabChange = (tab: string) => {
 		if (tab === 'Dates') {
-			setContent(getDatesContent(sale.Dates))
+			setContent(getDatesContent(sale?.Dates))
 			return;
 		}
 		if (tab === 'Images') {
 			setContent('')
 			return;
 		}
-		setContent(sale[tab])
+		setContent(sale?.[tab])
 	}
 
 	const sliderConfig: Settings = {
@@ -70,10 +80,10 @@ function DetailedSaleCard(props: Props) {
 	}
 
 	return (
-		<div className={styles.saleCard} key={sale.id}>
+		<div className={styles.saleCard} key={saleId}>
 			<TabHeader tabs={tabs} initTab={initialTab} onClick={handleTabChange} />
 			{content ? (
-				<div className={styles.content} key={sale.id}>{content}</div>
+				<div className={styles.content} key={saleId}>{content}</div>
 			) : null}
 			{(isMobile && !content) || isDesktop ? (
 				hasImages ? (
