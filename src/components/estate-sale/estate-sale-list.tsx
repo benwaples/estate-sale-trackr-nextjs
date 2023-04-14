@@ -75,6 +75,7 @@ function EstateSaleList(props: Props) {
 		verticalSwiping: true,
 		focusOnSelect: true,
 		arrows: false,
+		touchThreshold: 20,
 		afterChange: setCurrentSlide,
 	}
 
@@ -86,6 +87,7 @@ function EstateSaleList(props: Props) {
 		swipeToSlide: true,
 		verticalSwiping: true,
 		asNavFor: thumbnailSliderRef.current ?? undefined,
+		touchThreshold: 20,
 		afterChange: setCurrentSlide,
 	}
 

@@ -47,22 +47,23 @@ function DetailedSaleCard(props: Props) {
 	const hasImages = !!sale?.Images?.length;
 	const initialDesktopTab = !!sale?.["Sale Details"] ? "Sale Details" : undefined
 	const initialMobileTab = (hasImages) ? 'Images' : undefined
-	const initialTab = isMobile ? initialMobileTab : initialDesktopTab;
+	const initialTab = tabs.includes('Images') ? initialMobileTab : initialDesktopTab;
 
-	const [content, setContent] = useState(initialTab ? sale?.[initialTab] : sale?.[tabs[0]])
+	const [content, setContent] = useState<string | JSX.Element>(initialMobileTab ? '' : sale?.[initialDesktopTab ?? tabs[0]])
 	const [currentImageIndex, setCurrentImageIndex] = useState(1);
 
+	// sets initial content
 	useEffect(() => {
 		if (isMobile && hasImages) {
 			setContent('')
 			return;
 		};
-		setContent(initialTab ? sale?.[initialTab] : sale?.[tabs[0]])
-	}, [sale])
+		setContent(initialMobileTab ? '' : sale?.[initialDesktopTab ?? tabs[0]])
+	}, [initialTab])
 
 	const handleTabChange = (tab: string) => {
 		if (tab === 'Dates') {
-			setContent(getDatesContent(sale?.Dates))
+			setContent(getDatesContent(sale?.Dates) ?? '')
 			return;
 		}
 		if (tab === 'Images') {
