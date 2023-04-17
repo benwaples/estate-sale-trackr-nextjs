@@ -80,6 +80,7 @@ function DetailedSaleCard(props: Props) {
 		arrows: false,
 	}
 
+	// fix the page while touching a card
 	return (
 		<div className={styles.saleCard} key={saleId}>
 			<TabHeader tabs={tabs} initTab={initialTab} onClick={handleTabChange} />

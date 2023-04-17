@@ -20,6 +20,7 @@ function EstateSaleList(props: Props) {
 	const [currentSlide, setCurrentSlide] = useState(0)
 	const [detailedSaleMap, setDetailedSaleMap] = useState<{ [key: Sale["id"]]: Sale } | null>(null)
 	const [loadingSale, setLoadingSale] = useState(true)
+	const [swiping, setSwiping] = useState(false)
 
 	const detailedSliderRef = useRef<Slider | null>(null);
 	const thumbnailSliderRef = useRef<Slider | null>(null);
@@ -39,20 +40,17 @@ function EstateSaleList(props: Props) {
 		const getSaleIds = () => {
 			let saleIds = null;
 			if (currentSlide === 0 && !detailedSaleMap) {
-				console.log('init')
 				saleIds = saleInfo.slice(0, 5).map(({ id }) => id);
 			}
 
 			// is current slide null? then get that + 1 prev and 1 ahead
-			if (!saleIds && !detailedSaleMap?.[saleInfo[currentSlide].id]) {
-				console.log('missing current')
+			if (!saleIds && !detailedSaleMap?.[saleInfo[currentSlide]?.id]) {
 				saleIds = saleInfo.slice(currentSlide - 1, currentSlide + 1).map(({ id }) => id)
 			}
 
 			// look ahead
 			const lookahead = currentSlide + 2
-			if (!saleIds && !detailedSaleMap?.[saleInfo[lookahead].id]) {
-				console.log('adding future')
+			if (!saleIds && !detailedSaleMap?.[saleInfo[lookahead]?.id]) {
 				saleIds = saleInfo.slice(lookahead, lookahead + 3).map(({ id }) => id)
 			}
 
@@ -91,7 +89,7 @@ function EstateSaleList(props: Props) {
 
 	// TODO: add current sale to url and load that one if its present
 	return (
-		<div className={styles.estateSaleList}>
+		<div className={styles.estateSaleList} >
 
 			<div className={styles.thumbnailSliderWrapper}>
 				<h3 className={styles.thumbnailSliderTitle}>Upcoming Sales</h3>

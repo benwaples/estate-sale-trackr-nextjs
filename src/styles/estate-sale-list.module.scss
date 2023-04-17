@@ -5,6 +5,8 @@
   max-width: 1440px;
   margin: auto;
   padding: 20px 80px;
+	background-color: black;
+	color: white;
 
 	display: flex;
 	justify-content: flex-start;
@@ -152,6 +154,10 @@
 		justify-content: flex-end;
 		gap: 40px;
 		margin: 0 auto;
+		position: fixed;
+		right: 0;
+		bottom: 0;
+		left: 0;
 
 		.content {
 			height: unset;
