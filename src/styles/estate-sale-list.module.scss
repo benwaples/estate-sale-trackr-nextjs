@@ -159,9 +159,9 @@
 		bottom: 0;
 		left: 0;
 
-		&::-webkit-scrollbar {
-			display: none;
-		}
+		// &::-webkit-scrollbar {
+		// 	display: none;
+		// }
 
 		.content {
 			height: unset;
@@ -173,6 +173,7 @@
 
 		.detailedSliderWrapper {
 			max-height: 50%;
+			margin-bottom: -20px;
 		}
 	}
 }
