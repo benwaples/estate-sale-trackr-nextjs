@@ -67,7 +67,7 @@ function DetailedSaleCard(props: Props) {
 			return;
 		}
 		if (tab === 'Images') {
-			setContent(<></>)
+			setContent('')
 			return;
 		}
 		setContent(<p>{sale?.[tab]}</p>)
