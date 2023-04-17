@@ -1,6 +1,11 @@
 import User from "@/models/User"
-import NextAuth, { NextAuthOptions } from "next-auth"
+import NextAuth, { DefaultSession, NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
+
+interface Session extends Omit<DefaultSession, 'user'> {
+	user: DefaultSession["user"] & { followed_sales: number[] | null }
+}
+
 export const authOptions: NextAuthOptions = {
 	session: {
 		strategy: 'jwt'
@@ -17,18 +22,13 @@ export const authOptions: NextAuthOptions = {
 		session: async ({ session }) => {
 			const email = session.user?.email
 
-			let followed_sales: number[] = []
+			let followed_sales = []
 			if (email) {
+
 				followed_sales = await User.getAllFollowedSales(email)
 			}
 
-			return {
-				...session,
-				user: {
-					...session.user,
-					followed_sales
-				}
-			}
+			return { ...session, user: { ...session.user, followed_sales } }
 		}
 	}
 }
