@@ -8,6 +8,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import styles from '../../styles/estate-sale-list.module.scss'
 import NoImage from '../empty-state/no-image';
 import useScreenQuery from '@/hooks/use-screen-query';
+import FollowSale from '../follow-sale/follow-sale';
 
 interface Props {
 	saleId: number;
@@ -99,7 +100,7 @@ function DetailedSaleCard(props: Props) {
 					</>
 				) : <NoImage description='Images have not been posted for this sale' />
 			) : null}
-			<button className={styles.followSale}>Follow Sale</button>
+			<FollowSale />
 		</div>
 	)
 }

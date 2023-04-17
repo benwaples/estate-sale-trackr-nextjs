@@ -79,6 +79,7 @@ function EstateSaleList(props: Props) {
 	const detailedSliderConfig: Settings = {
 		className: styles.detailedSliderWrapper,
 		swipe: canSwipe,
+		touchThreshold: canSwipe ? 100 : 1,
 		vertical: true,
 		arrows: false,
 		swipeToSlide: true,
