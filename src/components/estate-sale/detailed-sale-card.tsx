@@ -85,7 +85,7 @@ function DetailedSaleCard(props: Props) {
 		<div className={styles.saleCard} key={saleId}>
 			<TabHeader tabs={tabs} initTab={initialTab} onClick={handleTabChange} />
 			{content ? (
-				<div className={styles.content} key={saleId}>{content}</div>
+				<div className={styles.content} key={saleId} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onTouchStart={onMouseEnter} onTouchEnd={onMouseLeave}>{content}</div>
 			) : null}
 			{(isMobile && !content) || isDesktop ? (
 				hasImages ? (
