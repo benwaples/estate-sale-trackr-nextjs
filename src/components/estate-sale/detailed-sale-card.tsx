@@ -45,7 +45,7 @@ function DetailedSaleCard(props: Props) {
 
 	const tabs = Object.keys(sale ?? {}).filter(key => !['id', !isMobile && 'Images'].includes(key)).reverse()
 	const hasImages = !!sale?.Images?.length;
-	const initialDesktopTab = !!sale?.["Sale Details"] ? "Sale Details" : undefined
+	const initialDesktopTab = !!sale?.["Sale Details"] ? "Sale Details" : tabs[0]
 	const initialMobileTab = (hasImages && isMobile) ? 'Images' : undefined
 	const initialTab = tabs.includes('Images') ? initialMobileTab : initialDesktopTab;
 
