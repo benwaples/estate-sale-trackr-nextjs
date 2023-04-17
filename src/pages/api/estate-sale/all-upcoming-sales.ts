@@ -21,20 +21,18 @@ export async function allUpcomingSaleIds(): Promise<allUpcomingSalesReturn[]> {
 
 		const href = link?.attributes.getNamedItem('href')
 		const saleId = href?.textContent?.split('=')[1]
-		const addressText = address?.textContent;
-		console.log('addressText', addressText)
-		console.log('Number(saleId)', Number(saleId))
+		let addressText = removeTabsAndNewLines(address?.textContent ?? '');
+
 		if (!saleId || !addressText) return;
-		// return {
-		// 	id: saleId,
-		// 	address
-		// }
+		if (addressText.slice(0, 3).toLowerCase() === 'tba') {
+			addressText = `Region - ${addressText.slice(3)}`
+		}
 		data.push({
 			id: Number(saleId),
 			address: addressText
 		})
 	})
-	console.log('data', data)
+
 	return data;
 }
 
