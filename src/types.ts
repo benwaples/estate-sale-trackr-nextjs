@@ -23,3 +23,19 @@ export interface Sale extends Dictionary {
 	} | string;
 	Images: string[]
 }
+
+export enum Status {
+	inactive,
+	active
+}
+export interface FollowedSale {
+	id: number;
+	status: Status;
+	sale_id: number;
+	follower_email: string;
+	user_given_name: string | null;
+	address: string;
+	start_date: number;
+	end_date: number;
+	created_at: number;
+}

@@ -16,7 +16,7 @@ export default class User {
 		const { rows } = await pg.query(`
 		SELECT * FROM users WHERE username = $1
 		`, [username])
-		return rows[0]
+		return rows[0];
 	}
 
 	static async signUp(username: string, password: string) {

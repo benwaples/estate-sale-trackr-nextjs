@@ -1,20 +1,24 @@
+import { FollowedSale, Status } from "@/types";
 import pg from "../utils/pg";
 
 export default class Sale {
 	id: number;
 	sale_id: number;
 	address: string;
+	user_given_name: string | null;
 
 	constructor(row: Sale) {
 		this.id = row.id;
 		this.sale_id = row.sale_id;
 		this.address = row.address;
+		this.user_given_name = row.user_given_name;
 	}
 
-	static async addSale(saleId: number, address: string) {
-		const { rows } = await pg.query<Sale>(`
-		INSERT INTO sales (sale_id, address) VALUES ($1, $2) RETURNING *
-		`, [saleId, address]);
+	static async followSale(followSale: FollowedSale) {
+		const { sale_id, follower_email, user_given_name, address, start_date, end_date } = followSale;
+		const { rows } = await pg.query<FollowedSale>(`
+		INSERT INTO followed_sales (sale_id, follower_email, user_given_name, address, start_date, end_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
+		`, [sale_id, follower_email, user_given_name, address, start_date, end_date]);
 
 
 		const sale = rows[0];
@@ -23,21 +27,14 @@ export default class Sale {
 		return new Sale(sale);
 	}
 
-	static async findSaleById(saleId: number) {
-		const { rows } = await pg.query<Sale>(`
-		SELECT * FROM sales WHERE sale_id = $1;
-		`, [saleId])
+	static async unfollowSale(id: FollowedSale['id']) {
+		const { rows } = await pg.query(`
+		UPDATE followed_sales
+		SET status = ${Status.inactive}
+		WHERE sale = $1
+		RETURNING *
+		`, [id])
 
-		if (!rows[0]) return null;
-		return new Sale(rows[0]);
-	}
-
-	static async findSalesByIDList(saleIdList: number[]) {
-		const { rows } = await pg.query<Sale>(`
-		SELECT * FROM sales where sale_id = ANY($1)
-		`, [saleIdList])
-
-		if (!rows.length) return [];
-		return rows.map(row => new Sale(row))
+		if (!rows[0]) throw new Error('unable to unfollow sale');
 	}
 }
