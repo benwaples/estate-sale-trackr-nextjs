@@ -1,3 +1,4 @@
+import { FollowedSale } from "@/types";
 import pg from "../utils/pg";
 import bcrypt from 'bcrypt'
 
@@ -48,18 +49,11 @@ export default class User {
 		return new User(user)
 	}
 
-	static async addFavoriteSale(userId: number, saleId: number) {
-		const { rows } = await pg.query<User>(`
-		UPDATE 
-			users
-		SET 
-			saved_sales = array_append(saved_sales, $1)
-		WHERE 
-			id = $2
-			AND $3 != ANY(saved_sales)
-		RETURNING *
-		`, [saleId, userId, saleId])
+	static async getAllFollowedSales(email: string) {
+		const { rows } = await pg.query(`
+			SELECT ARRAY(SELECT sale_id FROM followed_sales WHERE follower_email = $1) as sale_ids
+		`, [email])
 
-		if (!rows[0]) throw new Error('unable to add to saved sales')
+		return rows[0]?.sale_ids ?? []
 	}
 }

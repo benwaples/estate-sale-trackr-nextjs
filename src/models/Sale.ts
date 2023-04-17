@@ -17,7 +17,12 @@ export default class Sale {
 	static async followSale(followSale: FollowedSale) {
 		const { sale_id, follower_email, user_given_name, address, start_date, end_date } = followSale;
 		const { rows } = await pg.query<FollowedSale>(`
-		INSERT INTO followed_sales (sale_id, follower_email, user_given_name, address, start_date, end_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
+		INSERT INTO 
+		followed_sales (sale_id, follower_email, user_given_name, address, start_date, end_date) 
+		VALUES ($1, $2, $3, $4, $5, $6) 
+		-- forces unique email/sale_id
+		ON CONFLICT (sale_id, follower_email) DO NOTHING
+		RETURNING *
 		`, [sale_id, follower_email, user_given_name, address, start_date, end_date]);
 
 

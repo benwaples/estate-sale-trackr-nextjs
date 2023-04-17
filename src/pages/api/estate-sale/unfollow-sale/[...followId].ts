@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 async function unfollowSale(req: NextApiRequest, res: NextApiResponse) {
 	if (req.method !== 'POST') return res.status(404);
 
-	let id = req.query.followedSaleId
+	let id = req.query.followId
 	if (!id || typeof id !== 'string' || isNaN(Number(id))) return res.status(403);
 
 	try {

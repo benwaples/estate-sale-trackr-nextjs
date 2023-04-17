@@ -100,7 +100,7 @@ function DetailedSaleCard(props: Props) {
 					</>
 				) : <NoImage description='Images have not been posted for this sale' />
 			) : null}
-			<FollowSale />
+			{sale ? <FollowSale {...sale} sale_id={saleId} /> : null}
 		</div>
 	)
 }
