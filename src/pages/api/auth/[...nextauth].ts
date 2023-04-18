@@ -1,4 +1,4 @@
-import User from "@/models/User"
+import Sale from "@/models/Sale"
 import NextAuth, { DefaultSession, NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 
@@ -24,8 +24,7 @@ export const authOptions: NextAuthOptions = {
 
 			let followed_sales = []
 			if (email) {
-
-				followed_sales = await User.getAllFollowedSales(email)
+				followed_sales = await Sale.getAllFollowedSales(email)
 			}
 
 			return { ...session, user: { ...session.user, followed_sales } }

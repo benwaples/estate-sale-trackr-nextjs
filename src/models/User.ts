@@ -1,4 +1,4 @@
-import { FollowedSale } from "@/types";
+import { FollowedSale, Status } from "@/types";
 import pg from "../utils/pg";
 import bcrypt from 'bcrypt'
 
@@ -47,13 +47,5 @@ export default class User {
 		};
 
 		return new User(user)
-	}
-
-	static async getAllFollowedSales(email: string) {
-		const { rows } = await pg.query(`
-			SELECT ARRAY(SELECT sale_id FROM followed_sales WHERE follower_email = $1) as sale_ids
-		`, [email])
-
-		return rows[0]?.sale_ids ?? []
 	}
 }
