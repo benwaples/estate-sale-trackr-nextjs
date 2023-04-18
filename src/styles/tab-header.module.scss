@@ -12,6 +12,7 @@
 
 		.tabHeaderButton{
 			border-bottom: 1px solid transparent;
+			text-transform: capitalize;
 			&.activeTab {
 				color: lightgreen;
 				border-bottom: 1px solid lightgreen;

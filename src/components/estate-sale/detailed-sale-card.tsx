@@ -17,7 +17,7 @@ interface Props {
 	onMouseLeave?: () => void;
 }
 
-function getDatesContent(dates: Sale["Dates"] | undefined) {
+function getDatesContent(dates: Sale["dates"] | undefined) {
 	if (!dates) return;
 	// TODO: include a calendar view
 	if (typeof dates === 'string') {
@@ -44,11 +44,11 @@ function DetailedSaleCard(props: Props) {
 	const { isMobile, isDesktop } = useScreenQuery();
 	const { saleId, sale, onMouseEnter, onMouseLeave } = props;
 
-	const tabs = Object.keys(sale ?? {}).filter(key => !['id', !isMobile && 'Images'].includes(key)).reverse()
-	const hasImages = !!sale?.Images?.length;
-	const initialDesktopTab = !!sale?.["Sale Details"] ? "Sale Details" : tabs[0]
-	const initialMobileTab = (hasImages && isMobile) ? 'Images' : undefined
-	const initialTab = tabs.includes('Images') ? initialMobileTab : initialDesktopTab;
+	const tabs = Object.keys(sale ?? {}).filter(key => !['id', !isMobile && 'images'].includes(key)).reverse()
+	const hasImages = !!sale?.images?.length;
+	const initialDesktopTab = !!sale?.["sale details"] ? "sale details" : tabs[0]
+	const initialMobileTab = (hasImages && isMobile) ? 'images' : undefined
+	const initialTab = tabs.includes('images') ? initialMobileTab : initialDesktopTab;
 
 	const [content, setContent] = useState<string | JSX.Element>(initialMobileTab ? '' : sale?.[initialDesktopTab ?? tabs[0]])
 	const [currentImageIndex, setCurrentImageIndex] = useState(1);
@@ -63,11 +63,11 @@ function DetailedSaleCard(props: Props) {
 	}, [initialTab])
 
 	const handleTabChange = (tab: string) => {
-		if (tab === 'Dates') {
-			setContent(getDatesContent(sale?.Dates) ?? '')
+		if (tab === 'dates') {
+			setContent(getDatesContent(sale?.dates) ?? '')
 			return;
 		}
-		if (tab === 'Images') {
+		if (tab === 'images') {
 			setContent('')
 			return;
 		}
@@ -93,10 +93,10 @@ function DetailedSaleCard(props: Props) {
 					<>
 						<div className={styles.imageSliderWrapper} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 							<Slider {...sliderConfig}>
-								{sale.Images.map(img => <img key={img} className={styles.saleImage} src={img} />)}
+								{sale.images.map(img => <img key={img} className={styles.saleImage} src={img} />)}
 							</Slider>
 						</div>
-						<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.Images?.length}`}</p>
+						<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
 					</>
 				) : <NoImage description='Images have not been posted for this sale' />
 			) : null}

@@ -57,4 +57,15 @@ export default class Sale {
 
 		return rows[0]?.sale_ids ?? []
 	}
+
+	static async followedSalesBySaleIds(saleIdList: number[]) {
+		const { rows } = await pg.query<FollowedSale>(`
+		SELECT * 
+		FROM followed_sales
+		WHERE sale_id = ANY($1)
+		AND status = ${Status.active}
+		`, [saleIdList])
+
+		return rows.map(row => new Sale(row))
+	}
 }

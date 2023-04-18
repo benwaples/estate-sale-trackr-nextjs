@@ -48,14 +48,14 @@ export async function getSaleInfo(id: number): Promise<Sale> {
 	const data = { id } as Sale
 
 	rows.forEach(row => {
-		const title = removeTabsAndNewLines(row.querySelector('.small-3')?.textContent ?? '')
+		const title = removeTabsAndNewLines(row.querySelector('.small-3')?.textContent ?? '')?.toLowerCase()
 		const description = removeTabsAndNewLines(row.querySelector('.small-9')?.textContent ?? '')
 
 		if (title && description) {
-			if (title === 'Dates') {
+			if (title === 'dates') {
 				return data[title] = parseSaleDateString(description) ?? ''
 			}
-			if (title === 'Address') {
+			if (title === 'address') {
 				return data[title] = parseSaleAddress(description)
 			}
 
@@ -69,10 +69,10 @@ export async function getSaleInfo(id: number): Promise<Sale> {
 		if (!source) return;
 
 		const fullSource = `https://www.estatesale-finder.com/${source}`
-		if (!data.Images) {
-			return data.Images = [fullSource]
+		if (!data.images) {
+			return data.images = [fullSource]
 		} else {
-			data.Images.push(fullSource)
+			data.images.push(fullSource)
 		}
 	})
 

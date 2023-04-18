@@ -16,12 +16,12 @@ export interface BaseSaleData {
 
 export interface Sale extends Dictionary {
 	id: number;
-	Dates: {
+	dates: {
 		startTime: number;
 		endTime: number;
 		dayAndTime: string[]
 	} | string;
-	Images: string[]
+	images: string[]
 }
 
 export enum Status {
