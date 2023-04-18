@@ -1,13 +1,25 @@
-import { NextApiReq, NextApiRes } from "@/types";
+import { FollowedSale, NextApiReq, NextApiRes, SaleDetails } from "@/types";
 import { allUpcomingSaleIds, getSaleInfo } from "../estate-sale/all-upcoming-sales";
-import User from "@/models/User";
-import Sale from "@/models/Sale";
+import Sale from "@/models/FollowedSale";
 import { toMap } from "@/utils/utils";
+
+function compareSaleDetails(saleDetails: SaleDetails, followedSale: FollowedSale) {
+	if (saleDetails?.dates?.startTime !== followedSale?.start_time) {
+		return false
+	}
+	if (saleDetails?.dates?.endTime !== followedSale?.end_time) {
+		return false
+	}
+	if (saleDetails?.address !== followedSale.address) {
+		return false
+	}
+	return true
+}
 
 async function checkFutureSales(req: NextApiReq, res: NextApiRes) {
 	if (req.method !== 'GET') return res.status(404).end();
 	console.time('checkFutureSalesScrape')
-	console.timeEnd('checkFutureSalesScrape')
+
 	try {
 		// get future sale ids,
 		const upcomingSales = await allUpcomingSaleIds()
@@ -18,15 +30,30 @@ async function checkFutureSales(req: NextApiReq, res: NextApiRes) {
 		const followedUpcomingSales = await Sale.followedSalesBySaleIds(upcomingSaleIds)
 		const followedUpcomingSalesMap = toMap(followedUpcomingSales, 'sale_id');
 
-		console.log('upcomingSalesFollowed', followedUpcomingSales);
-
 		// scrape those pages again. we should make sure that data returned here is the exact same as what gets inserted into followed_sales
 		const saleDetails = await Promise.all(followedUpcomingSales.map(followedSale => getSaleInfo(followedSale.sale_id)))
 
-		// compare new data against the stored data that they followed from.
-
+		const followedSalesToUpdate: FollowedSale[] = [];
 		// if new data doesnt match stored data, notify them and then update their row.
+		const notifyList = saleDetails.reduce((a: FollowedSale[], c) => {
+			const followedSale = followedUpcomingSalesMap[c.id]
+			// compare new data against the stored data that they followed from.
+			const isEqual = compareSaleDetails(c, followedSale)
+			if (isEqual || c.id === 11967) return a
+			console.log('c', c)
+			console.log('followedSale', followedSale)
 
+			a.push(followedSale)
+			followedSalesToUpdate.push({ ...followedSale, address: c.address, start_time: c.dates?.startTime, end_time: c.dates?.endTime })
+			return a
+		}, [])
+
+
+		// send notification via some sort of queue
+
+		//  bulk update the followed sale
+
+		return res.status(200).end();
 	} catch (e: any) {
 		console.error(checkFutureSales.name, e.message)
 		res.status(500).send(e.message)

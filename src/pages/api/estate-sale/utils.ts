@@ -45,7 +45,7 @@ const convertTime12to24 = (time: string, modifier: string) => {
 
 
 export function parseSaleDateString(x: string | undefined) {
-	if (!x) return null;
+	if (!x) return;
 
 	const [startAndEndRaw, dayAndTimeRaw] = x.split('   ').map(el => el.trim()).filter(el => !!el);
 	const [start, end] = startAndEndRaw.split('till')

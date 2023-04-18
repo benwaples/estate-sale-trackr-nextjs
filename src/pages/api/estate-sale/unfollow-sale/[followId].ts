@@ -1,4 +1,4 @@
-import Sale from "@/models/Sale";
+import Sale from "@/models/FollowedSale";
 import { NextApiReq } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
 

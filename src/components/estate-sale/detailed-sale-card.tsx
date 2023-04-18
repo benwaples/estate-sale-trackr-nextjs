@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Slider, { Settings } from 'react-slick';
-import { Sale } from '@/types'
+import { SaleDetails } from '@/types'
 import TabHeader from '../tab-header/tab-header';
 
 import 'slick-carousel/slick/slick.css';
@@ -12,17 +12,15 @@ import FollowSale from '../follow-sale/follow-sale';
 
 interface Props {
 	saleId: number;
-	sale: Sale | undefined;
+	sale: SaleDetails | undefined;
 	onMouseEnter?: () => void;
 	onMouseLeave?: () => void;
 }
 
-function getDatesContent(dates: Sale["dates"] | undefined) {
+function getDatesContent(dates: SaleDetails["dates"] | undefined) {
 	if (!dates) return;
 	// TODO: include a calendar view
-	if (typeof dates === 'string') {
-		return dates
-	}
+
 	return (
 		<div className='dates'>
 			<ul>

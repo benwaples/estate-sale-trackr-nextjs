@@ -1,4 +1,4 @@
-import { Dictionary, Sale } from "@/types";
+import { Dictionary, SaleDetails } from "@/types";
 import { parseResponseBodyIntoDom, parseSaleAddress, parseSaleDateString, removeTabsAndNewLines } from "./utils";
 import { NextApiRequest, NextApiResponse } from "next";
 import { checkAuthMiddleware } from "../auth/utils";
@@ -36,7 +36,7 @@ export async function allUpcomingSaleIds(): Promise<allUpcomingSalesReturn[]> {
 	return data;
 }
 
-export async function getSaleInfo(id: number): Promise<Sale> {
+export async function getSaleInfo(id: number): Promise<SaleDetails> {
 	const saleURL = `https://www.estatesale-finder.com/viewsale.php?saleid=${id}`;
 
 	const response = await fetch(saleURL);
@@ -45,7 +45,7 @@ export async function getSaleInfo(id: number): Promise<Sale> {
 	const rows = document.querySelectorAll('.salelist .row')
 	const images = document.querySelectorAll('.salelist img')
 
-	const data = { id } as Sale
+	const data = { id } as SaleDetails
 
 	rows.forEach(row => {
 		const title = removeTabsAndNewLines(row.querySelector('.small-3')?.textContent ?? '')?.toLowerCase()
@@ -53,7 +53,7 @@ export async function getSaleInfo(id: number): Promise<Sale> {
 
 		if (title && description) {
 			if (title === 'dates') {
-				return data[title] = parseSaleDateString(description) ?? ''
+				return data[title] = parseSaleDateString(description)
 			}
 			if (title === 'address') {
 				return data[title] = parseSaleAddress(description)

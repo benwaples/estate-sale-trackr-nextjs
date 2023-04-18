@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import styles from '../../styles/estate-sale-list.module.scss'
-import { Sale } from '@/types'
+import { SaleDetails } from '@/types'
 import { postHelper } from '@/utils/utils'
 import { useSession } from 'next-auth/react'
 
-function FollowSale(props: Sale) {
-	const { id, sale_id, Address, Dates } = props
+function FollowSale(props: SaleDetails) {
+	const { id, sale_id, address, dates } = props
 
 	const { data, update } = useSession()
 	const [loading, setLoading] = useState(false)
@@ -15,16 +15,16 @@ function FollowSale(props: Sale) {
 	const followSale = async () => {
 		// TODO: if no email, should display a modal for SSO
 		if (!data?.user?.email) return;
-		let start_date;
-		let end_date;
-		if (typeof Dates === 'object') {
-			start_date = Dates.startTime
-			end_date = Dates.endTime
+		let start_time;
+		let end_time;
+		if (typeof dates === 'object') {
+			start_time = dates.startTime
+			end_time = dates.endTime
 		}
 		// TODO: add notification that this sale has been followed - if not number attached to account, ask if they wanna add one
 		try {
 			setLoading(true)
-			const followedSale = await postHelper('/api/estate-sale/follow-sale', { sale_id, follower_email: data.user.email, address: Address, start_date, end_date })
+			const followedSale = await postHelper('/api/estate-sale/follow-sale', { sale_id, follower_email: data.user.email, address, start_time, end_time })
 
 			// updates current user session with newly followed sale
 			await update({ ...data, user: { ...data.user, followed_sales: [...(data.user.followed_sales ?? []), followedSale.sale_id] } })

@@ -1,4 +1,4 @@
-import Sale from "@/models/Sale"
+import Sale from "@/models/FollowedSale"
 import NextAuth, { DefaultSession, NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 
