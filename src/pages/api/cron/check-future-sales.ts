@@ -6,7 +6,7 @@ import { EmailSender } from "@/models/EmailSender";
 
 function compareSaleDetails(saleDetails: SaleDetails, followedSale: FollowedSale) {
 	if (saleDetails?.dates?.startTime !== followedSale?.start_time) {
-		console.log('startTime', typeof saleDetails?.dates?.startTime, typeof followedSale?.start_time);
+		console.log('startTime', saleDetails?.dates?.startTime, followedSale?.start_time);
 		return false;
 	}
 	if (saleDetails?.dates?.endTime !== followedSale?.end_time) {

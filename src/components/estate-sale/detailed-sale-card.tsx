@@ -81,7 +81,8 @@ function DetailedSaleCard(props: Props) {
 		arrows: false,
 	};
 
-	// fix the page while touching a card
+	// TODO: add drag handles
+
 	return (
 		<div className={styles.saleCard} key={saleId}>
 			<TabHeader tabs={tabs} initTab={initialTab} onClick={handleTabChange} />
