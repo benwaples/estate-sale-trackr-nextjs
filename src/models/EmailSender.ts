@@ -7,7 +7,7 @@ export class EmailSender {
 
 	static async sendEmail(followedSale: FollowedSale) {
 		const client = new Mailjet({ apiKey: process.env.MAILJET_API_KEY, apiSecret: process.env.MAILJET_SECRET });
-		console.log(EmailSender.followedSaleEmailHTML(followedSale.address));
+
 		const messages = {
 			Messages: [
 				{
@@ -27,6 +27,7 @@ export class EmailSender {
 		};
 
 		try {
+			console.log('sending email to: ', followedSale.follower_email);
 			await client.post('send', { 'version': 'v3.1' }).request(messages);
 		} catch (e) {
 			console.error(e);
