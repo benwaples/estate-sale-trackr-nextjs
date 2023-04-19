@@ -92,7 +92,7 @@ function DetailedSaleCard(props: Props) {
 					<>
 						<div className={styles.imageSliderWrapper} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 							<Slider {...sliderConfig}>
-								{sale.images.map(img => <Image key={img} className={styles.saleImage} src={img} alt="" />)}
+								{sale.images.map(img => <img key={img} className={styles.saleImage} src={img} alt="" />)}
 							</Slider>
 						</div>
 						<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
