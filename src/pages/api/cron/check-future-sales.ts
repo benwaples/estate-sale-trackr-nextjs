@@ -41,19 +41,20 @@ async function checkFutureSales(req: NextApiReq, res: NextApiRes) {
 			const isEqual = compareSaleDetails(c, followedSale);
 			if (isEqual) return a;
 
-			a.push(followedSale);
+			a.push({ ...followedSale, address: c.address, start_time: c.dates?.startTime, end_time: c.dates?.endTime });
 			return a;
 		}, []);
 
 		console.log('notifyList', notifyList);
 
 		if (!notifyList.length) return res.status(200).end();
+		// TODO: bucket emails that should be sent to one person
 
 		// send notification via some sort of queue
 		await Promise.all(notifyList.map(EmailSender.sendEmail));
 		//  bulk update the followed sale
-		await Sale.bulkUpdateFollowedSales(notifyList);
-
+		const updatedFollowedSales = await Sale.bulkUpdateFollowedSales(notifyList);
+		console.log('updatedFollowedSales', updatedFollowedSales);
 		return res.status(200).end();
 	} catch (e: any) {
 		console.error(checkFutureSales.name, e.message);

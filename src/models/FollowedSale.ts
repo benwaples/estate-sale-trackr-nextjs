@@ -89,10 +89,10 @@ export default class Sale {
 				${query} 
 			) AS fsu(sale_id, address, start_time, end_time) 
 			WHERE CAST(fsu.sale_id AS int) = CAST(fs.sale_id AS int)
-			RETURNING *
+			RETURNING fs.follower_email, fs.address
 		`, values);
 
-		return rows.map(row => new Sale(row));
+		return rows;
 	}
 
 
