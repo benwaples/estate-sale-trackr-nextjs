@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Router, { useRouter } from 'next/router';
 import Slider, { Settings } from 'react-slick';
 import cn from 'classnames';
 import { BaseSaleData, SaleDetails } from '@/types';
@@ -19,6 +20,7 @@ function EstateSaleList(props: Props) {
 	const [canSwipe, setCanSwipe] = useState(true);
 	const [currentSlide, setCurrentSlide] = useState(0);
 	const [detailedSaleMap, setDetailedSaleMap] = useState<{ [key: SaleDetails["id"]]: SaleDetails } | null>(null);
+	const [initialDetailedSlide, setInitialDetailedSlide] = useState<number | null>(null);
 	const [loadingSale, setLoadingSale] = useState(true);
 	const [swiping, setSwiping] = useState(false);
 
@@ -26,9 +28,23 @@ function EstateSaleList(props: Props) {
 	const thumbnailSliderRef = useRef<Slider | null>(null);
 
 	const { isMobile } = useScreenQuery();
+	const { query } = useRouter();
 
 	const getSaleIds = useCallback(() => {
 		let saleIds = null;
+
+		if (query.sale_id && !detailedSaleMap && thumbnailSliderRef.current) {
+			const saleIndex = saleInfo.findIndex(sale => sale.id.toString() === query.sale_id);
+			if (saleIndex !== -1) {
+				setCurrentSlide(saleIndex);
+				// scroll to slide in thumbnail slider
+				thumbnailSliderRef.current.slickGoTo(saleIndex);
+				setInitialDetailedSlide(saleIndex);
+				// use current slide to get lookahead slides
+				saleIds = saleInfo.slice(saleIndex, saleIndex + 3).map(({ id }) => id);
+			}
+		}
+
 		if (currentSlide === 0 && !detailedSaleMap) {
 			saleIds = saleInfo.slice(0, 5).map(({ id }) => id);
 		}
@@ -45,7 +61,7 @@ function EstateSaleList(props: Props) {
 		}
 
 		return saleIds;
-	}, [currentSlide, detailedSaleMap, saleInfo]);
+	}, [currentSlide, detailedSaleMap, query.sale_id, saleInfo]);
 
 	useEffect(() => {
 		const getSaleDetails = async (saleIds: number[]) => {
@@ -58,11 +74,25 @@ function EstateSaleList(props: Props) {
 		};
 
 		const saleIds = getSaleIds();
-		if (!saleIds) return;
+		if (!saleIds?.length) return;
 
 		getSaleDetails(saleIds);
 
 	}, [currentSlide, getSaleIds, saleInfo]);
+
+	const handleSlideChange = (i: number) => {
+		setCurrentSlide(i);
+
+		const slideId = saleInfo[i].id;
+		Router.push(
+			{
+				pathname: '',
+				query: { sale_id: slideId }
+			},
+			undefined, // AS param is not needed here
+			{ shallow: true }
+		);
+	};
 
 	const thumbnailSliderConfig: Settings = {
 		className: cn(styles.thumbnailSlider),
@@ -74,7 +104,8 @@ function EstateSaleList(props: Props) {
 		verticalSwiping: true,
 		focusOnSelect: true,
 		arrows: false,
-		afterChange: setCurrentSlide,
+		afterChange: handleSlideChange,
+		initialSlide: initialDetailedSlide ? initialDetailedSlide : undefined
 	};
 
 	const detailedSliderConfig: Settings = {
@@ -86,7 +117,8 @@ function EstateSaleList(props: Props) {
 		swipeToSlide: true,
 		verticalSwiping: true,
 		asNavFor: thumbnailSliderRef.current ?? undefined,
-		afterChange: setCurrentSlide,
+		afterChange: handleSlideChange,
+		initialSlide: initialDetailedSlide ? initialDetailedSlide : undefined
 	};
 
 	// TODO: add current sale to url and load that one if its present
