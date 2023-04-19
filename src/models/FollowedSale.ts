@@ -45,7 +45,7 @@ export default class Sale {
 		WHERE sale_id = $1 
 			AND follower_email = $2
 		RETURNING *
-		`, [sale_id, email])
+		`, [sale_id, email]);
 
 		if (!rows[0]) throw new Error('unable to unfollow sale');
 	}
@@ -54,27 +54,27 @@ export default class Sale {
 
 		const getBulkValues = () => {
 			let sanitizeTicker = 0;
-			const values: (string | number)[] = []
+			const values: (string | number)[] = [];
 
 			const handleValue = (value?: number | string) => {
 				if (!value) return;
 
-				values.push(value)
-				sanitizeTicker++
+				values.push(value);
+				sanitizeTicker++;
 
-				return `$${sanitizeTicker}`
-			}
+				return `$${sanitizeTicker}`;
+			};
 			const query = followedSales.map(sale => {
 				const stringToSanitize = [sale.sale_id, sale.address, sale.start_time, sale.end_time]
 					.map(handleValue)
 					.filter(el => !!el)
-					.join(',')
+					.join(',');
 
-				return `(${stringToSanitize})`
-			}).join(',')
+				return `(${stringToSanitize})`;
+			}).join(',');
 
-			return { query, values }
-		}
+			return { query, values };
+		};
 
 		const { query, values } = getBulkValues();
 
@@ -90,9 +90,9 @@ export default class Sale {
 			) AS fsu(sale_id, address, start_time, end_time) 
 			WHERE CAST(fsu.sale_id AS int) = CAST(fs.sale_id AS int)
 			RETURNING *
-		`, values)
+		`, values);
 
-		return rows.map(row => new Sale(row))
+		return rows.map(row => new Sale(row));
 	}
 
 
@@ -104,9 +104,9 @@ export default class Sale {
 				WHERE follower_email = $1 
 					AND status = ${Status.active}
 			) as sale_ids
-		`, [email])
+		`, [email]);
 
-		return rows[0]?.sale_ids ?? []
+		return rows[0]?.sale_ids ?? [];
 	}
 
 	static async followedSalesBySaleIds(saleIdList: number[]) {
@@ -115,9 +115,9 @@ export default class Sale {
 		FROM followed_sales
 		WHERE sale_id = ANY($1)
 		AND status = ${Status.active}
-		`, [saleIdList])
+		`, [saleIdList]);
 
-		return rows.map(row => new Sale(row))
+		return rows.map(row => new Sale(row));
 	}
 
 	static async getAllFutureSalesFollowed() {
@@ -128,8 +128,8 @@ export default class Sale {
 			start_time IS NOT NULL 
 			AND start_time > $1
 		AND status = ${Status.active}
-		`, [Date.now()])
+		`, [Date.now()]);
 
-		return rows.map(row => new Sale(row))
+		return rows.map(row => new Sale(row));
 	}
 }

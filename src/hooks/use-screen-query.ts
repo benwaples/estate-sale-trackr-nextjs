@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 
-const tabletBreakpoint = 1280
-const mobileBreakpoint = 500
+const tabletBreakpoint = 1280;
+const mobileBreakpoint = 500;
 
 interface IUseScreenQueryReturn {
 	isMobile: boolean;

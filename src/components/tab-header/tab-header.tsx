@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import cn from 'classnames'
-import styles from '../../styles/tab-header.module.scss'
+import React, { useEffect, useState } from 'react';
+import cn from 'classnames';
+import styles from '../../styles/tab-header.module.scss';
 
 interface Props {
 	tabs: string[];
@@ -11,24 +11,24 @@ interface Props {
 function TabHeader(props: Props) {
 	const { tabs, onClick, initTab } = props;
 
-	const [activeTab, setActiveTab] = useState(initTab ?? tabs[0])
+	const [activeTab, setActiveTab] = useState(initTab ?? tabs[0]);
 
-	useEffect(() => { initTab && setActiveTab(initTab) }, [initTab])
+	useEffect(() => { initTab && setActiveTab(initTab); }, [initTab]);
 
 	const generateTabButton = (tab: string) => {
 		const isActive = activeTab === tab;
 		const handleClick = () => {
-			setActiveTab(tab)
+			setActiveTab(tab);
 			onClick(tab);
-		}
+		};
 		return (
 			<li key={tab} className={cn(styles.tabHeaderButton, { [styles.activeTab]: isActive })} onClick={handleClick}>{tab}</li>
-		)
-	}
+		);
+	};
 
 	return (
 		<div className={styles.tabHeader}><ul>{tabs.map(generateTabButton)}</ul></div>
-	)
+	);
 }
 
-export default TabHeader
+export default TabHeader;
