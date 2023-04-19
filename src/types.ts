@@ -14,12 +14,28 @@ export interface BaseSaleData {
 	address: string;
 }
 
-export interface Sale extends Dictionary {
+export interface SaleDetails extends Dictionary {
 	id: number;
-	Dates: {
+	dates?: {
 		startTime: number;
 		endTime: number;
 		dayAndTime: string[]
-	} | string;
-	Images: string[]
+	};
+	images: string[]
+}
+
+export enum Status {
+	inactive,
+	active
+}
+export interface FollowedSale {
+	id: number;
+	status: Status;
+	sale_id: number;
+	follower_email: string;
+	user_given_name: string | null;
+	address: string;
+	start_time?: number;
+	end_time?: number;
+	created_at: number;
 }

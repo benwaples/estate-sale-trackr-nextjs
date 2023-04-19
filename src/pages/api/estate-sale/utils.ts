@@ -45,7 +45,7 @@ const convertTime12to24 = (time: string, modifier: string) => {
 
 
 export function parseSaleDateString(x: string | undefined) {
-	if (!x) return null;
+	if (!x) return;
 
 	const [startAndEndRaw, dayAndTimeRaw] = x.split('   ').map(el => el.trim()).filter(el => !!el);
 	const [start, end] = startAndEndRaw.split('till')
@@ -87,4 +87,12 @@ export function parseSaleAddress(x: string | undefined) {
 	if (address.toLocaleLowerCase().includes('tba')) return `Not Posted - ${region.trim()}`;
 
 	return address.trim();
+}
+
+export async function logAsyncTime(label: string, callback: () => Promise<any>) {
+	console.time(label)
+	const res = await callback();
+	console.timeEnd(label)
+
+	return res;
 }

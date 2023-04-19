@@ -1,28 +1,27 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Slider, { Settings } from 'react-slick';
-import { Sale } from '@/types'
+import { SaleDetails } from '@/types';
 import TabHeader from '../tab-header/tab-header';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import styles from '../../styles/estate-sale-list.module.scss'
+import styles from '../../styles/estate-sale-list.module.scss';
 import NoImage from '../empty-state/no-image';
 import useScreenQuery from '@/hooks/use-screen-query';
 import FollowSale from '../follow-sale/follow-sale';
 
 interface Props {
 	saleId: number;
-	sale: Sale | undefined;
+	sale: SaleDetails | undefined;
 	onMouseEnter?: () => void;
 	onMouseLeave?: () => void;
 }
 
-function getDatesContent(dates: Sale["Dates"] | undefined) {
+function getDatesContent(dates: SaleDetails["dates"] | undefined) {
 	if (!dates) return;
 	// TODO: include a calendar view
-	if (typeof dates === 'string') {
-		return dates
-	}
+
 	return (
 		<div className='dates'>
 			<ul>
@@ -32,54 +31,54 @@ function getDatesContent(dates: Sale["Dates"] | undefined) {
 				{dates.dayAndTime.map(day => {
 					return (
 						<li key={day}>{day}</li>
-					)
+					);
 				})}
 
 			</ul>
 		</div>
-	)
+	);
 }
 
 function DetailedSaleCard(props: Props) {
 	const { isMobile, isDesktop } = useScreenQuery();
 	const { saleId, sale, onMouseEnter, onMouseLeave } = props;
 
-	const tabs = Object.keys(sale ?? {}).filter(key => !['id', !isMobile && 'Images'].includes(key)).reverse()
-	const hasImages = !!sale?.Images?.length;
-	const initialDesktopTab = !!sale?.["Sale Details"] ? "Sale Details" : tabs[0]
-	const initialMobileTab = (hasImages && isMobile) ? 'Images' : undefined
-	const initialTab = tabs.includes('Images') ? initialMobileTab : initialDesktopTab;
+	const tabs = Object.keys(sale ?? {}).filter(key => !['id', !isMobile && 'images'].includes(key)).reverse();
+	const hasImages = !!sale?.images?.length;
+	const initialDesktopTab = !!sale?.["sale details"] ? "sale details" : tabs[0];
+	const initialMobileTab = (hasImages && isMobile) ? 'images' : undefined;
+	const initialTab = tabs.includes('images') ? initialMobileTab : initialDesktopTab;
 
-	const [content, setContent] = useState<string | JSX.Element>(initialMobileTab ? '' : sale?.[initialDesktopTab ?? tabs[0]])
+	const [content, setContent] = useState<string | JSX.Element>(initialMobileTab ? '' : sale?.[initialDesktopTab ?? tabs[0]]);
 	const [currentImageIndex, setCurrentImageIndex] = useState(1);
 
 	// sets initial content
 	useEffect(() => {
 		if (isMobile && hasImages) {
-			setContent('')
+			setContent('');
 			return;
 		};
-		setContent(initialMobileTab ? '' : sale?.[initialDesktopTab ?? tabs[0]])
-	}, [initialTab])
+		setContent(initialMobileTab ? '' : sale?.[initialDesktopTab ?? tabs[0]]);
+	}, [initialTab, hasImages, tabs, initialDesktopTab, initialMobileTab, sale, isMobile]);
 
 	const handleTabChange = (tab: string) => {
-		if (tab === 'Dates') {
-			setContent(getDatesContent(sale?.Dates) ?? '')
+		if (tab === 'dates') {
+			setContent(getDatesContent(sale?.dates) ?? '');
 			return;
 		}
-		if (tab === 'Images') {
-			setContent('')
+		if (tab === 'images') {
+			setContent('');
 			return;
 		}
-		setContent(<p>{sale?.[tab]}</p>)
-	}
+		setContent(<p>{sale?.[tab]}</p>);
+	};
 
 	const sliderConfig: Settings = {
 		className: styles.saleImages,
 		lazyLoad: 'anticipated',
-		afterChange(index: number) { setCurrentImageIndex(index + 1) },
+		afterChange(index: number) { setCurrentImageIndex(index + 1); },
 		arrows: false,
-	}
+	};
 
 	// fix the page while touching a card
 	return (
@@ -93,16 +92,16 @@ function DetailedSaleCard(props: Props) {
 					<>
 						<div className={styles.imageSliderWrapper} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 							<Slider {...sliderConfig}>
-								{sale.Images.map(img => <img key={img} className={styles.saleImage} src={img} />)}
+								{sale.images.map(img => <Image key={img} className={styles.saleImage} src={img} alt="" />)}
 							</Slider>
 						</div>
-						<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.Images?.length}`}</p>
+						<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
 					</>
 				) : <NoImage description='Images have not been posted for this sale' />
 			) : null}
-			<FollowSale />
+			{sale ? <FollowSale {...sale} sale_id={saleId} /> : null}
 		</div>
-	)
+	);
 }
 
-export default DetailedSaleCard
+export default DetailedSaleCard;

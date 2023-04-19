@@ -1,5 +1,6 @@
+import { FollowedSale, Status } from "@/types";
 import pg from "../utils/pg";
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 
 export default class User {
 	id: number;
@@ -15,8 +16,8 @@ export default class User {
 	static async findByUsername(username: string) {
 		const { rows } = await pg.query(`
 		SELECT * FROM users WHERE username = $1
-		`, [username])
-		return rows[0]
+		`, [username]);
+		return rows[0];
 	}
 
 	static async signUp(username: string, password: string) {
@@ -29,7 +30,7 @@ export default class User {
 		`, [username, bcrypt.hashSync(password, 8)]);
 
 
-		const user = rows[0]
+		const user = rows[0];
 		if (!user) throw new Error('unable to create user, try a new username');
 		return new User(user);
 	}
@@ -37,29 +38,14 @@ export default class User {
 	static async signIn(username: string, password: string) {
 		const { rows } = await pg.query<User>(`
 			SELECT * FROM users WHERE username = $1
-			`, [username])
+			`, [username]);
 
-		const user = rows[0]
+		const user = rows[0];
 		if (!user || !bcrypt.compareSync(password, user.password)) {
 			// if no user, or incorrect password, return no found message as to not allude that a given username exists
-			throw new Error('user not found')
+			throw new Error('user not found');
 		};
 
-		return new User(user)
-	}
-
-	static async addFavoriteSale(userId: number, saleId: number) {
-		const { rows } = await pg.query<User>(`
-		UPDATE 
-			users
-		SET 
-			saved_sales = array_append(saved_sales, $1)
-		WHERE 
-			id = $2
-			AND $3 != ANY(saved_sales)
-		RETURNING *
-		`, [saleId, userId, saleId])
-
-		if (!rows[0]) throw new Error('unable to add to saved sales')
+		return new User(user);
 	}
 }

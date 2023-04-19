@@ -1,11 +1,11 @@
-import React from 'react'
-import { useSession, signIn, signOut } from "next-auth/react"
+import React from 'react';
+import { useSession, signIn, signOut } from "next-auth/react";
 
 function Nav() {
 	const { data: session } = useSession();
 
 	function authAction() {
-		return session ? signOut() : signIn()
+		return session ? signOut() : signIn();
 	}
 
 	return (
@@ -14,7 +14,7 @@ function Nav() {
 				{session ? 'Sign Out' : 'Sign In'}
 			</button>
 		</nav>
-	)
+	);
 }
 
-export default Nav
+export default Nav;

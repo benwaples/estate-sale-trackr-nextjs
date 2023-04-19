@@ -16,18 +16,18 @@ export default async function signUp(
 		const {
 			username,
 			password
-		} = req.body
+		} = req.body;
 
 		if (!username || !password) {
-			return res.status(400).json({ message: 'missing username or password' })
+			return res.status(400).json({ message: 'missing username or password' });
 		}
 
-		const user = await User.signUp(username, password)
-		console.log(`${username} has signed up`)
+		const user = await User.signUp(username, password);
+		console.log(`${username} has signed up`);
 
-		return res.send(profileAsToken(user))
+		return res.send(profileAsToken(user));
 	} catch (e: any) {
-		console.error(signUp.name, e.message)
-		res.status(500).send(e.message)
+		console.error(signUp.name, e.message);
+		res.status(500).send(e.message);
 	}
 }

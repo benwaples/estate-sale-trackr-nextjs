@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next';
 import User from '../../../models/User';
 import { profileAsToken } from './utils';
 
@@ -18,17 +18,17 @@ export default async function signIn(
 		const {
 			username,
 			password
-		} = req.body
+		} = req.body;
 
 		if (!username || !password) {
-			return res.status(400).send({ message: 'missing username or password' })
+			return res.status(400).send({ message: 'missing username or password' });
 		}
 
-		const user = await User.signIn(username, password)
+		const user = await User.signIn(username, password);
 
-		return res.send(profileAsToken(user))
+		return res.send(profileAsToken(user));
 	} catch (e: any) {
-		console.error(signIn.name, e.message)
-		res.status(500).send(e.message)
+		console.error(signIn.name, e.message);
+		res.status(500).send(e.message);
 	}
 }

@@ -1,5 +1,3 @@
-import { Sale } from "@/types";
-import { parseResponseBodyIntoDom, parseSaleAddress, parseSaleDateString, removeTabsAndNewLines } from "../utils";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSaleInfo } from "../all-upcoming-sales";
 
