@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Slider, { Settings } from 'react-slick';
-import cn from 'classnames'
-import { BaseSaleData, Sale } from '@/types'
+import cn from 'classnames';
+import { BaseSaleData, SaleDetails } from '@/types';
 import DetailedSaleCard from './detailed-sale-card';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import styles from '../../styles/estate-sale-list.module.scss'
+import styles from '../../styles/estate-sale-list.module.scss';
 import ThumbnailSaleCard from './thumbnail-sale-card';
 import useScreenQuery from '@/hooks/use-screen-query';
 import { getHelper, toMap } from '@/utils/utils';
@@ -15,53 +15,54 @@ interface Props {
 }
 
 function EstateSaleList(props: Props) {
-	const { saleInfo } = props
-	const [canSwipe, setCanSwipe] = useState(true)
-	const [currentSlide, setCurrentSlide] = useState(0)
-	const [detailedSaleMap, setDetailedSaleMap] = useState<{ [key: Sale["id"]]: Sale } | null>(null)
-	const [loadingSale, setLoadingSale] = useState(true)
-	const [swiping, setSwiping] = useState(false)
+	const { saleInfo } = props;
+	const [canSwipe, setCanSwipe] = useState(true);
+	const [currentSlide, setCurrentSlide] = useState(0);
+	const [detailedSaleMap, setDetailedSaleMap] = useState<{ [key: SaleDetails["id"]]: SaleDetails } | null>(null);
+	const [loadingSale, setLoadingSale] = useState(true);
+	const [swiping, setSwiping] = useState(false);
 
 	const detailedSliderRef = useRef<Slider | null>(null);
 	const thumbnailSliderRef = useRef<Slider | null>(null);
 
 	const { isMobile } = useScreenQuery();
 
-	useEffect(() => {
-		const getSaleDetails = async (saleIds: number[]) => {
-			setLoadingSale(true)
-			const saleDetails = await getHelper(`/api/estate-sale/sale-details${saleIds.map(id => '/' + id).join('')}`)
-			const saleMap = toMap(saleDetails, 'id')
-			setLoadingSale(false)
-
-			setDetailedSaleMap(prev => ({ ...prev, ...saleMap }))
-		};
-
-		const getSaleIds = () => {
-			let saleIds = null;
-			if (currentSlide === 0 && !detailedSaleMap) {
-				saleIds = saleInfo.slice(0, 5).map(({ id }) => id);
-			}
-
-			// is current slide null? then get that + 1 prev and 1 ahead
-			if (!saleIds && !detailedSaleMap?.[saleInfo[currentSlide]?.id]) {
-				saleIds = saleInfo.slice(currentSlide - 1, currentSlide + 1).map(({ id }) => id)
-			}
-
-			// look ahead
-			const lookahead = currentSlide + 2
-			if (!saleIds && !detailedSaleMap?.[saleInfo[lookahead]?.id]) {
-				saleIds = saleInfo.slice(lookahead, lookahead + 3).map(({ id }) => id)
-			}
-
-			return saleIds;
+	const getSaleIds = useCallback(() => {
+		let saleIds = null;
+		if (currentSlide === 0 && !detailedSaleMap) {
+			saleIds = saleInfo.slice(0, 5).map(({ id }) => id);
 		}
 
-		const saleIds = getSaleIds()
+		// is current slide null? then get that + 1 prev and 1 ahead
+		if (!saleIds && !detailedSaleMap?.[saleInfo[currentSlide]?.id]) {
+			saleIds = saleInfo.slice(currentSlide - 1, currentSlide + 1).map(({ id }) => id);
+		}
+
+		// look ahead
+		const lookahead = currentSlide + 2;
+		if (!saleIds && !detailedSaleMap?.[saleInfo[lookahead]?.id]) {
+			saleIds = saleInfo.slice(lookahead, lookahead + 3).map(({ id }) => id);
+		}
+
+		return saleIds;
+	}, [currentSlide, detailedSaleMap, saleInfo]);
+
+	useEffect(() => {
+		const getSaleDetails = async (saleIds: number[]) => {
+			setLoadingSale(true);
+			const saleDetails = await getHelper(`/api/estate-sale/sale-details${saleIds.map(id => '/' + id).join('')}`);
+			const saleMap = toMap(saleDetails, 'id');
+			setLoadingSale(false);
+
+			setDetailedSaleMap(prev => ({ ...prev, ...saleMap }));
+		};
+
+		const saleIds = getSaleIds();
 		if (!saleIds) return;
 
 		getSaleDetails(saleIds);
-	}, [currentSlide])
+
+	}, [currentSlide, getSaleIds, saleInfo]);
 
 	const thumbnailSliderConfig: Settings = {
 		className: cn(styles.thumbnailSlider),
@@ -74,7 +75,7 @@ function EstateSaleList(props: Props) {
 		focusOnSelect: true,
 		arrows: false,
 		afterChange: setCurrentSlide,
-	}
+	};
 
 	const detailedSliderConfig: Settings = {
 		className: styles.detailedSliderWrapper,
@@ -86,7 +87,7 @@ function EstateSaleList(props: Props) {
 		verticalSwiping: true,
 		asNavFor: thumbnailSliderRef.current ?? undefined,
 		afterChange: setCurrentSlide,
-	}
+	};
 
 	// TODO: add current sale to url and load that one if its present
 	return (
@@ -112,12 +113,12 @@ function EstateSaleList(props: Props) {
 					{saleInfo.map(sale => {
 						return (
 							<DetailedSaleCard key={sale.id} saleId={sale.id} sale={detailedSaleMap[sale.id]} onMouseEnter={() => setCanSwipe(false)} onMouseLeave={() => setCanSwipe(true)} />
-						)
+						);
 					})}
 				</Slider>
 			) : "Loading..."}
 		</div>
-	)
+	);
 }
 
-export default EstateSaleList
+export default EstateSaleList;
