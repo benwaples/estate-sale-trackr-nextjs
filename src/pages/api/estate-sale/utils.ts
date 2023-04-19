@@ -88,3 +88,11 @@ export function parseSaleAddress(x: string | undefined) {
 
 	return address.trim();
 }
+
+export async function logAsyncTime(label: string, callback: () => Promise<any>) {
+	console.time(label)
+	const res = await callback();
+	console.timeEnd(label)
+
+	return res;
+}
