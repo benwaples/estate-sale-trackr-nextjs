@@ -58,9 +58,11 @@ function DetailedSaleCard(props: Props) {
 			setContent('');
 			return;
 		};
+		console.log('runnign');
 		setContent(initialMobileTab ? '' : sale?.[initialDesktopTab ?? tabs[0]]);
-	}, [initialTab, hasImages, tabs, initialDesktopTab, initialMobileTab, sale, isMobile]);
-
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [initialTab]);
+	console.log('wewa');
 	const handleTabChange = (tab: string) => {
 		if (tab === 'dates') {
 			setContent(getDatesContent(sale?.dates) ?? '');

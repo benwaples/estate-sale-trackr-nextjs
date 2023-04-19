@@ -29,7 +29,6 @@ async function checkFutureSales(req: NextApiReq, res: NextApiRes) {
 		const followedUpcomingSales = await Sale.getAllFutureSalesFollowed();
 		if (!followedUpcomingSales.length) return res.status(204).end();
 		const followedUpcomingSalesMap = toMap(followedUpcomingSales, 'sale_id');
-		console.log('followedUpcomingSalesMap', followedUpcomingSalesMap);
 
 		//  TODO: this could be a webhook/queue as well
 		// scrape those pages again. we should make sure that data returned here is the exact same as what gets inserted into followed_sales
@@ -40,7 +39,7 @@ async function checkFutureSales(req: NextApiReq, res: NextApiRes) {
 			const followedSale = followedUpcomingSalesMap[c.id];
 			// compare new data against the stored data that they followed from.
 			const isEqual = compareSaleDetails(c, followedSale);
-			if (isEqual && c.sale_id == 11963) return a;
+			if (isEqual) return a;
 
 			a.push(followedSale);
 			return a;
