@@ -1,16 +1,16 @@
 import { Dictionary } from '@/types';
-import jsdom from 'jsdom'
+import jsdom from 'jsdom';
 
 
 export async function parseResponseBodyIntoDom(response: Response): Promise<Document> {
 	const body = await response.text();
 
-	const dom = new jsdom.JSDOM(body)
-	return dom.window.document
+	const dom = new jsdom.JSDOM(body);
+	return dom.window.document;
 }
 
 export function removeTabsAndNewLines(x: string | undefined): string | null {
-	if (!x) return null
+	if (!x) return null;
 	return x.replace(/[\t\n\r]/gm, ' ').trim();
 }
 
@@ -41,22 +41,22 @@ const convertTime12to24 = (time: string, modifier: string) => {
 	}
 
 	return `${hours.padStart(2, '0')}:${minutes}`;
-}
+};
 
 
 export function parseSaleDateString(x: string | undefined) {
 	if (!x) return;
 
 	const [startAndEndRaw, dayAndTimeRaw] = x.split('   ').map(el => el.trim()).filter(el => !!el);
-	const [start, end] = startAndEndRaw.split('till')
+	const [start, end] = startAndEndRaw.split('till');
 
-	const [startDayOfWeek, startDayOfMonth, startMonth, startYear, startTimeOfDay, startMeridiem] = start.split(' ').filter(el => el !== 'of')
-	const [endDayOfWeek, endDayOfMonth, endMonth, endYear, endTimeOfDay, endMeridiem] = end.split(' ').filter(el => !!el && el !== 'of')
+	const [startDayOfWeek, startDayOfMonth, startMonth, startYear, startTimeOfDay, startMeridiem] = start.split(' ').filter(el => el !== 'of');
+	const [endDayOfWeek, endDayOfMonth, endMonth, endYear, endTimeOfDay, endMeridiem] = end.split(' ').filter(el => !!el && el !== 'of');
 
 	// YYYY-MM-DDTTT:TT:TT
-	const startTime = new Date(`${startYear}-${monthIndex[startMonth]}-${(startDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(startTimeOfDay, startMeridiem)}`).getTime()
-	if (!startTime) console.log(`${startYear}-${monthIndex[startMonth]}-${(startDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(startTimeOfDay, startMeridiem)}`)
-	const endTime = new Date(`${endYear}-${monthIndex[endMonth]}-${(endDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(endTimeOfDay, endMeridiem)}`).getTime()
+	const startTime = new Date(`${startYear}-${monthIndex[startMonth]}-${(startDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(startTimeOfDay, startMeridiem)}`).getTime();
+	if (!startTime) console.log(`${startYear}-${monthIndex[startMonth]}-${(startDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(startTimeOfDay, startMeridiem)}`);
+	const endTime = new Date(`${endYear}-${monthIndex[endMonth]}-${(endDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(endTimeOfDay, endMeridiem)}`).getTime();
 
 	const pattern = /([A-Z][a-z]+): (\d+-\d+)/g;
 
@@ -76,13 +76,13 @@ export function parseSaleDateString(x: string | undefined) {
 		startTime,
 		endTime,
 		dayAndTime
-	}
+	};
 }
 
 export function parseSaleAddress(x: string | undefined) {
 	if (!x) return null;
 
-	const [address, region] = x.split('   ').filter(el => !!el.trim())
+	const [address, region] = x.split('   ').filter(el => !!el.trim());
 
 	if (address.toLocaleLowerCase().includes('tba')) return `Not Posted - ${region.trim()}`;
 
@@ -90,9 +90,9 @@ export function parseSaleAddress(x: string | undefined) {
 }
 
 export async function logAsyncTime(label: string, callback: () => Promise<any>) {
-	console.time(label)
+	console.time(label);
 	const res = await callback();
-	console.timeEnd(label)
+	console.timeEnd(label);
 
 	return res;
 }
