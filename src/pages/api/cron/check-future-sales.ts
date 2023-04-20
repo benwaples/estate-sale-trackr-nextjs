@@ -6,15 +6,15 @@ import { EmailSender } from "@/models/EmailSender";
 
 function compareSaleDetails(saleDetails: SaleDetails, followedSale: FollowedSale) {
 	if (saleDetails?.dates?.startTime !== followedSale?.start_time) {
-		console.log(saleDetails.sale_id, ' startTime does not match', saleDetails?.dates?.startTime, followedSale?.start_time);
+		console.log(followedSale.sale_id, ' startTime does not match', saleDetails?.dates?.startTime, followedSale?.start_time);
 		return false;
 	}
 	if (saleDetails?.dates?.endTime !== followedSale?.end_time) {
-		console.log(saleDetails.sale_id, ' endTime does not match', saleDetails?.dates?.endTime, followedSale?.end_time);
+		console.log(followedSale.sale_id, ' endTime does not match', saleDetails?.dates?.endTime, followedSale?.end_time);
 		return false;
 	}
 	if (saleDetails?.address !== followedSale.address) {
-		console.log(saleDetails.sale_id, ' address does not match', saleDetails?.address, followedSale.address);
+		console.log(followedSale.sale_id, ' address does not match', saleDetails?.address, followedSale.address);
 		return false;
 	}
 	return true;
