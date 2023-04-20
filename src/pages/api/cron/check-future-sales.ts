@@ -6,15 +6,15 @@ import { EmailSender } from "@/models/EmailSender";
 
 function compareSaleDetails(saleDetails: SaleDetails, followedSale: FollowedSale) {
 	if (saleDetails?.dates?.startTime !== followedSale?.start_time) {
-		console.log('startTime', saleDetails?.dates?.startTime, followedSale?.start_time);
+		console.log(saleDetails.sale_id, ' startTime does not match', saleDetails?.dates?.startTime, followedSale?.start_time);
 		return false;
 	}
 	if (saleDetails?.dates?.endTime !== followedSale?.end_time) {
-		console.log('endTime', saleDetails?.dates?.endTime, followedSale?.end_time);
+		console.log(saleDetails.sale_id, ' endTime does not match', saleDetails?.dates?.endTime, followedSale?.end_time);
 		return false;
 	}
 	if (saleDetails?.address !== followedSale.address) {
-		console.log('address', saleDetails?.address, followedSale.address);
+		console.log(saleDetails.sale_id, ' address does not match', saleDetails?.address, followedSale.address);
 		return false;
 	}
 	return true;
@@ -27,27 +27,27 @@ async function checkFutureSales(req: NextApiReq, res: NextApiRes) {
 	try {
 		// get all future sales that are being followed
 		const followedUpcomingSales = await Sale.getAllFutureSalesFollowed();
-		console.log('followedUpcomingSales', followedUpcomingSales[0]);
+
 		if (!followedUpcomingSales.length) return res.status(204).end();
 		const followedUpcomingSalesMap = toMap(followedUpcomingSales, 'sale_id');
 
 		//  TODO: this could be a webhook/queue as well
 		// scrape those pages again. we should make sure that data returned here is the exact same as what gets inserted into followed_sales
 		const saleDetails = await Promise.all(followedUpcomingSales.map(followedSale => getSaleInfo(followedSale.sale_id)));
-		console.log('saleDetails', saleDetails[0]);
+
 		// if new data doesnt match stored data, notify them and then update their row.
 		const notifyList = saleDetails.reduce((a: FollowedSale[], c) => {
 			const followedSale = followedUpcomingSalesMap[c.id];
 			// compare new data against the stored data that they followed from.
 			const isEqual = compareSaleDetails(c, followedSale);
 			// local fallback so I dont accidentally send emails to other people
-			if (isEqual || process.env.LOCAL && followedSale.follower_email !== 'benwaples@gmail.com') return a;
+			if (isEqual || process.env.LOCAL && followedSale.follower_email !== 'benwaples@gmail.com' && c.sale_id !== 11975) return a;
 
 			a.push({ ...followedSale, address: c.address, start_time: c.dates?.startTime, end_time: c.dates?.endTime });
 			return a;
 		}, []);
 
-		console.log('notifyList', notifyList[0]);
+		console.log('notifyList', notifyList);
 
 		if (!notifyList.length) return res.status(200).end();
 		// TODO: bucket emails that should be sent to one person

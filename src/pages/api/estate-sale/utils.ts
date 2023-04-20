@@ -1,5 +1,6 @@
-import { Dictionary } from '@/types';
 import jsdom from 'jsdom';
+import { DateTime } from 'luxon';
+import { Dictionary } from '@/types';
 
 
 export async function parseResponseBodyIntoDom(response: Response): Promise<Document> {
@@ -53,10 +54,15 @@ export function parseSaleDateString(x: string | undefined) {
 	const [startDayOfWeek, startDayOfMonth, startMonth, startYear, startTimeOfDay, startMeridiem] = start.split(' ').filter(el => el !== 'of');
 	const [endDayOfWeek, endDayOfMonth, endMonth, endYear, endTimeOfDay, endMeridiem] = end.split(' ').filter(el => !!el && el !== 'of');
 
+	const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 	// YYYY-MM-DDTTT:TT:TT
-	const startTime = new Date(`${startYear}-${monthIndex[startMonth]}-${(startDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(startTimeOfDay, startMeridiem)}`).getTime();
-	if (!startTime) console.log(`${startYear}-${monthIndex[startMonth]}-${(startDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(startTimeOfDay, startMeridiem)}`);
+	const startTime = new Date(`${startYear}-${monthIndex[startMonth]}-${(startDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(startTimeOfDay, startMeridiem)}z`).getTime();
+	// if (!startTime) console.log(`${startYear}-${monthIndex[startMonth]}-${(startDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(startTimeOfDay, startMeridiem)}`);
 	const endTime = new Date(`${endYear}-${monthIndex[endMonth]}-${(endDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(endTimeOfDay, endMeridiem)}`).getTime();
+
+	// const startTime = DateTime.fromISO(`${startDate.toISOString()}`, { zone }).toUnixInteger();
+	// const endTime = DateTime.fromISO(`${endDate.toISOString()}`, { zone }).toUnixInteger();
 
 	const pattern = /([A-Z][a-z]+): (\d+-\d+)/g;
 
