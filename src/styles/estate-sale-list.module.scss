@@ -117,6 +117,15 @@
 			transform: scale(0.95);
 			box-shadow: none;
 		}
+
+	}
+	.popoverWrapper {
+		margin-bottom: 10px;
+		.followButtonPopover {
+			text-align: center;
+			margin: auto;
+			background-color: darkgray;
+		}
 	}
 
 }

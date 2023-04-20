@@ -1,0 +1,23 @@
+.popover {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+
+	position: relative;
+	// top: -10px;
+	
+	.popoverContent {
+		position: absolute;
+		right: 0;
+		left: 0;
+		top: -20px;
+		
+		border-radius: 20px;
+		min-height: 40px;
+		height: auto;
+		min-width: 80px;
+		height: auto;
+
+
+	}
+}

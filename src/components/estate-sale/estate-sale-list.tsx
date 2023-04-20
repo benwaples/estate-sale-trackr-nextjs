@@ -20,7 +20,7 @@ function EstateSaleList(props: Props) {
 	const [canSwipe, setCanSwipe] = useState(true);
 	const [currentSlide, setCurrentSlide] = useState(0);
 	const [detailedSaleMap, setDetailedSaleMap] = useState<{ [key: SaleDetails["id"]]: SaleDetails } | null>(null);
-	const [initialDetailedSlide, setInitialDetailedSlide] = useState<number | null>(null);
+	const [initialDetailedSlide, setInitialDetailedSlide] = useState<number>(0);
 	const [loadingSale, setLoadingSale] = useState(true);
 	const [swiping, setSwiping] = useState(false);
 
@@ -105,7 +105,7 @@ function EstateSaleList(props: Props) {
 		focusOnSelect: true,
 		arrows: false,
 		afterChange: handleSlideChange,
-		initialSlide: initialDetailedSlide ? initialDetailedSlide : undefined
+		initialSlide: initialDetailedSlide >= 0 ? initialDetailedSlide : undefined
 	};
 
 	const detailedSliderConfig: Settings = {
@@ -118,7 +118,7 @@ function EstateSaleList(props: Props) {
 		verticalSwiping: true,
 		asNavFor: thumbnailSliderRef.current ?? undefined,
 		afterChange: handleSlideChange,
-		initialSlide: initialDetailedSlide ? initialDetailedSlide : undefined
+		initialSlide: initialDetailedSlide >= 0 ? initialDetailedSlide : undefined
 	};
 
 	// TODO: add current sale to url and load that one if its present

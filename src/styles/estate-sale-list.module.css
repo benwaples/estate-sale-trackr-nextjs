@@ -1,0 +1,227 @@
+.estateSaleList {
+  max-width: 1440px;
+  margin: auto;
+  padding: 20px 80px;
+  background-color: black;
+  color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.estateSaleList .detailedSliderWrapper {
+  width: 60%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.estateSaleList .thumbnailSliderWrapper {
+  width: 40%;
+  text-align: center;
+}
+
+.estateSaleList .thumbnailSliderWrapper .thumbnailSliderTitle {
+  padding-bottom: 20px;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.estateSaleList .thumbnailSliderWrapper .prevNextContainer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 20px;
+}
+
+.estateSaleList .thumbnailSliderWrapper .prevNextContainer button {
+  color: black;
+  background-color: lightgreen;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+.estateSaleList .thumbnailSliderWrapper .prevNextContainer button:hover {
+  -webkit-transform: scale(1.05);
+          transform: scale(1.05);
+  -webkit-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+          box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.estateSaleList .thumbnailSliderWrapper .prevNextContainer button:active {
+  -webkit-transform: scale(0.95);
+          transform: scale(0.95);
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.saleCard {
+  margin: 20px auto;
+  height: 600px;
+  width: 400px;
+  border-radius: 12px;
+  -webkit-box-shadow: 0 0 10px #ccc;
+          box-shadow: 0 0 10px #ccc;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+}
+
+.saleCard .content {
+  padding: 10px;
+  height: 40%;
+  overflow: auto;
+}
+
+.saleCard .imageSliderWrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+}
+
+.saleCard .imageSliderWrapper .saleImages {
+  height: 100%;
+  padding-top: 10px;
+}
+
+.saleCard .imageSliderWrapper .saleImages .slick-list {
+  height: 100%;
+}
+
+.saleCard .imageSliderWrapper .saleImages .saleImage {
+  aspect-ratio: 16/9;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+
+.saleCard .sliderPagination {
+  margin-left: auto;
+  padding: 20px;
+}
+
+.saleCard .followSale {
+  color: black;
+  background-color: lightgreen;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  width: 50%;
+  margin: 0 auto 5px;
+}
+
+.saleCard .followSale:hover {
+  -webkit-transform: scale(1.05);
+          transform: scale(1.05);
+  -webkit-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+          box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.saleCard .followSale:active {
+  -webkit-transform: scale(0.95);
+          transform: scale(0.95);
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.saleCard .popoverWrapper {
+  margin-bottom: 10px;
+}
+
+.saleCard .popoverWrapper .followButtonPopover {
+  text-align: center;
+  margin: auto;
+  background-color: darkgray;
+}
+
+.thumbnailSale {
+  white-space: nowrap;
+  padding: 5px;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.thumbnailSale.activeThumbnail {
+  background-color: green;
+}
+
+@media (max-width: 500px) {
+  .saleCard {
+    width: 100%;
+    height: 400px;
+    padding: 10px;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+  }
+  .saleCard .followSale {
+    margin-top: 10px;
+  }
+  .saleCard .sliderPagination {
+    padding: 10px 20px;
+  }
+  .estateSaleList {
+    max-width: 100%;
+    padding: 25px;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: reverse;
+        -ms-flex-direction: column-reverse;
+            flex-direction: column-reverse;
+    -webkit-box-pack: end;
+        -ms-flex-pack: end;
+            justify-content: flex-end;
+    gap: 40px;
+    margin: 0 auto;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+  .estateSaleList .content {
+    height: unset;
+  }
+  .estateSaleList .detailedSliderWrapper, .estateSaleList .thumbnailSliderWrapper {
+    width: 100%;
+  }
+  .estateSaleList .detailedSliderWrapper {
+    max-height: 50%;
+    margin-bottom: -20px;
+  }
+}
+/*# sourceMappingURL=estate-sale-list.module.css.map */

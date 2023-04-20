@@ -1,0 +1,26 @@
+.popover {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  position: relative;
+}
+
+.popover .popoverContent {
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: -20px;
+  border-radius: 20px;
+  min-height: 40px;
+  height: auto;
+  min-width: 80px;
+  height: auto;
+}
+/*# sourceMappingURL=popover.module.css.map */
