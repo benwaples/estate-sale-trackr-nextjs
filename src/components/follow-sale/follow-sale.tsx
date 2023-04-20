@@ -96,7 +96,7 @@ function FollowSale(props: SaleDetails) {
 					<p>To follow a sale, you must be  <button onClick={() => signIn(undefined, { callbackUrl: getCallbackUrl() })}>signed in</button></p>
 				</div>
 			</Popover>
-			<button className={styles.followSale} onClick={handleClick} onBlur={() => setOpenPopover(false)}>{loading ? "Loading..." : buttonText}</button>
+			<button className={styles.followSale} onClick={handleClick}>{loading ? "Loading..." : buttonText}</button>
 		</>
 	);
 }

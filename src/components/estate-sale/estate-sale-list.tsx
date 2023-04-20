@@ -121,7 +121,6 @@ function EstateSaleList(props: Props) {
 		initialSlide: initialDetailedSlide >= 0 ? initialDetailedSlide : undefined
 	};
 
-	// TODO: add current sale to url and load that one if its present
 	return (
 		<div className={styles.estateSaleList} >
 
