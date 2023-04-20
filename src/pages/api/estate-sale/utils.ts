@@ -24,9 +24,9 @@ export const monthIndex: Dictionary = {
 	July: '07',
 	August: '08',
 	September: '09',
-	October: 10,
-	November: 11,
-	December: 12
+	October: '10',
+	November: '11',
+	December: '12'
 };
 
 const convertTime12to24 = (time: string, modifier: string) => {
