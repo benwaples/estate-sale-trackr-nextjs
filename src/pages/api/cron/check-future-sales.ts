@@ -27,6 +27,7 @@ async function checkFutureSales(req: NextApiReq, res: NextApiRes) {
 	try {
 		// get all future sales that are being followed
 		const followedUpcomingSales = await Sale.getAllFutureSalesFollowed();
+		console.log('followedUpcomingSales', followedUpcomingSales);
 		if (!followedUpcomingSales.length) return res.status(204).end();
 		const followedUpcomingSalesMap = toMap(followedUpcomingSales, 'sale_id');
 

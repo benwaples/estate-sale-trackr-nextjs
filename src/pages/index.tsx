@@ -58,3 +58,88 @@ function Home(props: Props) {
 }
 
 export default Home;
+
+/**
+ *  SW Portland',
+    follower_email: 'benwaples@gmail.com',
+    start_time: 1682158500000,
+    end_time: 1682254800000,
+    user_given_name: null
+  },
+  {
+    id: 34,
+    sale_id: 11976,
+    address: 'Not Posted - Region: SW Portland',
+    follower_email: 'benwaples@gmail.com',
+    start_time: 1682154000000,
+    end_time: 1682265600000,
+    user_given_name: null
+  },
+  {
+    id: 9,
+    sale_id: 11984,
+    address: '35513 NE 119th Avenue  La Center  WA 98629',
+    follower_email: 'benwaples@gmail.com',
+    start_time: 1682067600000,
+    end_time: 1682269200000,
+    user_given_name: null
+  },
+  {
+    id: 10,
+    sale_id: 11978,
+    address: '2106 NE Village Green Drive Vancouver  WA 98684',
+    follower_email: 'benwaples@gmail.com',
+    start_time: 1682067600000,
+    end_time: 1682269200000,
+    user_given_name: null
+  },
+  {
+    id: 11,
+    sale_id: 11963,
+    address: '14744 NW Forestel Loop Beaverton  OR 97006',
+    follower_email: 'benwaples@gmail.com',
+    start_time: 1682071200000,
+    end_time: 1682262000000,
+    user_given_name: null
+  }
+]
+sending email to:  benwaples@gmail.com
+sending email to:  benwaples@gmail.com
+sending email to:  benwaples@gmail.com
+sending email to:  benwaples@gmail.com
+sending email to:  benwaples@gmail.com
+sending email to:  benwaples@gmail.com
+sending email to:  benwaples@gmail.com
+updatedFollowedSales [
+  {
+    follower_email: 'benwaples@gmail.com',
+    address: 'Not Posted - Region: SW Portland'
+  },
+  {
+    follower_email: 'benwaples@gmail.com',
+    address: '21507 Highway 99E NE Aurora  OR 97002'
+  },
+  {
+    follower_email: 'benwaples@gmail.com',
+    address: 'Not Posted - Region: SW Portland'
+  },
+  {
+    follower_email: 'benwaples@gmail.com',
+    address: 'Not Posted - Region: SW Portland'
+  },
+  {
+    follower_email: 'benwaples@gmail.com',
+    address: '35513 NE 119th Avenue  La Center  WA 98629'
+  },
+  {
+    follower_email: 'benwaples@gmail.com',
+    address: '2106 NE Village Green Drive Vancouver  WA 98684'
+  },
+  {
+    follower_email: 'benwaples@gmail.com',
+    address: '14744 NW Forestel Loop Beaverton  OR 97006'
+  }
+]
+checkFutureSalesScrape: 4.060s
+
+ */
