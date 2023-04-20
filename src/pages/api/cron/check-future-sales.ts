@@ -34,7 +34,7 @@ async function checkFutureSales(req: NextApiReq, res: NextApiRes) {
 		//  TODO: this could be a webhook/queue as well
 		// scrape those pages again. we should make sure that data returned here is the exact same as what gets inserted into followed_sales
 		const saleDetails = await Promise.all(followedUpcomingSales.map(followedSale => getSaleInfo(followedSale.sale_id)));
-
+		console.log('saleDetails', saleDetails[0]);
 		// if new data doesnt match stored data, notify them and then update their row.
 		const notifyList = saleDetails.reduce((a: FollowedSale[], c) => {
 			const followedSale = followedUpcomingSalesMap[c.id];
