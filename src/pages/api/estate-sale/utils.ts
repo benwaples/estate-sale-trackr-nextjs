@@ -59,7 +59,7 @@ export function parseSaleDateString(x: string | undefined) {
 	// YYYY-MM-DDTTT:TT:TT
 	const startTime = new Date(`${startYear}-${monthIndex[startMonth]}-${(startDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(startTimeOfDay, startMeridiem)}z`).getTime();
 	// if (!startTime) console.log(`${startYear}-${monthIndex[startMonth]}-${(startDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(startTimeOfDay, startMeridiem)}`);
-	const endTime = new Date(`${endYear}-${monthIndex[endMonth]}-${(endDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(endTimeOfDay, endMeridiem)}`).getTime();
+	const endTime = new Date(`${endYear}-${monthIndex[endMonth]}-${(endDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(endTimeOfDay, endMeridiem)}z`).getTime();
 
 	// const startTime = DateTime.fromISO(`${startDate.toISOString()}`, { zone }).toUnixInteger();
 	// const endTime = DateTime.fromISO(`${endDate.toISOString()}`, { zone }).toUnixInteger();
