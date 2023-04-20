@@ -27,7 +27,7 @@ async function checkFutureSales(req: NextApiReq, res: NextApiRes) {
 	try {
 		// get all future sales that are being followed
 		const followedUpcomingSales = await Sale.getAllFutureSalesFollowed();
-		console.log('followedUpcomingSales', followedUpcomingSales);
+		console.log('followedUpcomingSales', followedUpcomingSales[0]);
 		if (!followedUpcomingSales.length) return res.status(204).end();
 		const followedUpcomingSalesMap = toMap(followedUpcomingSales, 'sale_id');
 
@@ -47,7 +47,7 @@ async function checkFutureSales(req: NextApiReq, res: NextApiRes) {
 			return a;
 		}, []);
 
-		console.log('notifyList', notifyList);
+		console.log('notifyList', notifyList[0]);
 
 		if (!notifyList.length) return res.status(200).end();
 		// TODO: bucket emails that should be sent to one person
