@@ -47,7 +47,7 @@ async function checkFutureSales(req: NextApiReq, res: NextApiRes) {
 			return a;
 		}, []);
 
-		console.log('notifyList', notifyList);
+		console.log('notifyList', notifyList.length, notifyList[0]);
 
 		if (!notifyList.length) return res.status(200).end();
 		// TODO: bucket emails that should be sent to one person
