@@ -126,9 +126,9 @@ export default class Sale {
 		FROM followed_sales
 		WHERE 
 			start_time IS NOT NULL 
-			-- AND start_time > $1
+			AND start_time > $1
 		AND status = ${Status.active}
-		`, []);
+		`, [Date.now()]);
 
 		return rows.map(row => new Sale(row));
 	}

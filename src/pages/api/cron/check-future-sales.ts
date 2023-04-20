@@ -27,8 +27,8 @@ async function checkFutureSales(req: NextApiReq, res: NextApiRes) {
 	try {
 		// get all future sales that are being followed
 		const followedUpcomingSales = await Sale.getAllFutureSalesFollowed();
-
 		if (!followedUpcomingSales.length) return res.status(204).end();
+		console.log('upcoming sales followed: ', followedUpcomingSales.length);
 		const followedUpcomingSalesMap = toMap(followedUpcomingSales, 'sale_id');
 
 		//  TODO: this could be a webhook/queue as well
