@@ -5,7 +5,7 @@ import Mailjet from 'node-mailjet';
 
 export class EmailSender {
 
-	static async sendEmail(followedSale: FollowedSale) {
+	static async sendEmail(emailAddress: string, html: string) {
 		const client = new Mailjet({ apiKey: process.env.MAILJET_API_KEY, apiSecret: process.env.MAILJET_SECRET });
 
 		const messages = {
@@ -17,17 +17,17 @@ export class EmailSender {
 					},
 					To: [
 						{
-							Email: followedSale.follower_email,
+							Email: emailAddress,
 						}
 					],
 					Subject: `Update to an estate sale youre following`,
-					HTMLPart: EmailSender.followedSaleEmailHTML(followedSale.address)
+					HTMLPart: html
 				}
 			]
 		};
 
 		try {
-			console.log('sending email to: ', followedSale.follower_email);
+			console.log('sending email to: ', emailAddress);
 			await client.post('send', { 'version': 'v3.1' }).request(messages);
 		} catch (e) {
 			console.error(e);
@@ -35,7 +35,7 @@ export class EmailSender {
 
 	}
 
-	static followedSaleEmailHTML(address: string) {
+	static baseHtml(body: string) {
 		return (`
 		<!DOCTYPE html>
 		<html>
@@ -51,7 +51,7 @@ export class EmailSender {
 					background-color: #000000;
 					border-radius: 10px;
 					box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-					margin: 0 auto;
+					margin: 0 auto 30px;
 					max-width: 600px;
 					padding: 30px;
 					text-align: center;
@@ -90,15 +90,25 @@ export class EmailSender {
 				}
 			</style>
 		</head>
-		<body>
-			<div class="container">
-				<h1 class="accent">Theres been an Update to a Sale youre following!</h1>
-				<p><span class="accent">${address}</span></p>
-				<a href="https://estate-sale-trackr-nextjs.vercel.app" class="btn">Go to sale</a>
-			</div>
-		</body>
+			<body>
+				${body}
+			</body>
 		</html>
 		`);
+	}
+
+	static async sendFollowedSaleEmail(emailAddress: string, followedSaleList: FollowedSale[]) {
+		const followedSaleHtml = followedSaleList.map(sale => `
+		<div class="container">
+			<h1 class="accent">Theres been an Update to a Sale youre following!</h1>
+			<p><span class="accent">${sale.address}</span></p>
+			<a href="https://estate-sale-trackr-nextjs.vercel.app/?sale_id=${sale.sale_id}" class="btn">Go to sale</a>
+		</div>
+		`).join('');
+
+		const html = this.baseHtml(followedSaleHtml);
+
+		return await this.sendEmail(emailAddress, html);
 	}
 
 
