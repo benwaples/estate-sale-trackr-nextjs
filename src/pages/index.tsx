@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import EstateSaleList from '@/components/estate-sale/estate-sale-list';
 import { allUpcomingSaleIds } from './api/estate-sale/all-upcoming-sales';
 import { BaseSaleData } from '@/types';
+import Map from '@/components/estate-sale/map/map';
 
 const faviconOptions = [
   'https://openmoji.org/data/color/svg/1F92A.svg',
@@ -16,7 +17,7 @@ const faviconOptions = [
 ];
 
 export const getServerSideProps = async () => {
-  const saleInfo = await allUpcomingSaleIds();
+  const saleInfo = await allUpcomingSaleIds(true);
   return { props: { saleInfo } }; // will be passed to the page component as props
 };
 
@@ -37,7 +38,7 @@ function Home(props: Props) {
 
     return () => clearInterval(faviconTimeout);
   }, []);
-
+  console.log('saleInfo', saleInfo);
   return (
     <>
       <Head>
@@ -50,7 +51,8 @@ function Home(props: Props) {
 
         {/* <Nav /> */}
         {/* TODO: add support for a calendar view */}
-        <EstateSaleList saleInfo={saleInfo ?? []} />
+        {/* <EstateSaleList saleInfo={saleInfo ?? []} /> */}
+        <Map />
 
       </div>
     </>

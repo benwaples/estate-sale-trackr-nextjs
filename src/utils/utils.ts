@@ -8,10 +8,10 @@ export function toMap(array: Dictionary[], key: string) {
 	}, {});
 }
 
-export async function getHelper(endpoint: string) {
+export async function getHelper<T = any>(endpoint: string, headers?: Dictionary): Promise<T | undefined> {
 	try {
-		const response = await fetch(endpoint);
-		const body = await response.json();
+		const response = await fetch(endpoint, { headers });
+		const body: T = await response.json();
 
 		return body;
 	} catch (e) {

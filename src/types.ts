@@ -1,6 +1,6 @@
-import { Request } from 'express'
-import { NextApiRequest, NextApiResponse } from 'next'
-import User from './models/User'
+import { Request } from 'express';
+import { NextApiRequest, NextApiResponse } from 'next';
+import User from './models/User';
 export interface Dictionary {
 	[key: string | number]: any
 }
@@ -38,4 +38,35 @@ export interface FollowedSale {
 	start_time?: number;
 	end_time?: number;
 	created_at: number;
+}
+
+export interface RadarMetaResponse {
+	code: number
+}
+
+export interface RadarAddressResponse {
+	latitude: number
+	longitude: number
+	geometry: RadarGeometryResponse
+	country: string
+	countryCode: string
+	countryFlag: string
+	county: string
+	distance: number
+	confidence: string
+	city: string
+	stateCode: string
+	state: string
+	layer: string
+	formattedAddress: string
+	addressLabel: string
+}
+
+export interface RadarGeometryResponse {
+	type: string
+	coordinates: number[]
+}
+export interface RadarGeocodeForwardResponse {
+	meta: RadarMetaResponse
+	addresses: RadarAddressResponse[]
 }
