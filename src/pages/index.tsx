@@ -3,7 +3,7 @@ import Nav from '@/components/nav/nav';
 import { useEffect, useState } from 'react';
 import EstateSaleList from '@/components/estate-sale/estate-sale-list';
 import { allUpcomingSaleIds } from './api/estate-sale/all-upcoming-sales';
-import { BaseSaleData } from '@/types';
+import { BaseSaleData, CoordinateSaleData } from '@/types';
 import Map from '@/components/estate-sale/map/map';
 
 const faviconOptions = [
@@ -22,7 +22,7 @@ export const getServerSideProps = async () => {
 };
 
 interface Props {
-  saleInfo?: BaseSaleData[];
+  saleInfo?: CoordinateSaleData[];
 }
 
 function Home(props: Props) {
@@ -52,7 +52,7 @@ function Home(props: Props) {
         {/* <Nav /> */}
         {/* TODO: add support for a calendar view */}
         {/* <EstateSaleList saleInfo={saleInfo ?? []} /> */}
-        <Map />
+        <Map saleInfo={saleInfo ?? []} />
 
       </div>
     </>

@@ -14,6 +14,10 @@ export interface BaseSaleData {
 	address: string;
 }
 
+export interface CoordinateSaleData extends BaseSaleData {
+	coordinates: { lat: number, lng: number }
+}
+
 export interface SaleDetails extends Dictionary {
 	id: number;
 	dates?: {
