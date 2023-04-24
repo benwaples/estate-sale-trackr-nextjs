@@ -10,6 +10,7 @@ import styles from '../../styles/estate-sale-list.module.scss';
 import ThumbnailSaleCard from './thumbnail-sale-card';
 import useScreenQuery from '@/hooks/use-screen-query';
 import { getHelper, toMap } from '@/utils/utils';
+import DisplayToggle from '../display-toggle/display-toggle';
 
 interface Props {
 	saleInfo: BaseSaleData[];
@@ -123,7 +124,7 @@ function EstateSaleList(props: Props) {
 
 	return (
 		<div className={styles.estateSaleList} >
-
+			<DisplayToggle />
 			<div className={styles.thumbnailSliderWrapper}>
 				<h3 className={styles.thumbnailSliderTitle}>Upcoming Sales</h3>
 				<Slider {...thumbnailSliderConfig} ref={ref => thumbnailSliderRef.current = ref}>
@@ -134,10 +135,6 @@ function EstateSaleList(props: Props) {
 					<button onClick={() => thumbnailSliderRef.current?.slickNext()}>Next</button>
 				</div>
 			</div>
-			{/* {(detailedSale && !loadingSale) ? (
-				<DetailedSaleCard sale={detailedSale} onMouseEnter={() => setCanSwipe(false)} onMouseLeave={() => setCanSwipe(true)} />
-				// placeholder while fetching
-			) : 'Loading...'} */}
 			{/* still need this for mobile */}
 			{detailedSaleMap ? (
 				<Slider {...detailedSliderConfig} ref={ref => detailedSliderRef.current = ref}>

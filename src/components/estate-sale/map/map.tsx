@@ -6,6 +6,7 @@ import { CoordinateSaleData, SaleDetails } from '@/types';
 import DetailedSaleCard from '../detailed-sale-card';
 import { getHelper } from '@/utils/utils';
 import styles from '../../../styles/map.module.scss';
+import DisplayToggle from '@/components/display-toggle/display-toggle';
 
 interface Props {
 	saleInfo: CoordinateSaleData[];
@@ -74,6 +75,7 @@ function Map(props: Props) {
 			{saleDetails ? (
 				<DetailedSaleCard sale={saleDetails} saleId={saleDetails.id} />
 			) : null}
+			<DisplayToggle />
 		</div>
 	);
 }

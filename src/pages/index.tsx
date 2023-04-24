@@ -5,6 +5,7 @@ import EstateSaleList from '@/components/estate-sale/estate-sale-list';
 import { allUpcomingSaleIds } from './api/estate-sale/all-upcoming-sales';
 import { BaseSaleData, CoordinateSaleData } from '@/types';
 import Map from '@/components/estate-sale/map/map';
+import { useRouter } from 'next/router';
 
 const faviconOptions = [
   'https://openmoji.org/data/color/svg/1F92A.svg',
@@ -29,6 +30,9 @@ function Home(props: Props) {
   const { saleInfo } = props;
   const [favicon, setFavicon] = useState(faviconOptions[0]);
 
+  const { query } = useRouter();
+  const displayType = query.display_type;
+
   useEffect(() => {
     const getFavicon = () => {
       const faviconOption = faviconOptions[Math.floor(Math.random() * faviconOptions.length)];
@@ -38,7 +42,7 @@ function Home(props: Props) {
 
     return () => clearInterval(faviconTimeout);
   }, []);
-  console.log('saleInfo', saleInfo);
+
   return (
     <>
       <Head>
@@ -51,9 +55,11 @@ function Home(props: Props) {
 
         {/* <Nav /> */}
         {/* TODO: add support for a calendar view */}
-        {/* <EstateSaleList saleInfo={saleInfo ?? []} /> */}
-        <Map saleInfo={saleInfo ?? []} />
-
+        {displayType === 'list' ? (
+          <EstateSaleList saleInfo={saleInfo ?? []} />
+        ) : (
+          <Map saleInfo={saleInfo ?? []} />
+        )}
       </div>
     </>
   );
