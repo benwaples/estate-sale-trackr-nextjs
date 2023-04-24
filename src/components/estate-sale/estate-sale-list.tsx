@@ -88,7 +88,7 @@ function EstateSaleList(props: Props) {
 		Router.push(
 			{
 				pathname: '',
-				query: { sale_id: slideId }
+				query: { ...query, sale_id: slideId }
 			},
 			undefined, // AS param is not needed here
 			{ shallow: true }

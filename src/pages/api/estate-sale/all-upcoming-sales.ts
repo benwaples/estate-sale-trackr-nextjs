@@ -46,7 +46,12 @@ export async function allUpcomingSaleIds(shouldIncludeLatLng?: boolean): Promise
 	if (shouldIncludeLatLng) {
 
 		const dataWithCoordinates = await Promise.all(data.map(async (dataPoint) => {
-			const coordinates = await getLatLngFromAddress(dataPoint.address);
+
+			const address = dataPoint.address.toLowerCase().includes('region')
+				? dataPoint.address.match(/\d+/g)?.[0] ?? dataPoint.address
+				: dataPoint.address;
+
+			const coordinates = await getLatLngFromAddress(address);
 			return {
 				...dataPoint,
 				coordinates
