@@ -47,22 +47,19 @@ function Map(props: Props) {
 				const [saleDetails] = await getHelper(`/api/estate-sale/sale-details/${firstSaleInfo.id}`);
 				setSaleDetails(saleDetails);
 
-				const infoWindow = new google.maps.InfoWindow({
-					content: "",
-					disableAutoPan: true,
-				});
-
 				const markers = saleInfo.map(sale => {
 					const label = sale.address;
 					const marker = new google.maps.Marker({
 						position: sale.coordinates,
-						label
+						label,
+						map
 					});
 
 					marker.addListener("click", async () => {
 						const [saleDetails] = await getHelper(`/api/estate-sale/sale-details/${sale.id}`);
 
-						setSaleDetails(saleDetails);
+						// show sale details
+						setSaleDetails(() => saleDetails);
 						Router.push(
 							{
 								pathname: '',
@@ -72,8 +69,9 @@ function Map(props: Props) {
 							{ shallow: true }
 						);
 
-						infoWindow.setContent('see details card');
-						infoWindow.open(map, marker);
+						// center map
+						const markerPosition = marker.getPosition();
+						if (markerPosition) map.panTo(markerPosition);
 					});
 
 					return marker;
@@ -89,7 +87,7 @@ function Map(props: Props) {
 		<div className={styles.mapContainer}>
 			<div ref={mapRef} style={{ width: "800px", height: "400px", margin: 'auto' }} />
 			{saleDetails ? (
-				<DetailedSaleCard sale={saleDetails} saleId={saleDetails.id} />
+				<DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} />
 			) : null}
 			<DisplayToggle />
 		</div>
