@@ -3,10 +3,11 @@ import Nav from '@/components/nav/nav';
 import { useEffect, useState } from 'react';
 import EstateSaleList from '@/components/estate-sale/estate-sale-list';
 import { allUpcomingSaleIds } from './api/estate-sale/all-upcoming-sales';
-import { BaseSaleData } from '@/types';
+import { BaseSaleData, CoordinateSaleData } from '@/types';
+import Map from '@/components/estate-sale/map/map';
+import { useRouter } from 'next/router';
 
 const faviconOptions = [
-  'https://openmoji.org/data/color/svg/1F92A.svg',
   'https://openmoji.org/data/color/svg/1F4B8.svg',
   'https://openmoji.org/data/color/svg/1F4B0.svg',
   'https://openmoji.org/data/color/svg/1F4B3.svg',
@@ -16,17 +17,20 @@ const faviconOptions = [
 ];
 
 export const getServerSideProps = async () => {
-  const saleInfo = await allUpcomingSaleIds();
+  const saleInfo = await allUpcomingSaleIds(true);
   return { props: { saleInfo } }; // will be passed to the page component as props
 };
 
 interface Props {
-  saleInfo?: BaseSaleData[];
+  saleInfo?: CoordinateSaleData[];
 }
 
 function Home(props: Props) {
   const { saleInfo } = props;
   const [favicon, setFavicon] = useState(faviconOptions[0]);
+
+  const { query } = useRouter();
+  const displayType = query.display_type;
 
   useEffect(() => {
     const getFavicon = () => {
@@ -50,8 +54,11 @@ function Home(props: Props) {
 
         {/* <Nav /> */}
         {/* TODO: add support for a calendar view */}
-        <EstateSaleList saleInfo={saleInfo ?? []} />
-
+        {displayType === 'list' ? (
+          <EstateSaleList saleInfo={saleInfo ?? []} />
+        ) : (
+          <Map saleInfo={saleInfo ?? []} />
+        )}
       </div>
     </>
   );
