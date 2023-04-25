@@ -44,7 +44,7 @@ async function checkFutureSales(req: NextApiReq, res: NextApiRes) {
 			// compare new data against the stored data that they followed from.
 			const isEqual = salesAreEqual(c, followedSale);
 			// local fallback so I dont accidentally send emails to other people.
-			if (![11949, 11768].includes(c.id) && (isEqual || process.env.LOCAL && followedSale.follower_email !== 'benwaples@gmail.com')) return a;
+			if ((isEqual || process.env.LOCAL && followedSale.follower_email !== 'benwaples@gmail.com')) return a;
 
 			const updatedFollowedSale = { ...followedSale, address: c.address, start_time: c.dates?.startTime, end_time: c.dates?.endTime };
 			followedSalesToUpdate.push(updatedFollowedSale);
