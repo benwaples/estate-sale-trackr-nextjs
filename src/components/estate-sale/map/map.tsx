@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ReactDomServer from 'react-dom/server';
 import { Loader } from "@googlemaps/js-api-loader";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
+import Router, { useRouter } from 'next/router';
 import { CoordinateSaleData, SaleDetails } from '@/types';
 import DetailedSaleCard from '../detailed-sale-card';
 import { getHelper } from '@/utils/utils';
@@ -20,6 +20,8 @@ function Map(props: Props) {
 	const mapRef = useRef<HTMLDivElement | null>(null);// ref for map
 	const mountedMap = useRef(false);
 
+	const { query } = useRouter();
+
 	// useEffect to load map
 	useEffect(() => {
 		if (!mapRef.current || mountedMap.current || !saleInfo?.length) return;
@@ -32,16 +34,22 @@ function Map(props: Props) {
 			.then(async () => {
 				if (!mapRef.current) return;
 
+				const firstSaleInfo = saleInfo.find(sale => sale.id.toString() === query?.sale_id) ?? saleInfo[0];
+
+				// initialize map
 				const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
 				const map = new Map(mapRef.current, {
-					center: { lat: 45.5152, lng: -122.6784 },
+					center: firstSaleInfo.coordinates,
 					zoom: 11,
 				});
+
+				// initialize detail card
+				const [saleDetails] = await getHelper(`/api/estate-sale/sale-details/${firstSaleInfo.id}`);
+				setSaleDetails(saleDetails);
 
 				const infoWindow = new google.maps.InfoWindow({
 					content: "",
 					disableAutoPan: true,
-
 				});
 
 				const markers = saleInfo.map(sale => {
@@ -55,6 +63,14 @@ function Map(props: Props) {
 						const [saleDetails] = await getHelper(`/api/estate-sale/sale-details/${sale.id}`);
 
 						setSaleDetails(saleDetails);
+						Router.push(
+							{
+								pathname: '',
+								query: { ...query, sale_id: sale.id }
+							},
+							undefined, // AS param is not needed here
+							{ shallow: true }
+						);
 
 						infoWindow.setContent('see details card');
 						infoWindow.open(map, marker);

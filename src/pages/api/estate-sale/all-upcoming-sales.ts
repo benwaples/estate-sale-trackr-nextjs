@@ -10,7 +10,7 @@ interface allUpcomingSalesReturn {
 }
 
 async function getLatLngFromAddress(address: string): Promise<{ lat: number, lng: number }> {
-	const response = await getHelper<RadarGeocodeForwardResponse>(`${process.env.RADAR_API_ENDPOINT}//geocode/forward?query=${address}`, { Authorization: process.env.RADAR_API_KEY });
+	const response = await getHelper<RadarGeocodeForwardResponse>(`${process.env.RADAR_API_ENDPOINT}/geocode/forward?query=${address}`, { Authorization: process.env.RADAR_API_KEY });
 	//  defaults to generic portland coordinates
 	const latitude = response?.addresses?.[0].latitude ?? 45.533467;
 	const longitude = response?.addresses?.[0].longitude ?? -122.650095;
