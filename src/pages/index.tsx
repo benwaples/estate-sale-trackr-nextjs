@@ -8,7 +8,6 @@ import Map from '@/components/estate-sale/map/map';
 import { useRouter } from 'next/router';
 
 const faviconOptions = [
-  'https://openmoji.org/data/color/svg/1F92A.svg',
   'https://openmoji.org/data/color/svg/1F4B8.svg',
   'https://openmoji.org/data/color/svg/1F4B0.svg',
   'https://openmoji.org/data/color/svg/1F4B3.svg',

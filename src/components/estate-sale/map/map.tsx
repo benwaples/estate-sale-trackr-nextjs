@@ -7,6 +7,7 @@ import DetailedSaleCard from '../detailed-sale-card';
 import { getHelper } from '@/utils/utils';
 import styles from '../../../styles/map.module.scss';
 import DisplayToggle from '@/components/display-toggle/display-toggle';
+import useScreenQuery from '@/hooks/use-screen-query';
 
 interface Props {
 	saleInfo: CoordinateSaleData[];
@@ -21,6 +22,7 @@ function Map(props: Props) {
 	const mountedMap = useRef(false);
 
 	const { query } = useRouter();
+	const { isMobile } = useScreenQuery();
 
 	// useEffect to load map
 	useEffect(() => {
@@ -52,13 +54,17 @@ function Map(props: Props) {
 					const marker = new google.maps.Marker({
 						position: sale.coordinates,
 						label,
-						map
+						map,
+						// icon: 'https://openmoji.org/data/color/svg/1F3E0.svg',
 					});
 
 					marker.addListener("click", async () => {
-						const [saleDetails] = await getHelper(`/api/estate-sale/sale-details/${sale.id}`);
+						// center map
+						const markerPosition = marker.getPosition();
+						if (markerPosition) map.panTo(markerPosition);
 
 						// show sale details
+						const [saleDetails] = await getHelper(`/api/estate-sale/sale-details/${sale.id}`);
 						setSaleDetails(() => saleDetails);
 						Router.push(
 							{
@@ -68,10 +74,6 @@ function Map(props: Props) {
 							undefined, // AS param is not needed here
 							{ shallow: true }
 						);
-
-						// center map
-						const markerPosition = marker.getPosition();
-						if (markerPosition) map.panTo(markerPosition);
 					});
 
 					return marker;
@@ -84,8 +86,8 @@ function Map(props: Props) {
 	}, [saleInfo]);
 
 	return (
-		<div className={styles.mapContainer}>
-			<div ref={mapRef} style={{ width: "800px", height: "400px", margin: 'auto' }} />
+		<div className={styles.mapContainer} style={{ display: 'flex', flexDirection: 'column-reverse' }}>
+			<div ref={mapRef} style={{ width: isMobile ? "100%" : "800px", height: "400px", margin: 'auto' }} />
 			{saleDetails ? (
 				<DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} />
 			) : null}
