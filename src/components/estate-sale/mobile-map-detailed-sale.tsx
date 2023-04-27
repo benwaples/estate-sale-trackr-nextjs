@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef, TouchEventHandler } from 'react';
 import cn from 'classnames';
 import { MobileMapSaleViewType, SaleDetails } from '@/types';
 import TabHeader from '../tab-header/tab-header';
@@ -15,6 +15,8 @@ interface Props {
 	view: { type: MobileMapSaleViewType, handleViewChange: React.Dispatch<React.SetStateAction<MobileMapSaleViewType>> };
 }
 
+const defaultTouchPosition = { startY: 0 };
+
 function MobileMapDetailedSale(props: Props) {
 	const { sale, view } = props;
 
@@ -24,6 +26,7 @@ function MobileMapDetailedSale(props: Props) {
 
 	const [content, setContent] = useState<string | JSX.Element>(sale?.[initialTab ?? tabs[0]]);
 	const [currentImageIndex, setCurrentImageIndex] = useState(1);
+	const [touchPosition, setTouchPosition] = useState(defaultTouchPosition);
 
 	// sets initial content
 	useEffect(() => {
@@ -42,6 +45,50 @@ function MobileMapDetailedSale(props: Props) {
 		}
 		setContent(<p>{sale?.[tab]}</p>);
 	};
+	const handleTouchEnd = (startY: number, endY: number) => {
+		console.log('Math.abs(startY - endY)', Math.abs(startY - endY));
+		if (!startY || Math.abs(startY - endY) <= 50) {
+			console.log('happeneing');
+			return;
+		};
+
+		const didSwipeUp = endY < startY;
+		const didSwipeDown = endY > startY;
+
+		console.log('startY', startY);
+		console.log('endY', endY);
+		console.log('didSwipeUp', didSwipeUp);
+		console.log('didSwipeDown', didSwipeDown);
+		if (didSwipeUp && view.type === MobileMapSaleViewType.minimized) {
+			console.log('ful');
+			view.handleViewChange(MobileMapSaleViewType.full);
+		};
+
+		if (didSwipeDown && view.type === MobileMapSaleViewType.full) {
+			console.log('mini');
+			view.handleViewChange(MobileMapSaleViewType.minimized);
+		};
+
+		if (didSwipeDown && view.type === MobileMapSaleViewType.minimized) {
+			console.log('close');
+			view.handleViewChange(MobileMapSaleViewType.hidden);
+		}
+
+		setTouchPosition(defaultTouchPosition);
+	};
+
+	const handleTouchChange: (key: 'startY' | 'endY') => TouchEventHandler = (key: string) => (e) => {
+		setTouchPosition(prev => {
+			if (key === 'endY') {
+				// console.log('end')
+				handleTouchEnd(prev.startY, e.changedTouches[0].screenY);
+				return defaultTouchPosition;
+			}
+			// con
+			return { ...prev, [key]: e.changedTouches[0].screenY };
+		});
+	};
+
 
 	const sliderConfig: () => Settings = useCallback(() => ({
 		className: styles.saleImages,
@@ -73,7 +120,7 @@ function MobileMapDetailedSale(props: Props) {
 	);
 
 	return (
-		<div className={cn(styles.mapSaleCard, styles[view.type])} key={sale?.id}>
+		<div className={cn(styles.mapSaleCard, styles[view.type])} key={sale?.id} onTouchStart={handleTouchChange('startY')} onTouchEnd={handleTouchChange('endY')} >
 			<div className={styles.minimizedHeader}>
 				{isFullView ? (
 					<TabHeader tabs={tabs} initTab={initialTab} onClick={handleTabChange} />
@@ -84,7 +131,9 @@ function MobileMapDetailedSale(props: Props) {
 			</div>
 
 			{(content && isFullView) ? (
-				<div className={styles.content} key={sale?.id} >{content}</div>
+				<div className={styles.content} key={sale?.id} onTouchMove={(e) => {
+					setTouchPosition(defaultTouchPosition);
+				}} >{content}</div>
 			) : null}
 
 			<div className={styles.imageSliderWrapper}>
