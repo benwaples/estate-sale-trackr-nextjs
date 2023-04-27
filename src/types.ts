@@ -75,7 +75,7 @@ export interface RadarGeocodeForwardResponse {
 	addresses: RadarAddressResponse[]
 }
 
-export enum MapSaleViewTypes {
+export enum MobileMapSaleViewType {
 	minimized,
 	full,
 	none

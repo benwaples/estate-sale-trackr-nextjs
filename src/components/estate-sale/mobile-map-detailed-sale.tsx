@@ -1,4 +1,4 @@
-import { MapSaleViewTypes, SaleDetails } from '@/types';
+import { MobileMapSaleViewType, SaleDetails } from '@/types';
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import TabHeader from '../tab-header/tab-header';
 import styles from '../../styles/map.module.scss';
@@ -10,7 +10,7 @@ import useScreenQuery from '@/hooks/use-screen-query';
 
 interface Props {
 	sale: SaleDetails | null;
-	view: MapSaleViewTypes;
+	view: MobileMapSaleViewType;
 }
 
 function MobileMapDetailedSale(props: Props) {
@@ -64,13 +64,13 @@ function MobileMapDetailedSale(props: Props) {
 		);
 	}, [sale?.images, sliderConfig]);
 
-	if (view === MapSaleViewTypes.none) return <></>;
+	if (view === MobileMapSaleViewType.none) return <></>;
 
 	// loading card
 	if (!sale) return <></>;
 
 	// minimized view
-	if (view === MapSaleViewTypes.minimized) {
+	if (view === MobileMapSaleViewType.minimized) {
 		return (
 			<div className={styles.minimizedCard}>
 				<h3>{sale?.address ?? ''}</h3>

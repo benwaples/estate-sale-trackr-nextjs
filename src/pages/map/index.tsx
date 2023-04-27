@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from "@googlemaps/js-api-loader";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import Router, { useRouter } from 'next/router';
-import { CoordinateSaleData, MapSaleViewTypes, SaleDetails } from '@/types';
+import { CoordinateSaleData, MobileMapSaleViewType, SaleDetails } from '@/types';
 import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
 import { getHelper } from '@/utils/utils';
 import styles from '../../styles/map.module.scss';
@@ -25,7 +25,7 @@ function Map(props: Props) {
 	const { saleInfo } = props;
 
 	const [saleDetails, setSaleDetails] = useState<SaleDetails | null>(null);
-	const [saleView, setSaleView] = useState<MapSaleViewTypes>(MapSaleViewTypes.none);
+	const [saleView, setSaleView] = useState<MobileMapSaleViewType>(MobileMapSaleViewType.none);
 
 	const mapRef = useRef<HTMLDivElement | null>(null);// ref for map
 	const mountedMap = useRef(false);
@@ -84,6 +84,10 @@ function Map(props: Props) {
 							undefined, // AS param is not needed here
 							{ shallow: true }
 						);
+
+						if (!isDesktop) {
+							setSaleView(MobileMapSaleViewType.minimized);
+						}
 					});
 
 					return marker;
