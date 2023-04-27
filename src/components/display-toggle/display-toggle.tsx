@@ -6,22 +6,24 @@ interface Props { }
 function DisplayToggle(props: Props) {
 	const { } = props;
 
-	const { query } = useRouter();
-
+	const router = useRouter();
+	const activeDisplay = router.pathname.includes('map') ? 'map' : 'list';
+	console.log('activeDisplay', activeDisplay);
 	function handleClick() {
-		const { display_type, ...rest } = query;
-		if (display_type === 'list') {
-			Router.push({ href: '/', query: { ...rest, display_type: 'map' } }, undefined, { shallow: true });
+		if (activeDisplay === 'list') {
+			router.push('/map');
 			return;
 		}
-		Router.push({ href: '/', query: { ...rest, display_type: 'list' } }, undefined, { shallow: true });
+		router.push('/list');
 	}
 
-	const activeDisplay = query.display_type ?? 'map';
 	return (
 		<div>
-			<button onClick={handleClick} className={cn('display-button', { active: activeDisplay === 'list' })}>List</button>
-			<button onClick={handleClick} className={cn('display-button', { active: activeDisplay === 'map' })}>Map</button>
+			{activeDisplay === 'map' ? (
+				<button onClick={handleClick} className={'display-toggle'}>View List</button>
+			) : (
+				<button onClick={handleClick} className={'display-toggle'}>View Map</button>
+			)}
 		</div>
 	);
 }

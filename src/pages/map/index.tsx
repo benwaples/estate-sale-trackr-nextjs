@@ -3,11 +3,18 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import Router, { useRouter } from 'next/router';
 import { CoordinateSaleData, SaleDetails } from '@/types';
-import DetailedSaleCard from '../detailed-sale-card';
+import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
 import { getHelper } from '@/utils/utils';
-import styles from '../../../styles/map.module.scss';
+import styles from '../../styles/map.module.scss';
 import DisplayToggle from '@/components/display-toggle/display-toggle';
 import useScreenQuery from '@/hooks/use-screen-query';
+import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
+
+// export const getServerSideProps = async () => {
+// 	const saleInfo = await allUpcomingSaleIds(true);
+// 	return { props: { saleInfo } }; // will be passed to the page component as props
+// };
+
 
 interface Props {
 	saleInfo: CoordinateSaleData[];
@@ -15,7 +22,7 @@ interface Props {
 
 function Map(props: Props) {
 	const { saleInfo } = props;
-
+	console.log('saleInfo', saleInfo);
 	const [saleDetails, setSaleDetails] = useState<SaleDetails | null>(null);
 
 	const mapRef = useRef<HTMLDivElement | null>(null);// ref for map
@@ -69,7 +76,7 @@ function Map(props: Props) {
 						Router.push(
 							{
 								pathname: '',
-								query: { ...query, sale_id: sale.id }
+								query: { sale_id: sale.id }
 							},
 							undefined, // AS param is not needed here
 							{ shallow: true }
@@ -86,7 +93,7 @@ function Map(props: Props) {
 	}, [saleInfo]);
 
 	return (
-		<div className={styles.mapContainer} style={{ display: 'flex', flexDirection: 'column-reverse' }}>
+		<div className={styles.mapContainer}>
 			<div ref={mapRef} style={{ width: isMobile ? "100%" : "800px", height: "400px", margin: 'auto' }} />
 			{saleDetails ? (
 				<DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} />
@@ -97,4 +104,3 @@ function Map(props: Props) {
 }
 
 export default Map;
-

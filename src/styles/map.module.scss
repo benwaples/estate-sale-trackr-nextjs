@@ -1,6 +1,14 @@
+@import './mixins.scss';
+
 .mapContainer {
 	width: 100%;
 	display: flex;
-	justify-content: center;
 	align-items: center;
+}
+
+@include mobile() {
+	.mapContainer {
+		justify-content: center;
+		align-items: center;
+	}
 }
