@@ -90,6 +90,7 @@ function Map(props: Props) {
 
 				mountedMap.current = true;
 			});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [saleInfo]);
 
 	return (
