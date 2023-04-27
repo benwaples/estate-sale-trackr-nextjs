@@ -109,14 +109,15 @@ function Map(props: Props) {
 			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [saleInfo]);
-	console.log('saleView', saleView);
+	console.log('saleDetails', saleDetails);
 	return (
 		<div className={styles.mapContainer}>
 			<div ref={mapRef} className={styles.map} >
 				{!isDesktop ? (
 					<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
-				) : saleDetails ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
+				) : null}
 			</div>
+			{saleDetails ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
 			{/* <DisplayToggle /> */}
 		</div>
 	);
