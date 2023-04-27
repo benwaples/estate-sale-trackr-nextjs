@@ -9,7 +9,13 @@
           align-items: center;
 }
 
-@media (max-width: 500px) {
+.mapContainer .map {
+  margin: auto;
+  height: 400px;
+  width: 800px;
+}
+
+@media (max-width: 599px) {
   .mapContainer {
     -webkit-box-pack: center;
         -ms-flex-pack: center;
@@ -21,6 +27,9 @@
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
+  }
+  .mapContainer .map {
+    width: 100%;
   }
 }
 /*# sourceMappingURL=map.module.css.map */

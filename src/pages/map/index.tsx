@@ -95,10 +95,10 @@ function Map(props: Props) {
 
 	return (
 		<div className={styles.mapContainer}>
-			<div ref={mapRef} style={{ width: isMobile ? "100%" : "800px", height: "400px", margin: 'auto' }} />
-			{saleDetails ? (
+			<div ref={mapRef} className={styles.map} />
+			{/* {saleDetails ? (
 				<DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} />
-			) : null}
+			) : null} */}
 			{/* <DisplayToggle /> */}
 		</div>
 	);
