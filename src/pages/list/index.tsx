@@ -134,7 +134,7 @@ function EstateSaleList(props: Props) {
 		<div className={styles.estateSaleList} >
 
 			<div className={styles.thumbnailSliderWrapper}>
-				<DisplayToggle />
+				{/* <DisplayToggle /> */}
 				<h3 className={styles.thumbnailSliderTitle}>Upcoming Sales</h3>
 				<Slider {...thumbnailSliderConfig} ref={ref => thumbnailSliderRef.current = ref}>
 					{saleInfo?.map((sale, i) => <ThumbnailSaleCard key={sale.id} sale={sale} isActive={i === currentSlide} />)}

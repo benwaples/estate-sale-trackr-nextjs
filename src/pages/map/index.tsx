@@ -99,7 +99,7 @@ function Map(props: Props) {
 			{saleDetails ? (
 				<DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} />
 			) : null}
-			<DisplayToggle />
+			{/* <DisplayToggle /> */}
 		</div>
 	);
 }

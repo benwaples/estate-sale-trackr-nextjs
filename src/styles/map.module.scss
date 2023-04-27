@@ -7,9 +7,10 @@
 	align-items: center;
 }
 
-@include mobile() {
+@include mobile {
 	.mapContainer {
 		justify-content: center;
 		align-items: center;
+		flex-direction: column;
 	}
 }
