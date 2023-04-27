@@ -121,9 +121,7 @@ function MobileMapDetailedSale(props: Props) {
 			</div>
 
 			{(content && isFullView) ? (
-				<div className={styles.content} key={sale?.id} onTouchMove={(e) => {
-					setTouchYPosition(defaultTouchPosition);
-				}} >{content}</div>
+				<div className={styles.content} key={sale?.id} onTouchMove={() => setTouchYPosition(defaultTouchPosition)} >{content}</div>
 			) : null}
 
 			<div className={styles.imageSliderWrapper}>
