@@ -15,7 +15,7 @@ interface Props {
 	view: { type: MobileMapSaleViewType, handleViewChange: React.Dispatch<React.SetStateAction<MobileMapSaleViewType>> };
 }
 
-const defaultTouchPosition = { startY: 0 };
+const defaultTouchPosition = 0;
 
 function MobileMapDetailedSale(props: Props) {
 	const { sale, view } = props;
@@ -26,7 +26,7 @@ function MobileMapDetailedSale(props: Props) {
 
 	const [content, setContent] = useState<string | JSX.Element>(sale?.[initialTab ?? tabs[0]]);
 	const [currentImageIndex, setCurrentImageIndex] = useState(1);
-	const [touchPosition, setTouchPosition] = useState(defaultTouchPosition);
+	const [, setTouchYPosition] = useState(defaultTouchPosition);
 
 	// sets initial content
 	useEffect(() => {
@@ -46,46 +46,36 @@ function MobileMapDetailedSale(props: Props) {
 		setContent(<p>{sale?.[tab]}</p>);
 	};
 	const handleTouchEnd = (startY: number, endY: number) => {
-		console.log('Math.abs(startY - endY)', Math.abs(startY - endY));
+		// if start never triggered or if the swipe wasnt bigger than 50 px, do nothing
 		if (!startY || Math.abs(startY - endY) <= 50) {
-			console.log('happeneing');
 			return;
 		};
 
 		const didSwipeUp = endY < startY;
 		const didSwipeDown = endY > startY;
 
-		console.log('startY', startY);
-		console.log('endY', endY);
-		console.log('didSwipeUp', didSwipeUp);
-		console.log('didSwipeDown', didSwipeDown);
 		if (didSwipeUp && view.type === MobileMapSaleViewType.minimized) {
-			console.log('ful');
 			view.handleViewChange(MobileMapSaleViewType.full);
 		};
 
 		if (didSwipeDown && view.type === MobileMapSaleViewType.full) {
-			console.log('mini');
 			view.handleViewChange(MobileMapSaleViewType.minimized);
 		};
 
 		if (didSwipeDown && view.type === MobileMapSaleViewType.minimized) {
-			console.log('close');
 			view.handleViewChange(MobileMapSaleViewType.hidden);
 		}
-
-		setTouchPosition(defaultTouchPosition);
 	};
 
 	const handleTouchChange: (key: 'startY' | 'endY') => TouchEventHandler = (key: string) => (e) => {
-		setTouchPosition(prev => {
+		setTouchYPosition(prev => {
 			if (key === 'endY') {
-				// console.log('end')
-				handleTouchEnd(prev.startY, e.changedTouches[0].screenY);
+				handleTouchEnd(prev, e.changedTouches[0].screenY);
+
 				return defaultTouchPosition;
 			}
-			// con
-			return { ...prev, [key]: e.changedTouches[0].screenY };
+
+			return e.changedTouches[0].screenY;
 		});
 	};
 
@@ -132,7 +122,7 @@ function MobileMapDetailedSale(props: Props) {
 
 			{(content && isFullView) ? (
 				<div className={styles.content} key={sale?.id} onTouchMove={(e) => {
-					setTouchPosition(defaultTouchPosition);
+					setTouchYPosition(defaultTouchPosition);
 				}} >{content}</div>
 			) : null}
 
