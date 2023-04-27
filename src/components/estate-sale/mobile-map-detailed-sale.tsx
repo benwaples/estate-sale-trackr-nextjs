@@ -1,27 +1,27 @@
+/* eslint-disable @next/next/no-img-element */
+import { useEffect, useMemo, useState, useCallback } from 'react';
+import cn from 'classnames';
 import { MobileMapSaleViewType, SaleDetails } from '@/types';
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import TabHeader from '../tab-header/tab-header';
-import styles from '../../styles/map.module.scss';
 import { getDatesContent } from './detailed-sale-card';
 import Slider, { Settings } from 'react-slick';
 import NoImage from '../empty-state/no-image';
 import FollowSale from '../follow-sale/follow-sale';
 import useScreenQuery from '@/hooks/use-screen-query';
+import styles from '../../styles/map.module.scss';
 
 interface Props {
 	sale: SaleDetails | null;
-	view: MobileMapSaleViewType;
+	view: { type: MobileMapSaleViewType, handleViewChange: React.Dispatch<React.SetStateAction<MobileMapSaleViewType>> };
 }
 
 function MobileMapDetailedSale(props: Props) {
 	const { sale, view } = props;
 
-	const { isMobile, isDesktop } = useScreenQuery();
-
-	const tabs = Object.keys(sale ?? {}).filter(key => !['id', !isMobile && 'images'].includes(key)).reverse();
+	const tabs = Object.keys(sale ?? {}).filter(key => !['id'].includes(key)).reverse();
 	const hasImages = !!sale?.images?.length;
 	const initialDesktopTab = !!sale?.["sale details"] ? "sale details" : tabs[0];
-	const initialMobileTab = (hasImages && isMobile) ? 'images' : undefined;
+	const initialMobileTab = (hasImages) ? 'images' : undefined;
 	const initialTab = tabs.includes('images') ? initialMobileTab : initialDesktopTab;
 
 	const [content, setContent] = useState<string | JSX.Element>(initialMobileTab ? '' : sale?.[initialDesktopTab ?? tabs[0]]);
@@ -29,7 +29,7 @@ function MobileMapDetailedSale(props: Props) {
 
 	// sets initial content
 	useEffect(() => {
-		if (isMobile && hasImages) {
+		if (hasImages) {
 			setContent('');
 			return;
 		};
@@ -59,45 +59,52 @@ function MobileMapDetailedSale(props: Props) {
 	const memoizedSlider = useMemo(() => {
 		return (
 			<Slider {...sliderConfig}>
-				{sale?.images.map(img => <img key={img} className={styles.saleImage} src={img} alt="" />)}
+				{sale?.images?.map(img => <img key={img} className={cn(styles.saleImage, styles[view.type])} src={img} alt="" />)}
 			</Slider>
 		);
-	}, [sale?.images, sliderConfig]);
-
-	if (view === MobileMapSaleViewType.none) return <></>;
+	}, [sale?.images, sliderConfig, view.type]);
 
 	// loading card
 	if (!sale) return <></>;
 
-	// minimized view
-	if (view === MobileMapSaleViewType.minimized) {
-		return (
-			<div className={styles.minimizedCard}>
-				<h3>{sale?.address ?? ''}</h3>
-				<div className={styles.imageSliderWrapper}>
-					{memoizedSlider}
-				</div>
-			</div>
-		);
+	// minimized/full view
+	const isFullView = view.type === MobileMapSaleViewType.full;
+
+	const handleViewChange = () => {
+		view.handleViewChange(MobileMapSaleViewType[!isFullView ? 'full' : 'minimized']);
 	};
-	// full view
+
+	const viewToggle = (
+		<button className={cn(styles.viewToggle, { [styles.up]: !isFullView, [styles.down]: isFullView })} onClick={handleViewChange}>&#62;</button>
+	);
+
 	return (
-		<div className={styles.mapSaleCard} key={sale?.id}>
-			<TabHeader tabs={tabs} initTab={initialTab} onClick={handleTabChange} />
-			{content ? (
+		<div className={cn(styles.mapSaleCard, styles[view.type])} key={sale?.id}>
+			<div className={styles.minimizedHeader}>
+				{isFullView ? (
+					<TabHeader tabs={tabs} initTab={initialTab} onClick={handleTabChange} />
+				) : (
+					<h3>{sale?.address}</h3>
+				)}
+				{viewToggle}
+			</div>
+
+			{(content && isFullView) ? (
 				<div className={styles.content} key={sale?.id} >{content}</div>
 			) : null}
-			{(isMobile && !content) || isDesktop ? (
-				hasImages ? (
-					<>
-						<div className={styles.imageSliderWrapper}>
-							{memoizedSlider}
-						</div>
+
+			{(!content && hasImages) ? (
+				<>
+					<div className={styles.imageSliderWrapper}>
+						{memoizedSlider}
+					</div>
+					{isFullView ? (
 						<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
-					</>
-				) : <NoImage description='Images have not been posted for this sale' />
-			) : null}
-			{sale ? <FollowSale {...sale} sale_id={sale.id} /> : null}
+					) : null}
+				</>
+			) : <NoImage description='Images have not been posted for this sale' />}
+
+			{(sale && isFullView) ? <FollowSale {...sale} sale_id={sale.id} /> : null}
 		</div>
 	);
 }

@@ -25,13 +25,15 @@ function Map(props: Props) {
 	const { saleInfo } = props;
 
 	const [saleDetails, setSaleDetails] = useState<SaleDetails | null>(null);
-	const [saleView, setSaleView] = useState<MobileMapSaleViewType>(MobileMapSaleViewType.none);
+	const [saleView, setSaleView] = useState<MobileMapSaleViewType>(MobileMapSaleViewType.hidden);
 
 	const mapRef = useRef<HTMLDivElement | null>(null);// ref for map
 	const mountedMap = useRef(false);
 
 	const { query } = useRouter();
 	const { isDesktop } = useScreenQuery();
+
+	const getSaleView = () => saleView;
 
 	// useEffect to load map
 	useEffect(() => {
@@ -58,6 +60,7 @@ function Map(props: Props) {
 				// initialize detail card
 				const [saleDetails] = await getHelper(`/api/estate-sale/sale-details/${firstSaleInfo.id}`);
 				setSaleDetails(saleDetails);
+				if (!isDesktop) setSaleView(MobileMapSaleViewType.minimized);
 
 				const markers = saleInfo.map(sale => {
 					const label = sale.address;
@@ -69,13 +72,20 @@ function Map(props: Props) {
 					});
 
 					marker.addListener("click", async () => {
+						if (sale.id === saleDetails.id && getSaleView() === MobileMapSaleViewType.minimized) {
+							console.log('clicking same sale again');
+							setSaleView(MobileMapSaleViewType.hidden);
+							return;
+						}
+
 						// center map
 						const markerPosition = marker.getPosition();
 						if (markerPosition) map.panTo(markerPosition);
 
 						// show sale details
-						const [saleDetails] = await getHelper(`/api/estate-sale/sale-details/${sale.id}`);
-						setSaleDetails(() => saleDetails);
+						const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${sale.id}`);
+						setSaleDetails(_saleDetails);
+
 						Router.push(
 							{
 								pathname: '',
@@ -99,15 +109,15 @@ function Map(props: Props) {
 			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [saleInfo]);
-
+	console.log('saleView', saleView);
 	return (
 		<div className={styles.mapContainer}>
-			<div ref={mapRef} className={styles.map} />
+			<div ref={mapRef} className={styles.map} >
+				{!isDesktop ? (
+					<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
+				) : saleDetails ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
+			</div>
 			{/* <DisplayToggle /> */}
-			{!isDesktop ? (
-				<MobileMapDetailedSale sale={saleDetails} view={saleView} />
-
-			) : saleDetails ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
 		</div>
 	);
 }

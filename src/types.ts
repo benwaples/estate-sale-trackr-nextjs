@@ -76,7 +76,7 @@ export interface RadarGeocodeForwardResponse {
 }
 
 export enum MobileMapSaleViewType {
-	minimized,
-	full,
-	none
+	hidden = 'hidden',
+	minimized = 'minimized',
+	full = 'full',
 }
