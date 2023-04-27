@@ -1,11 +1,11 @@
 import Head from 'next/head';
 import Nav from '@/components/nav/nav';
 import { useEffect, useState } from 'react';
-import EstateSaleList from '@/components/estate-sale/estate-sale-list';
+import Router, { useRouter } from 'next/router';
+import EstateSaleList from '@/pages/list';
 import { allUpcomingSaleIds } from './api/estate-sale/all-upcoming-sales';
 import { BaseSaleData, CoordinateSaleData } from '@/types';
-import Map from '@/components/estate-sale/map/map';
-import { useRouter } from 'next/router';
+import Map from '@/pages/map';
 
 const faviconOptions = [
   'https://openmoji.org/data/color/svg/1F4B8.svg',
@@ -16,10 +16,10 @@ const faviconOptions = [
   'https://openmoji.org/data/color/svg/1F3DA.svg',
 ];
 
-export const getServerSideProps = async () => {
-  const saleInfo = await allUpcomingSaleIds(true);
-  return { props: { saleInfo } }; // will be passed to the page component as props
-};
+// export const getServerSideProps = async () => {
+//   const saleInfo = await allUpcomingSaleIds(true);
+//   return { props: { saleInfo } }; // will be passed to the page component as props
+// };
 
 interface Props {
   saleInfo?: CoordinateSaleData[];
@@ -27,10 +27,10 @@ interface Props {
 
 function Home(props: Props) {
   const { saleInfo } = props;
+
   const [favicon, setFavicon] = useState(faviconOptions[0]);
 
-  const { query } = useRouter();
-  const displayType = query.display_type;
+  const { query, pathname } = useRouter();
 
   useEffect(() => {
     const getFavicon = () => {
@@ -41,6 +41,12 @@ function Home(props: Props) {
 
     return () => clearInterval(faviconTimeout);
   }, []);
+
+  useEffect(() => {
+    if (!pathname.includes('map') && !pathname.includes('list')) {
+      Router.push('/map');
+    }
+  }, [pathname]);
 
   return (
     <>
@@ -54,99 +60,14 @@ function Home(props: Props) {
 
         {/* <Nav /> */}
         {/* TODO: add support for a calendar view */}
-        {displayType === 'list' ? (
+        {/* {displayType === 'list' ? (
           <EstateSaleList saleInfo={saleInfo ?? []} />
         ) : (
           <Map saleInfo={saleInfo ?? []} />
-        )}
+        )} */}
       </div>
     </>
   );
 }
 
 export default Home;
-
-/**
- *  SW Portland',
-    follower_email: 'benwaples@gmail.com',
-    start_time: 1682158500000,
-    end_time: 1682254800000,
-    user_given_name: null
-  },
-  {
-    id: 34,
-    sale_id: 11976,
-    address: 'Not Posted - Region: SW Portland',
-    follower_email: 'benwaples@gmail.com',
-    start_time: 1682154000000,
-    end_time: 1682265600000,
-    user_given_name: null
-  },
-  {
-    id: 9,
-    sale_id: 11984,
-    address: '35513 NE 119th Avenue  La Center  WA 98629',
-    follower_email: 'benwaples@gmail.com',
-    start_time: 1682067600000,
-    end_time: 1682269200000,
-    user_given_name: null
-  },
-  {
-    id: 10,
-    sale_id: 11978,
-    address: '2106 NE Village Green Drive Vancouver  WA 98684',
-    follower_email: 'benwaples@gmail.com',
-    start_time: 1682067600000,
-    end_time: 1682269200000,
-    user_given_name: null
-  },
-  {
-    id: 11,
-    sale_id: 11963,
-    address: '14744 NW Forestel Loop Beaverton  OR 97006',
-    follower_email: 'benwaples@gmail.com',
-    start_time: 1682071200000,
-    end_time: 1682262000000,
-    user_given_name: null
-  }
-]
-sending email to:  benwaples@gmail.com
-sending email to:  benwaples@gmail.com
-sending email to:  benwaples@gmail.com
-sending email to:  benwaples@gmail.com
-sending email to:  benwaples@gmail.com
-sending email to:  benwaples@gmail.com
-sending email to:  benwaples@gmail.com
-updatedFollowedSales [
-  {
-    follower_email: 'benwaples@gmail.com',
-    address: 'Not Posted - Region: SW Portland'
-  },
-  {
-    follower_email: 'benwaples@gmail.com',
-    address: '21507 Highway 99E NE Aurora  OR 97002'
-  },
-  {
-    follower_email: 'benwaples@gmail.com',
-    address: 'Not Posted - Region: SW Portland'
-  },
-  {
-    follower_email: 'benwaples@gmail.com',
-    address: 'Not Posted - Region: SW Portland'
-  },
-  {
-    follower_email: 'benwaples@gmail.com',
-    address: '35513 NE 119th Avenue  La Center  WA 98629'
-  },
-  {
-    follower_email: 'benwaples@gmail.com',
-    address: '2106 NE Village Green Drive Vancouver  WA 98684'
-  },
-  {
-    follower_email: 'benwaples@gmail.com',
-    address: '14744 NW Forestel Loop Beaverton  OR 97006'
-  }
-]
-checkFutureSalesScrape: 4.060s
-
- */

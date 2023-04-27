@@ -3,14 +3,20 @@ import Router, { useRouter } from 'next/router';
 import Slider, { Settings } from 'react-slick';
 import cn from 'classnames';
 import { BaseSaleData, SaleDetails } from '@/types';
-import DetailedSaleCard from './detailed-sale-card';
+import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import styles from '../../styles/estate-sale-list.module.scss';
-import ThumbnailSaleCard from './thumbnail-sale-card';
+import ThumbnailSaleCard from '../../components/estate-sale/thumbnail-sale-card';
 import useScreenQuery from '@/hooks/use-screen-query';
 import { getHelper, toMap } from '@/utils/utils';
-import DisplayToggle from '../display-toggle/display-toggle';
+import DisplayToggle from '../../components/display-toggle/display-toggle';
+import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
+
+export const getServerSideProps = async () => {
+	const saleInfo = await allUpcomingSaleIds(true);
+	return { props: { saleInfo } }; // will be passed to the page component as props
+};
 
 interface Props {
 	saleInfo: BaseSaleData[];
@@ -32,6 +38,8 @@ function EstateSaleList(props: Props) {
 	const { query } = useRouter();
 
 	const getSaleIds = useCallback(() => {
+		if (!saleInfo) return;
+
 		let saleIds = null;
 
 		if (query.sale_id && !detailedSaleMap && thumbnailSliderRef.current) {
@@ -124,11 +132,12 @@ function EstateSaleList(props: Props) {
 
 	return (
 		<div className={styles.estateSaleList} >
-			<DisplayToggle />
+
 			<div className={styles.thumbnailSliderWrapper}>
+				{/* <DisplayToggle /> */}
 				<h3 className={styles.thumbnailSliderTitle}>Upcoming Sales</h3>
 				<Slider {...thumbnailSliderConfig} ref={ref => thumbnailSliderRef.current = ref}>
-					{saleInfo.map((sale, i) => <ThumbnailSaleCard key={sale.id} sale={sale} isActive={i === currentSlide} />)}
+					{saleInfo?.map((sale, i) => <ThumbnailSaleCard key={sale.id} sale={sale} isActive={i === currentSlide} />)}
 				</Slider>
 				<div className={styles.prevNextContainer}>
 					<button onClick={() => thumbnailSliderRef.current?.slickPrev()}>Prev</button>
