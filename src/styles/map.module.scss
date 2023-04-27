@@ -21,6 +21,8 @@
 
 		.map {
 			width: 100%;
+			// 180px for header
+			height: calc(100% - 180px);
 		}
 	}
 }

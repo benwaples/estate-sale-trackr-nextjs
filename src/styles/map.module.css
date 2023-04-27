@@ -30,6 +30,7 @@
   }
   .mapContainer .map {
     width: 100%;
+    height: calc(100% - 180px);
   }
 }
 /*# sourceMappingURL=map.module.css.map */

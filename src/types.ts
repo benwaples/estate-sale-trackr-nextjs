@@ -74,3 +74,9 @@ export interface RadarGeocodeForwardResponse {
 	meta: RadarMetaResponse
 	addresses: RadarAddressResponse[]
 }
+
+export enum MapSaleViewTypes {
+	minimized,
+	full,
+	none
+}

@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from "@googlemaps/js-api-loader";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import Router, { useRouter } from 'next/router';
-import { CoordinateSaleData, SaleDetails } from '@/types';
+import { CoordinateSaleData, MapSaleViewTypes, SaleDetails } from '@/types';
 import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
 import { getHelper } from '@/utils/utils';
 import styles from '../../styles/map.module.scss';
 import DisplayToggle from '@/components/display-toggle/display-toggle';
 import useScreenQuery from '@/hooks/use-screen-query';
 import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
+import MobileMapDetailedSale from '@/components/estate-sale/mobile-map-detailed-sale';
 
 export const getServerSideProps = async () => {
 	const saleInfo = await allUpcomingSaleIds(true);
@@ -22,14 +23,15 @@ interface Props {
 
 function Map(props: Props) {
 	const { saleInfo } = props;
-	console.log('saleInfo', saleInfo);
+
 	const [saleDetails, setSaleDetails] = useState<SaleDetails | null>(null);
+	const [saleView, setSaleView] = useState<MapSaleViewTypes>(MapSaleViewTypes.none);
 
 	const mapRef = useRef<HTMLDivElement | null>(null);// ref for map
 	const mountedMap = useRef(false);
 
 	const { query } = useRouter();
-	const { isMobile } = useScreenQuery();
+	const { isDesktop } = useScreenQuery();
 
 	// useEffect to load map
 	useEffect(() => {
@@ -50,6 +52,7 @@ function Map(props: Props) {
 				const map = new Map(mapRef.current, {
 					center: firstSaleInfo.coordinates,
 					zoom: 11,
+					gestureHandling: !isDesktop ? 'greedy' : 'cooperative'
 				});
 
 				// initialize detail card
@@ -96,10 +99,11 @@ function Map(props: Props) {
 	return (
 		<div className={styles.mapContainer}>
 			<div ref={mapRef} className={styles.map} />
-			{/* {saleDetails ? (
-				<DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} />
-			) : null} */}
 			{/* <DisplayToggle /> */}
+			{!isDesktop ? (
+				<MobileMapDetailedSale sale={saleDetails} view={saleView} />
+
+			) : saleDetails ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
 		</div>
 	);
 }
