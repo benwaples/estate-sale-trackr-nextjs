@@ -10,10 +10,10 @@ import DisplayToggle from '@/components/display-toggle/display-toggle';
 import useScreenQuery from '@/hooks/use-screen-query';
 import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
 
-// export const getServerSideProps = async () => {
-// 	const saleInfo = await allUpcomingSaleIds(true);
-// 	return { props: { saleInfo } }; // will be passed to the page component as props
-// };
+export const getServerSideProps = async () => {
+	const saleInfo = await allUpcomingSaleIds(true);
+	return { props: { saleInfo } }; // will be passed to the page component as props
+};
 
 
 interface Props {

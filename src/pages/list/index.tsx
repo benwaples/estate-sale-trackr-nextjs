@@ -13,11 +13,10 @@ import { getHelper, toMap } from '@/utils/utils';
 import DisplayToggle from '../../components/display-toggle/display-toggle';
 import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
 
-// export const getServerSideProps = async () => {
-// 	const saleInfo = await allUpcomingSaleIds(true);
-// 	return { props: { saleInfo } }; // will be passed to the page component as props
-// };
-
+export const getServerSideProps = async () => {
+	const saleInfo = await allUpcomingSaleIds(true);
+	return { props: { saleInfo } }; // will be passed to the page component as props
+};
 
 interface Props {
 	saleInfo: BaseSaleData[];
@@ -39,6 +38,8 @@ function EstateSaleList(props: Props) {
 	const { query } = useRouter();
 
 	const getSaleIds = useCallback(() => {
+		if (!saleInfo) return;
+
 		let saleIds = null;
 
 		if (query.sale_id && !detailedSaleMap && thumbnailSliderRef.current) {
@@ -136,7 +137,7 @@ function EstateSaleList(props: Props) {
 				<DisplayToggle />
 				<h3 className={styles.thumbnailSliderTitle}>Upcoming Sales</h3>
 				<Slider {...thumbnailSliderConfig} ref={ref => thumbnailSliderRef.current = ref}>
-					{saleInfo.map((sale, i) => <ThumbnailSaleCard key={sale.id} sale={sale} isActive={i === currentSlide} />)}
+					{saleInfo?.map((sale, i) => <ThumbnailSaleCard key={sale.id} sale={sale} isActive={i === currentSlide} />)}
 				</Slider>
 				<div className={styles.prevNextContainer}>
 					<button onClick={() => thumbnailSliderRef.current?.slickPrev()}>Prev</button>

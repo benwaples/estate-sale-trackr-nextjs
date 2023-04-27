@@ -8,7 +8,7 @@ function DisplayToggle(props: Props) {
 
 	const router = useRouter();
 	const activeDisplay = router.pathname.includes('map') ? 'map' : 'list';
-	console.log('activeDisplay', activeDisplay);
+
 	function handleClick() {
 		if (activeDisplay === 'list') {
 			router.push('/map');
