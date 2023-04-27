@@ -18,24 +18,18 @@ interface Props {
 function MobileMapDetailedSale(props: Props) {
 	const { sale, view } = props;
 
-	const tabs = Object.keys(sale ?? {}).filter(key => !['id'].includes(key)).reverse();
+	const tabs = Object.keys(sale ?? {}).filter(key => !['id', 'images'].includes(key)).reverse();
 	const hasImages = !!sale?.images?.length;
-	const initialDesktopTab = !!sale?.["sale details"] ? "sale details" : tabs[0];
-	const initialMobileTab = (hasImages) ? 'images' : undefined;
-	const initialTab = tabs.includes('images') ? initialMobileTab : initialDesktopTab;
+	const initialTab = !!sale?.["sale details"] ? "sale details" : tabs[0];
 
-	const [content, setContent] = useState<string | JSX.Element>(initialMobileTab ? '' : sale?.[initialDesktopTab ?? tabs[0]]);
+	const [content, setContent] = useState<string | JSX.Element>(sale?.[initialTab ?? tabs[0]]);
 	const [currentImageIndex, setCurrentImageIndex] = useState(1);
 
 	// sets initial content
 	useEffect(() => {
-		if (hasImages) {
-			setContent('');
-			return;
-		};
-		setContent(initialMobileTab ? '' : sale?.[initialDesktopTab ?? tabs[0]]);
+		setContent(sale?.[initialTab ?? tabs[0]]);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [initialTab]);
+	}, [initialTab, sale]);
 
 	const handleTabChange = (tab: string) => {
 		if (tab === 'dates') {
@@ -93,16 +87,16 @@ function MobileMapDetailedSale(props: Props) {
 				<div className={styles.content} key={sale?.id} >{content}</div>
 			) : null}
 
-			{(!content && hasImages) ? (
-				<>
-					<div className={styles.imageSliderWrapper}>
+			<div className={styles.imageSliderWrapper}>
+				{hasImages ? (
+					<>
 						{memoizedSlider}
-					</div>
-					{isFullView ? (
-						<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
-					) : null}
-				</>
-			) : <NoImage description='Images have not been posted for this sale' />}
+						{isFullView ? (
+							<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
+						) : null}
+					</>
+				) : <NoImage description='Images have not been posted for this sale' />}
+			</div>
 
 			{(sale && isFullView) ? <FollowSale {...sale} sale_id={sale.id} /> : null}
 		</div>

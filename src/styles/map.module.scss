@@ -35,29 +35,44 @@
 
 			.mapSaleCard {
 				background-color: black;
+				color: white;
 				padding-top: 8px;
 				max-width: 100%;
 				width: 100%;
 				text-align: center;
-				z-index: 10;
-		
+				transition: height 250ms ease-in-out;
+
+				display: flex;
+				flex-direction: column;
+				
 				position: absolute;
 				bottom: 0;
 				left: 0;
 				right: 0;
-		
-				transition: height 250ms ease-in-out;
+				
+				z-index: 10;
 
 				&.hidden {
 					height: 0;
 				}
 		
 				&.minimized {
-					height: 200px
+					height: 40%;
+
+					.imageSliderWrapper {
+						margin-top: auto;
+						margin-bottom: auto;
+					}
 				}
 
 				&.full {
 					height: 100%;
+					padding: 0 25px 25px;
+
+					.imageSliderWrapper {
+						margin-bottom: 0;
+						max-height: 50%;
+					}
 				}
 
 				h3 {
@@ -65,10 +80,23 @@
 					color: white;
 				}
 
+				.content {
+					text-align: left;
+					max-height: 40%;
+					overflow-y: scroll;
+				}
+
+				.imageSliderWrapper {
+					margin-top: auto;
+				}
+
 				.saleImage {
+					max-height: 300px;
+					object-fit: contain;
+					
 					&.minimized {
 						object-fit: contain;
-						max-height: 180px;
+						max-height: 200px;
 					}
 				}
 
@@ -83,11 +111,12 @@
 					border: 0;
 					padding: 4px 10px;
 					transition: transform 250ms linear;
-					
+
 					&.up {
 						transform: rotate(-90deg);
 						margin-bottom: 10px;
 					}
+
 					&.down {
 						margin-top: 10px;
 						transform: rotate(90deg);

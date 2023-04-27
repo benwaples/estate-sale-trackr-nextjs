@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Router, { useRouter } from 'next/router';
-import styles from '../../styles/estate-sale-list.module.scss';
+import styles from '../../styles/follow-button.module.scss';
 import { SaleDetails } from '@/types';
 import { postHelper } from '@/utils/utils';
 import { useSession, signIn } from 'next-auth/react';
