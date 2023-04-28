@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Loader } from "@googlemaps/js-api-loader";
-import { MarkerClusterer } from "@googlemaps/markerclusterer";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { GoogleMap, useJsApiLoader, MarkerF, MarkerClustererF, InfoBoxF } from '@react-google-maps/api';
+import { Cluster } from '@react-google-maps/marker-clusterer/dist';
 import Router, { useRouter } from 'next/router';
+
 import { CoordinateSaleData, MobileMapSaleViewType, SaleDetails } from '@/types';
 import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
 import { getHelper } from '@/utils/utils';
 import styles from '../../styles/map.module.scss';
-import DisplayToggle from '@/components/display-toggle/display-toggle';
 import useScreenQuery from '@/hooks/use-screen-query';
 import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
 import MobileMapDetailedSale from '@/components/estate-sale/mobile-map-detailed-sale';
@@ -26,106 +26,161 @@ function Map(props: Props) {
 
 	const [saleDetails, setSaleDetails] = useState<SaleDetails | null>(null);
 	const [saleView, setSaleView] = useState<MobileMapSaleViewType>(MobileMapSaleViewType.hidden);
+	const [salesWithMatchingPositions, setSalesWithMatchingPositions] = useState<CoordinateSaleData[] | null>(null);
 
-	const mapRef = useRef<HTMLDivElement | null>(null);// ref for map
-	const mountedMap = useRef(false);
+	const { isLoaded } = useJsApiLoader({
+		id: 'google-map-script',
+		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY ?? '',
+	});
 
 	const { query } = useRouter();
 	const { isDesktop } = useScreenQuery();
 
-	const getSaleView = () => saleView;
+	const mapRef = useRef<google.maps.Map | null>();
 
-	// useEffect to load map
-	useEffect(() => {
-		if (!mapRef.current || mountedMap.current || !saleInfo?.length) return;
-		const loader = new Loader({
-			apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY ?? '',
-			version: "weekly",
-		});
+	const getSaleDetails = async (saleId: number) => {
+		const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${saleId}`);
+		setSaleDetails(_saleDetails);
 
-		loader.load()
-			.then(async () => {
-				if (!mapRef.current) return;
+		Router.push(
+			{
+				pathname: '',
+				query: { sale_id: saleId }
+			},
+			undefined, // AS param is not needed here
+			{ shallow: true }
+		);
 
-				const firstSaleInfo = saleInfo.find(sale => sale.id.toString() === query?.sale_id) ?? saleInfo[0];
+		if (!isDesktop) {
+			setSaleView(MobileMapSaleViewType.minimized);
+		}
+	};
 
-				// initialize map
-				const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
-				const map = new Map(mapRef.current, {
-					center: firstSaleInfo.coordinates,
-					zoom: 11,
-					gestureHandling: !isDesktop ? 'greedy' : 'cooperative'
-				});
+	const handleMarkerClick = async (e: google.maps.MapMouseEvent, sale: CoordinateSaleData) => {
+		if (mapRef.current && e.latLng) mapRef.current.panTo(e.latLng);
+		if (sale.id === saleDetails?.id && saleView === MobileMapSaleViewType.minimized) {
+			setSaleView(MobileMapSaleViewType.hidden);
+			return;
+		}
 
-				// initialize detail card
-				const [saleDetails] = await getHelper(`/api/estate-sale/sale-details/${firstSaleInfo.id}`);
-				setSaleDetails(saleDetails);
-				if (!isDesktop) setSaleView(MobileMapSaleViewType.minimized);
+		// show sale details
+		getSaleDetails(sale.id);
+	};
 
-				const markers = saleInfo.map(sale => {
-					const label = sale.address;
-					const marker = new google.maps.Marker({
-						position: sale.coordinates,
-						label,
-						map,
-						// icon: 'https://openmoji.org/data/color/svg/1F3E0.svg',
-					});
+	const handleClusterClick = (cluster: Cluster) => {
+		const markers = cluster.getMarkers();
+		const firstMarkerPosition = markers[0]?.getPosition();
+		if (!firstMarkerPosition) return;
 
-					marker.addListener("click", async () => {
-						if (sale.id === saleDetails.id && getSaleView() === MobileMapSaleViewType.minimized) {
-							console.log('clicking same sale again');
-							setSaleView(MobileMapSaleViewType.hidden);
-							return;
-						}
+		const map = mapRef.current;
+		const zoom = map?.getZoom();
+		if (!map || !zoom) return;
 
-						// center map
-						const markerPosition = marker.getPosition();
-						if (markerPosition) map.panTo(markerPosition);
+		const center = cluster.getCenter();
+		if (center) map.panTo(center);
 
-						// show sale details
-						const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${sale.id}`);
-						setSaleDetails(_saleDetails);
+		const allMarkerPositionsMatch = markers.every(marker => marker.getPosition()?.equals(firstMarkerPosition));
+		if (allMarkerPositionsMatch) {
 
-						Router.push(
-							{
-								pathname: '',
-								query: { sale_id: sale.id }
-							},
-							undefined, // AS param is not needed here
-							{ shallow: true }
+			const details = markers
+				.map(marker => saleInfo.find(sale => sale.address === marker.getLabel()))
+				.filter(el => !!el);
+
+			if (!details.length) return;
+
+			setSalesWithMatchingPositions(details as CoordinateSaleData[]);
+			// keep the map at the same zoom level
+			return;
+		}
+
+		map.set('zoom', zoom + 1);
+	};
+
+	const onMapLoad = useCallback((map: google.maps.Map) => {
+		mapRef.current = map;
+	}, []);
+
+	const firstSaleInfo = saleInfo.find(sale => sale.id.toString() === query?.sale_id) ?? saleInfo[0];
+
+	return (isLoaded ? (
+		<div className={styles.mapContainer}>
+			<GoogleMap
+				mapContainerClassName={styles.map}
+				center={firstSaleInfo.coordinates}
+				zoom={11}
+				options={{ gestureHandling: !isDesktop ? 'greedy' : 'cooperative', zoomControl: true, clickableIcons: false, }}
+				onLoad={onMapLoad}
+			>
+				<MarkerClustererF
+					averageCenter
+					enableRetinaIcons
+					gridSize={60}
+					onClick={handleClusterClick}
+					zoomOnClick={false}
+				>
+					{(c) => {
+						return (
+							<>
+								{saleInfo.map(sale => (
+									<MarkerF
+										key={sale.id}
+										position={sale.coordinates}
+										label={sale.address}
+										clusterer={c}
+										onClick={async e => await handleMarkerClick(e, sale)}
+										animation={window.google.maps.Animation.DROP}
+									/>))}
+							</>
 						);
-
-						if (!isDesktop) {
-							setSaleView(MobileMapSaleViewType.minimized);
-						}
-					});
-
-					return marker;
-				});
-
-				new MarkerClusterer({ markers, map });
-
-				mountedMap.current = true;
-			});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [saleInfo]);
-
-	return (
-		<>
-			{/* {!isDesktop ? (
-				<div className={styles.fakeHeader}><h1>Estate Sale Tracker</h1></div>
-			) : null} */}
-			<div className={styles.mapContainer}>
-				<div ref={mapRef} className={styles.map} >
-					{!isDesktop ? (
-						<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
-					) : null}
-				</div>
-				{(saleDetails && isDesktop) ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
-				{/* <DisplayToggle /> */}
-			</div>
-		</>
-	);
+					}}
+				</MarkerClustererF>
+				{salesWithMatchingPositions ? (
+					<InfoBoxF
+						position={new google.maps.LatLng(salesWithMatchingPositions[0].coordinates)}
+						options={{ closeBoxURL: '', disableAutoPan: true, boxClass: styles.infoBoxS }}
+					>
+						<div className={styles.infoBoxContainer} >
+							<p>{salesWithMatchingPositions.length} sales in this zipcode without adddress posted</p>
+							<br />
+							<div className={styles.matchingSaleContainer}>
+								{salesWithMatchingPositions.map(sale => {
+									return (
+										<div className={styles.matchingSale} key={sale.id} onClick={async (e) => {
+											e.stopPropagation();
+											await getSaleDetails(sale.id);
+											mapRef.current?.panTo(new google.maps.LatLng({ ...salesWithMatchingPositions[0].coordinates, lat: salesWithMatchingPositions[0].coordinates.lat - 0.00274 }));
+										}}>
+											{sale.address}
+										</div>
+									);
+								})}
+							</div>
+							<button onClick={() => setSalesWithMatchingPositions(null)}>close</button>
+						</div>
+					</InfoBoxF>
+				) : null}
+				{!isDesktop ? (
+					<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
+				) : null}
+			</GoogleMap>
+			{(saleDetails && isDesktop) ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
+		</div>
+	) : null);
+	// <>
+	// 	{/* {!isDesktop ? (
+	// 		<div className={styles.fakeHeader}><h1>Estate Sale Tracker</h1></div>
+	// 	) : null} */}
+	// 	<div className={styles.mapContainer}>
+	// 		<div ref={mapRef} className={styles.map} >
+	// 			{!isDesktop ? (
+	// 				<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
+	// 			) : null}
+	// 		</div>
+	// 		{(saleDetails && isDesktop) ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
+	// 		{/* <DisplayToggle /> */}
+	// 	</div>
+	// </>
+	// );
 }
 
 export default Map;
