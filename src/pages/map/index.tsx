@@ -1,10 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-// import { Loader } from "@googlemaps/js-api-loader";
-import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import { GoogleMap, useJsApiLoader, MarkerF, MarkerClustererF } from '@react-google-maps/api';
-// import { MarkerClusterer } from "react-google-maps/lib/components/addons/MarkerClusterer";
-
+import { Cluster } from '@react-google-maps/marker-clusterer/dist';
 import Router, { useRouter } from 'next/router';
+
 import { CoordinateSaleData, MobileMapSaleViewType, SaleDetails } from '@/types';
 import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
 import { getHelper } from '@/utils/utils';
@@ -42,82 +40,48 @@ function Map(props: Props) {
 	const { query } = useRouter();
 	const { isDesktop } = useScreenQuery();
 
-	const getSaleView = () => saleView;
+	const handleMarkerClick = async (e: google.maps.MapMouseEvent, sale: CoordinateSaleData) => {
+		if (sale.id === saleDetails?.id && saleView === MobileMapSaleViewType.minimized) {
+			console.log('clicking same sale again');
+			setSaleView(MobileMapSaleViewType.hidden);
+			return;
+		}
 
-	// useEffect to load map
-	// useEffect(() => {
-	// 	if (!mapRef.current || mountedMap.current || !saleInfo?.length) return;
-	// 	const loader = new Loader({
-	// 		apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY ?? '',
-	// 		version: "weekly",
-	// 	});
+		// show sale details
+		const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${sale.id}`);
+		setSaleDetails(_saleDetails);
 
-	// 	loader.load()
-	// 		.then(async () => {
-	// 			if (!mapRef.current) return;
+		Router.push(
+			{
+				pathname: '',
+				query: { sale_id: sale.id }
+			},
+			undefined, // AS param is not needed here
+			{ shallow: true }
+		);
 
-	// 			const firstSaleInfo = saleInfo.find(sale => sale.id.toString() === query?.sale_id) ?? saleInfo[0];
+		if (!isDesktop) {
+			setSaleView(MobileMapSaleViewType.minimized);
+		}
+	};
 
-	// 			// initialize map
-	// 			const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
-	// 			const map = new Map(mapRef.current, {
-	// 				center: firstSaleInfo.coordinates,
-	// 				zoom: 11,
-	// 				gestureHandling: !isDesktop ? 'greedy' : 'cooperative'
-	// 			});
+	const handleClusterClick = (cluster: Cluster) => {
+		const markers = cluster.getMarkers();
+		console.log('markers', markers);
+		const firstMarkerPosition = markers[0]?.getPosition();
 
-	// 			// initialize detail card
-	// 			const [saleDetails] = await getHelper(`/api/estate-sale/sale-details/${firstSaleInfo.id}`);
-	// 			setSaleDetails(saleDetails);
-	// 			if (!isDesktop) setSaleView(MobileMapSaleViewType.minimized);
+		if (!firstMarkerPosition) return;
 
-	// 			const markers = saleInfo.map(sale => {
-	// 				const label = sale.address;
-	// 				const marker = new google.maps.Marker({
-	// 					position: sale.coordinates,
-	// 					label,
-	// 					map,
-	// 					// icon: 'https://openmoji.org/data/color/svg/1F3E0.svg',
-	// 				});
+		const allMarkerPositionsMatch = markers.every(marker => marker.getPosition()?.equals(firstMarkerPosition));
+		if (allMarkerPositionsMatch) {
 
-	// 				marker.addListener("click", async () => {
-	// 					if (sale.id === saleDetails.id && getSaleView() === MobileMapSaleViewType.minimized) {
-	// 						console.log('clicking same sale again');
-	// 						setSaleView(MobileMapSaleViewType.hidden);
-	// 						return;
-	// 					}
+			console.log('markers match');
+			return;
+		}
 
-	// 					// center map
-	// 					const markerPosition = marker.getPosition();
-	// 					if (markerPosition) map.panTo(markerPosition);
+		console.log('markers dont match, zoom');
 
-	// 					// show sale details
-	// 					const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${sale.id}`);
-	// 					setSaleDetails(_saleDetails);
-
-	// 					Router.push(
-	// 						{
-	// 							pathname: '',
-	// 							query: { sale_id: sale.id }
-	// 						},
-	// 						undefined, // AS param is not needed here
-	// 						{ shallow: true }
-	// 					);
-
-	// 					if (!isDesktop) {
-	// 						setSaleView(MobileMapSaleViewType.minimized);
-	// 					}
-	// 				});
-
-	// 				return marker;
-	// 			});
-
-	// 			new MarkerClusterer({ markers, map });
-
-	// 			mountedMap.current = true;
-	// 		});
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, [saleInfo]);
+	};
 
 	const firstSaleInfo = saleInfo.find(sale => sale.id.toString() === query?.sale_id) ?? saleInfo[0];
 
@@ -133,6 +97,7 @@ function Map(props: Props) {
 					averageCenter
 					enableRetinaIcons
 					gridSize={60}
+					onClick={handleClusterClick}
 				>
 					{(c) => {
 						return (
@@ -143,31 +108,7 @@ function Map(props: Props) {
 										position={sale.coordinates}
 										label={sale.address}
 										clusterer={c}
-										onClick={async e => {
-											console.log('e', e);
-											if (sale.id === saleDetails?.id && saleView === MobileMapSaleViewType.minimized) {
-												console.log('clicking same sale again');
-												setSaleView(MobileMapSaleViewType.hidden);
-												return;
-											}
-
-											// show sale details
-											const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${sale.id}`);
-											setSaleDetails(_saleDetails);
-
-											Router.push(
-												{
-													pathname: '',
-													query: { sale_id: sale.id }
-												},
-												undefined, // AS param is not needed here
-												{ shallow: true }
-											);
-
-											if (!isDesktop) {
-												setSaleView(MobileMapSaleViewType.minimized);
-											}
-										}}
+										onClick={async e => await handleMarkerClick(e, sale)}
 									/>))}
 							</>
 						);
