@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { GoogleMap, useJsApiLoader, MarkerF, MarkerClustererF } from '@react-google-maps/api';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { GoogleMap, useJsApiLoader, MarkerF, MarkerClustererF, InfoBoxF } from '@react-google-maps/api';
 import { Cluster } from '@react-google-maps/marker-clusterer/dist';
 import Router, { useRouter } from 'next/router';
 
@@ -7,7 +7,6 @@ import { CoordinateSaleData, MobileMapSaleViewType, SaleDetails } from '@/types'
 import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
 import { getHelper } from '@/utils/utils';
 import styles from '../../styles/map.module.scss';
-import DisplayToggle from '@/components/display-toggle/display-toggle';
 import useScreenQuery from '@/hooks/use-screen-query';
 import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
 import MobileMapDetailedSale from '@/components/estate-sale/mobile-map-detailed-sale';
@@ -27,34 +26,26 @@ function Map(props: Props) {
 
 	const [saleDetails, setSaleDetails] = useState<SaleDetails | null>(null);
 	const [saleView, setSaleView] = useState<MobileMapSaleViewType>(MobileMapSaleViewType.hidden);
-
-	// const mapRef = useRef<HTMLDivElement | null>(null);// ref for map
-	// const mountedMap = useRef(false);
+	const [salesWithMatchingPositions, setSalesWithMatchingPositions] = useState<CoordinateSaleData[] | null>(null);
 
 	const { isLoaded } = useJsApiLoader({
 		id: 'google-map-script',
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY ?? '',
-
 	});
 
 	const { query } = useRouter();
 	const { isDesktop } = useScreenQuery();
 
-	const handleMarkerClick = async (e: google.maps.MapMouseEvent, sale: CoordinateSaleData) => {
-		if (sale.id === saleDetails?.id && saleView === MobileMapSaleViewType.minimized) {
-			console.log('clicking same sale again');
-			setSaleView(MobileMapSaleViewType.hidden);
-			return;
-		}
+	const mapRef = useRef<google.maps.Map | null>();
 
-		// show sale details
-		const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${sale.id}`);
+	const getSaleDetails = async (saleId: number) => {
+		const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${saleId}`);
 		setSaleDetails(_saleDetails);
 
 		Router.push(
 			{
 				pathname: '',
-				query: { sale_id: sale.id }
+				query: { sale_id: saleId }
 			},
 			undefined, // AS param is not needed here
 			{ shallow: true }
@@ -65,23 +56,49 @@ function Map(props: Props) {
 		}
 	};
 
+	const handleMarkerClick = async (e: google.maps.MapMouseEvent, sale: CoordinateSaleData) => {
+		if (mapRef.current && e.latLng) mapRef.current.panTo(e.latLng);
+		if (sale.id === saleDetails?.id && saleView === MobileMapSaleViewType.minimized) {
+			setSaleView(MobileMapSaleViewType.hidden);
+			return;
+		}
+
+		// show sale details
+		getSaleDetails(sale.id);
+	};
+
 	const handleClusterClick = (cluster: Cluster) => {
 		const markers = cluster.getMarkers();
-		console.log('markers', markers);
 		const firstMarkerPosition = markers[0]?.getPosition();
-
 		if (!firstMarkerPosition) return;
+
+		const map = mapRef.current;
+		const zoom = map?.getZoom();
+		if (!map || !zoom) return;
+
+		const center = cluster.getCenter();
+		if (center) map.panTo(center);
 
 		const allMarkerPositionsMatch = markers.every(marker => marker.getPosition()?.equals(firstMarkerPosition));
 		if (allMarkerPositionsMatch) {
 
-			console.log('markers match');
+			const details = markers
+				.map(marker => saleInfo.find(sale => sale.address === marker.getLabel()))
+				.filter(el => !!el);
+
+			if (!details.length) return;
+
+			setSalesWithMatchingPositions(details as CoordinateSaleData[]);
+			// keep the map at the same zoom level
 			return;
 		}
 
-		console.log('markers dont match, zoom');
-
+		map.set('zoom', zoom + 1);
 	};
+
+	const onMapLoad = useCallback((map: google.maps.Map) => {
+		mapRef.current = map;
+	}, []);
 
 	const firstSaleInfo = saleInfo.find(sale => sale.id.toString() === query?.sale_id) ?? saleInfo[0];
 
@@ -91,13 +108,15 @@ function Map(props: Props) {
 				mapContainerClassName={styles.map}
 				center={firstSaleInfo.coordinates}
 				zoom={11}
-				options={{ gestureHandling: !isDesktop ? 'greedy' : 'cooperative' }}
+				options={{ gestureHandling: !isDesktop ? 'greedy' : 'cooperative', zoomControl: true, clickableIcons: false, }}
+				onLoad={onMapLoad}
 			>
 				<MarkerClustererF
 					averageCenter
 					enableRetinaIcons
 					gridSize={60}
 					onClick={handleClusterClick}
+					zoomOnClick={false}
 				>
 					{(c) => {
 						return (
@@ -109,11 +128,37 @@ function Map(props: Props) {
 										label={sale.address}
 										clusterer={c}
 										onClick={async e => await handleMarkerClick(e, sale)}
+										animation={window.google.maps.Animation.DROP}
 									/>))}
 							</>
 						);
 					}}
 				</MarkerClustererF>
+				{salesWithMatchingPositions ? (
+					<InfoBoxF
+						position={new google.maps.LatLng(salesWithMatchingPositions[0].coordinates)}
+						options={{ closeBoxURL: '', disableAutoPan: true, boxClass: styles.infoBoxS }}
+					>
+						<div className={styles.infoBoxContainer} >
+							<p>{salesWithMatchingPositions.length} sales in this zipcode without adddress posted</p>
+							<br />
+							<div className={styles.matchingSaleContainer}>
+								{salesWithMatchingPositions.map(sale => {
+									return (
+										<div className={styles.matchingSale} key={sale.id} onClick={async (e) => {
+											e.stopPropagation();
+											await getSaleDetails(sale.id);
+											mapRef.current?.panTo(new google.maps.LatLng({ ...salesWithMatchingPositions[0].coordinates, lat: salesWithMatchingPositions[0].coordinates.lat - 0.00274 }));
+										}}>
+											{sale.address}
+										</div>
+									);
+								})}
+							</div>
+							<button onClick={() => setSalesWithMatchingPositions(null)}>close</button>
+						</div>
+					</InfoBoxF>
+				) : null}
 				{!isDesktop ? (
 					<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
 				) : null}

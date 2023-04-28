@@ -129,6 +129,17 @@
 					}
 				}
 			}
+
 		}
+	}
+}
+.infoBoxS {
+	// transform: translateY(-100px) !important;
+	// transform-origin: 100%;
+	.infoBoxContainer {
+		background-color: black;
+		color: white;
+		max-width: 70%;
+		padding: 20px
 	}
 }
