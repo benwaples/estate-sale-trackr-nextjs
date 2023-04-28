@@ -3,14 +3,132 @@
 .mapContainer {
 	width: 100%;
 	height: 100vh;
+	max-height: 100vh;
 	display: flex;
 	align-items: center;
+
+	.map {
+		margin: auto;
+		height: 400px;
+		width: 800px;
+	}
+
+	.mapSaleCard {
+		max-width: 100%;
+	}
 }
+
+// .fakeHeader {
+// 	height: 60px
+// }
 
 @include mobile {
 	.mapContainer {
 		justify-content: center;
 		align-items: center;
 		flex-direction: column;
+		position: relative;
+		// 120px for header
+		// height: 100%;
+		
+		.map {
+			// height: calc(100% - 80px);
+			height: 100%;
+			width: 100%;
+			margin: unset;
+			margin-top: unset;
+			position: relative;
+
+			.mapSaleCard {
+				background-color: black;
+				color: white;
+				padding-top: 8px;
+				max-width: 100%;
+				width: 100%;
+				text-align: center;
+				transition: height 250ms ease-in-out;
+
+				display: flex;
+				flex-direction: column;
+				
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				
+				z-index: 10;
+
+				&.hidden {
+					height: 0;
+				}
+		
+				&.minimized {
+					height: 40%;
+
+					.imageSliderWrapper {
+						margin-top: auto;
+						margin-bottom: auto;
+					}
+				}
+
+				&.full {
+					height: 100%;
+					padding: 0 25px 25px;
+
+					.imageSliderWrapper {
+						margin-bottom: 0;
+						max-height: 50%;
+					}
+				}
+
+				h3 {
+					margin-bottom: 10px;
+					color: white;
+				}
+
+				.content {
+					text-align: left;
+					max-height: 40%;
+					overflow-y: scroll;
+				}
+
+				.imageSliderWrapper {
+					margin-top: auto;
+				}
+
+				.saleImage {
+					max-height: 300px;
+					object-fit: contain;
+					
+					&.minimized {
+						object-fit: contain;
+						max-height: 200px;
+					}
+				}
+
+				.minimizedHeader {
+					display: flex;
+					justify-content: space-between;
+				}
+				
+				.viewToggle {
+					background-color: black;
+					color: white;
+					border: 0;
+					padding: 4px 10px;
+					transition: transform 250ms linear;
+
+					&.up {
+						transform: rotate(-90deg);
+						margin-bottom: 10px;
+					}
+
+					&.down {
+						margin-top: 10px;
+						transform: rotate(90deg);
+					}
+				}
+			}
+		}
 	}
 }

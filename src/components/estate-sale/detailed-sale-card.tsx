@@ -18,7 +18,7 @@ interface Props {
 	onMouseLeave?: () => void;
 }
 
-function getDatesContent(dates: SaleDetails["dates"] | undefined) {
+export function getDatesContent(dates: SaleDetails["dates"] | undefined) {
 	if (!dates) return;
 	// TODO: include a calendar view
 

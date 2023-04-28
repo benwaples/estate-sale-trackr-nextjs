@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from "@googlemaps/js-api-loader";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import Router, { useRouter } from 'next/router';
-import { CoordinateSaleData, SaleDetails } from '@/types';
+import { CoordinateSaleData, MobileMapSaleViewType, SaleDetails } from '@/types';
 import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
 import { getHelper } from '@/utils/utils';
 import styles from '../../styles/map.module.scss';
 import DisplayToggle from '@/components/display-toggle/display-toggle';
 import useScreenQuery from '@/hooks/use-screen-query';
 import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
+import MobileMapDetailedSale from '@/components/estate-sale/mobile-map-detailed-sale';
 
 export const getServerSideProps = async () => {
 	const saleInfo = await allUpcomingSaleIds(true);
@@ -22,14 +23,17 @@ interface Props {
 
 function Map(props: Props) {
 	const { saleInfo } = props;
-	console.log('saleInfo', saleInfo);
+
 	const [saleDetails, setSaleDetails] = useState<SaleDetails | null>(null);
+	const [saleView, setSaleView] = useState<MobileMapSaleViewType>(MobileMapSaleViewType.hidden);
 
 	const mapRef = useRef<HTMLDivElement | null>(null);// ref for map
 	const mountedMap = useRef(false);
 
 	const { query } = useRouter();
-	const { isMobile } = useScreenQuery();
+	const { isDesktop } = useScreenQuery();
+
+	const getSaleView = () => saleView;
 
 	// useEffect to load map
 	useEffect(() => {
@@ -50,11 +54,13 @@ function Map(props: Props) {
 				const map = new Map(mapRef.current, {
 					center: firstSaleInfo.coordinates,
 					zoom: 11,
+					gestureHandling: !isDesktop ? 'greedy' : 'cooperative'
 				});
 
 				// initialize detail card
 				const [saleDetails] = await getHelper(`/api/estate-sale/sale-details/${firstSaleInfo.id}`);
 				setSaleDetails(saleDetails);
+				if (!isDesktop) setSaleView(MobileMapSaleViewType.minimized);
 
 				const markers = saleInfo.map(sale => {
 					const label = sale.address;
@@ -66,13 +72,20 @@ function Map(props: Props) {
 					});
 
 					marker.addListener("click", async () => {
+						if (sale.id === saleDetails.id && getSaleView() === MobileMapSaleViewType.minimized) {
+							console.log('clicking same sale again');
+							setSaleView(MobileMapSaleViewType.hidden);
+							return;
+						}
+
 						// center map
 						const markerPosition = marker.getPosition();
 						if (markerPosition) map.panTo(markerPosition);
 
 						// show sale details
-						const [saleDetails] = await getHelper(`/api/estate-sale/sale-details/${sale.id}`);
-						setSaleDetails(() => saleDetails);
+						const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${sale.id}`);
+						setSaleDetails(_saleDetails);
+
 						Router.push(
 							{
 								pathname: '',
@@ -81,6 +94,10 @@ function Map(props: Props) {
 							undefined, // AS param is not needed here
 							{ shallow: true }
 						);
+
+						if (!isDesktop) {
+							setSaleView(MobileMapSaleViewType.minimized);
+						}
 					});
 
 					return marker;
@@ -94,13 +111,20 @@ function Map(props: Props) {
 	}, [saleInfo]);
 
 	return (
-		<div className={styles.mapContainer}>
-			<div ref={mapRef} style={{ width: isMobile ? "100%" : "800px", height: "400px", margin: 'auto' }} />
-			{saleDetails ? (
-				<DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} />
-			) : null}
-			{/* <DisplayToggle /> */}
-		</div>
+		<>
+			{/* {!isDesktop ? (
+				<div className={styles.fakeHeader}><h1>Estate Sale Tracker</h1></div>
+			) : null} */}
+			<div className={styles.mapContainer}>
+				<div ref={mapRef} className={styles.map} >
+					{!isDesktop ? (
+						<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
+					) : null}
+				</div>
+				{(saleDetails && isDesktop) ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
+				{/* <DisplayToggle /> */}
+			</div>
+		</>
 	);
 }
 
