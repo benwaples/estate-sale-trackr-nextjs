@@ -18,19 +18,25 @@
 	}
 }
 
+// .fakeHeader {
+// 	height: 60px
+// }
+
 @include mobile {
 	.mapContainer {
 		justify-content: center;
 		align-items: center;
 		flex-direction: column;
 		position: relative;
-
+		// 120px for header
+		// height: 100%;
+		
 		.map {
+			// height: calc(100% - 80px);
+			height: 100%;
 			width: 100%;
-			// 120px for header
-			height: calc(100% - 120px);
 			margin: unset;
-			margin-top: auto;
+			margin-top: unset;
 			position: relative;
 
 			.mapSaleCard {

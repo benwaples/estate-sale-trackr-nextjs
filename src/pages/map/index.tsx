@@ -111,15 +111,20 @@ function Map(props: Props) {
 	}, [saleInfo]);
 
 	return (
-		<div className={styles.mapContainer}>
-			<div ref={mapRef} className={styles.map} >
-				{!isDesktop ? (
-					<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
-				) : null}
+		<>
+			{/* {!isDesktop ? (
+				<div className={styles.fakeHeader}><h1>Estate Sale Tracker</h1></div>
+			) : null} */}
+			<div className={styles.mapContainer}>
+				<div ref={mapRef} className={styles.map} >
+					{!isDesktop ? (
+						<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
+					) : null}
+				</div>
+				{(saleDetails && isDesktop) ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
+				{/* <DisplayToggle /> */}
 			</div>
-			{(saleDetails && isDesktop) ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
-			{/* <DisplayToggle /> */}
-		</div>
+		</>
 	);
 }
 

@@ -35,10 +35,10 @@
     position: relative;
   }
   .mapContainer .map {
+    height: 100%;
     width: 100%;
-    height: calc(100% - 120px);
     margin: unset;
-    margin-top: auto;
+    margin-top: unset;
     position: relative;
   }
   .mapContainer .map .mapSaleCard {
