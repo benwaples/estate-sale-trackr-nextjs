@@ -11,6 +11,7 @@
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.15.1",
     "@googlemaps/markerclusterer": "^2.0.15",
+    "@react-google-maps/api": "^2.18.1",
     "@types/bcrypt": "^5.0.0",
     "@types/classnames": "^2.3.1",
     "@types/cors": "^2.8.13",
