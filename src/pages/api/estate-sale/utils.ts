@@ -53,17 +53,9 @@ export function parseSaleDateString(x: string | undefined) {
 	const [startDayOfWeek, startDayOfMonth, startMonth, startYear, startTimeOfDay, startMeridiem] = start.split(' ').filter(el => el !== 'of');
 	const [endDayOfWeek, endDayOfMonth, endMonth, endYear, endTimeOfDay, endMeridiem] = end.split(' ').filter(el => !!el && el !== 'of');
 
-	// YYYY-MM-DDTTT:TT:TT
-	// const startTime = new Date(`${startYear}-${monthIndex[startMonth]}-${(startDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(startTimeOfDay, startMeridiem)}z`);
-	// const endTime = new Date(`${endYear}-${monthIndex[endMonth]}-${(endDayOfMonth.slice(0, -2).padStart(2, '0'))}T${convertTime12to24(endTimeOfDay, endMeridiem)}z`);
-	// May 26, 2023 22:00:00 GMT-0800
+	// MM DD, YYYY TTT:TT:TT GMT-0700
 	const startTime = new Date(`${monthIndex[startMonth]} ${(startDayOfMonth.slice(0, -2).padStart(2, '0'))}, ${startYear} ${convertTime12to24(startTimeOfDay, startMeridiem)} GMT-0700`).getTime();
 	const endTime = new Date(`${monthIndex[endMonth]} ${(endDayOfMonth.slice(0, -2).padStart(2, '0'))}, ${endYear} ${convertTime12to24(endTimeOfDay, endMeridiem)} GMT-0700`).getTime();
-
-	// const startTime = new Date(startDate.getTime() + startDate.getTimezoneOffset() * 60000).getTime();
-	// const endTime = new Date(endDate.getTime() + endDate.getTimezoneOffset() * 60000).getTime();
-
-	console.log('startTime', startTime);
 
 	const pattern = /([A-Z][a-z]+): (\d+-\d+)/g;
 
