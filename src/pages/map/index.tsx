@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { GoogleMap, useJsApiLoader, MarkerF, MarkerClustererF, InfoBoxF } from '@react-google-maps/api';
 import { Cluster } from '@react-google-maps/marker-clusterer/dist';
 import Router, { useRouter } from 'next/router';
@@ -62,6 +62,7 @@ function Map(props: Props) {
 			setSaleView(MobileMapSaleViewType.hidden);
 			return;
 		}
+		if (salesWithMatchingPositions) setSalesWithMatchingPositions(null);
 
 		// show sale details
 		getSaleDetails(sale.id);
@@ -81,7 +82,6 @@ function Map(props: Props) {
 
 		const allMarkerPositionsMatch = markers.every(marker => marker.getPosition()?.equals(firstMarkerPosition));
 		if (allMarkerPositionsMatch) {
-
 			const details = markers
 				.map(marker => saleInfo.find(sale => sale.address === marker.getLabel()))
 				.filter(el => !!el);
@@ -91,16 +91,25 @@ function Map(props: Props) {
 			setSalesWithMatchingPositions(details as CoordinateSaleData[]);
 			// keep the map at the same zoom level
 			return;
+		} else {
+			console.log('should close window');
+			setSalesWithMatchingPositions(null);
 		}
 
 		map.set('zoom', zoom + 1);
 	};
 
-	const onMapLoad = useCallback((map: google.maps.Map) => {
-		mapRef.current = map;
-	}, []);
+	// should only run on mount
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const firstSaleInfo = useMemo(() => saleInfo.find(sale => sale.id.toString() === query?.sale_id) ?? saleInfo[0], []);
 
-	const firstSaleInfo = saleInfo.find(sale => sale.id.toString() === query?.sale_id) ?? saleInfo[0];
+	const onMapLoad = useCallback(async (map: google.maps.Map) => {
+		mapRef.current = map;
+		if (firstSaleInfo) {
+			await getSaleDetails(firstSaleInfo.id);
+		}
+	}, [firstSaleInfo, getSaleDetails]);
+
 
 	return (isLoaded ? (
 		<div className={styles.mapContainer}>
@@ -137,7 +146,8 @@ function Map(props: Props) {
 				{salesWithMatchingPositions ? (
 					<InfoBoxF
 						position={new google.maps.LatLng(salesWithMatchingPositions[0].coordinates)}
-						options={{ closeBoxURL: '', disableAutoPan: true, boxClass: styles.infoBoxS }}
+						options={{ closeBoxURL: '', disableAutoPan: true, boxClass: styles.infoBoxS, visible: !!salesWithMatchingPositions }}
+
 					>
 						<div className={styles.infoBoxContainer} >
 							<p>{salesWithMatchingPositions.length} sales in this zipcode without adddress posted</p>
