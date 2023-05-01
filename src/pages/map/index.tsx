@@ -10,6 +10,7 @@ import styles from '../../styles/map.module.scss';
 import useScreenQuery from '@/hooks/use-screen-query';
 import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
 import MobileMapDetailedSale from '@/components/estate-sale/mobile-map-detailed-sale';
+import InfoBox from './infobox';
 
 export const getServerSideProps = async () => {
 	const saleInfo = await allUpcomingSaleIds(true);
@@ -109,7 +110,6 @@ function Map(props: Props) {
 		}
 	}, [firstSaleInfo, getSaleDetails]);
 
-	console.log('salesWithMatching', salesWithMatchingPositions);
 	return (isLoaded ? (
 		<div className={styles.mapContainer}>
 			<GoogleMap
@@ -143,29 +143,14 @@ function Map(props: Props) {
 					}}
 				</MarkerClustererF>
 				{salesWithMatchingPositions ? (
-					<InfoBoxF
-						position={new google.maps.LatLng(salesWithMatchingPositions[0].coordinates)}
-						options={{ closeBoxURL: '', disableAutoPan: true, boxClass: styles.infoBoxS, visible: !!salesWithMatchingPositions, alignBottom: true }}
-					>
-						<div className={styles.infoBoxContainer} >
-							<p>{salesWithMatchingPositions.length} sales in this zipcode without adddress posted</p>
-							<br />
-							<div className={styles.matchingSaleContainer}>
-								{salesWithMatchingPositions.map(sale => {
-									return (
-										<div className={styles.matchingSale} key={sale.id} onClick={async (e) => {
-											e.stopPropagation();
-											await getSaleDetails(sale.id);
-											mapRef.current?.panTo(new google.maps.LatLng({ ...salesWithMatchingPositions[0].coordinates, lat: salesWithMatchingPositions[0].coordinates.lat - 0.00274 }));
-										}}>
-											{sale.address}
-										</div>
-									);
-								})}
-							</div>
-							<button onClick={() => setSalesWithMatchingPositions(null)}>close</button>
-						</div>
-					</InfoBoxF>
+					<InfoBox
+						saleList={salesWithMatchingPositions}
+						onSaleClick={async (id) => {
+							await getSaleDetails(id);
+							mapRef.current?.panTo(new google.maps.LatLng(salesWithMatchingPositions[0].coordinates));
+						}}
+						onClose={() => setSalesWithMatchingPositions(null)}
+					/>
 				) : null}
 				{!isDesktop ? (
 					<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
@@ -174,21 +159,6 @@ function Map(props: Props) {
 			{(saleDetails && isDesktop) ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
 		</div>
 	) : null);
-	// <>
-	// 	{/* {!isDesktop ? (
-	// 		<div className={styles.fakeHeader}><h1>Estate Sale Tracker</h1></div>
-	// 	) : null} */}
-	// 	<div className={styles.mapContainer}>
-	// 		<div ref={mapRef} className={styles.map} >
-	// 			{!isDesktop ? (
-	// 				<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
-	// 			) : null}
-	// 		</div>
-	// 		{(saleDetails && isDesktop) ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
-	// 		{/* <DisplayToggle /> */}
-	// 	</div>
-	// </>
-	// );
 }
 
 export default Map;
