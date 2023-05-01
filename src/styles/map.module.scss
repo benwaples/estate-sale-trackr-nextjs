@@ -134,12 +134,72 @@
 	}
 }
 .infoBoxS {
-	// transform: translateY(-100px) !important;
-	// transform-origin: 100%;
 	.infoBoxContainer {
 		background-color: black;
 		color: white;
 		max-width: 70%;
-		padding: 20px
+		padding: 20px;
+
+		p strong {
+			color: lightgreen;
+		}
+
+		.matchingSaleContainer {
+			max-width: 250px;
+
+			.matchingSale {
+				font-size: 12px;
+				padding: 8px;
+				border: solid green 1px;
+				border-radius: 12px;
+				margin: 8px 0;
+				cursor: pointer;
+				
+				.saleDetailsBtn {
+					font-size: 12px;
+					display: block;
+					margin: auto;
+					background-color: transparent;
+					color: lightgreen;
+					border: none;
+					padding: 8px 0;
+					cursor: pointer;
+				}
+			}
+
+			.sliderController {
+				width: 100%;
+				display: flex;
+				justify-content: space-between;
+				gap: 10px;
+
+				button {
+					width: 50%;
+					border: 0;
+					border-radius: 8px;
+					&:hover {
+						transform: scale(1.05);
+						box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+					}
+
+					&:active {
+						transform: scale(0.95);
+						box-shadow: none;
+					}
+				}
+
+			}
+		}
+
+		.closeBtn {
+			background-color: lightgreen;
+			border: none;
+			border-radius: 12px;
+			padding: 8px 20px;
+			margin-top: 10px;
+			width: 100%;
+			color: white;
+		}
+
 	}
 }

@@ -80,7 +80,7 @@ function MobileMapDetailedSale(props: Props) {
 	};
 
 
-	const sliderConfig: () => Settings = useCallback(() => ({
+	const sliderConfig: Settings = useMemo(() => ({
 		className: styles.saleImages,
 		lazyLoad: 'anticipated',
 		afterChange(index: number) { setCurrentImageIndex(index + 1); },

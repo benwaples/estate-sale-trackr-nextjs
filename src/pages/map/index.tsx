@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { GoogleMap, useJsApiLoader, MarkerF, MarkerClustererF, InfoBoxF } from '@react-google-maps/api';
 import { Cluster } from '@react-google-maps/marker-clusterer/dist';
 import Router, { useRouter } from 'next/router';
@@ -10,6 +10,7 @@ import styles from '../../styles/map.module.scss';
 import useScreenQuery from '@/hooks/use-screen-query';
 import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
 import MobileMapDetailedSale from '@/components/estate-sale/mobile-map-detailed-sale';
+import InfoBox from '../../components/estate-sale/infobox';
 
 export const getServerSideProps = async () => {
 	const saleInfo = await allUpcomingSaleIds(true);
@@ -38,7 +39,7 @@ function Map(props: Props) {
 
 	const mapRef = useRef<google.maps.Map | null>();
 
-	const getSaleDetails = async (saleId: number) => {
+	const getSaleDetails = useCallback(async (saleId: number) => {
 		const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${saleId}`);
 		setSaleDetails(_saleDetails);
 
@@ -54,7 +55,7 @@ function Map(props: Props) {
 		if (!isDesktop) {
 			setSaleView(MobileMapSaleViewType.minimized);
 		}
-	};
+	}, [isDesktop]);
 
 	const handleMarkerClick = async (e: google.maps.MapMouseEvent, sale: CoordinateSaleData) => {
 		if (mapRef.current && e.latLng) mapRef.current.panTo(e.latLng);
@@ -62,12 +63,13 @@ function Map(props: Props) {
 			setSaleView(MobileMapSaleViewType.hidden);
 			return;
 		}
+		if (salesWithMatchingPositions) setSalesWithMatchingPositions(null);
 
 		// show sale details
 		getSaleDetails(sale.id);
 	};
 
-	const handleClusterClick = (cluster: Cluster) => {
+	const handleClusterClick = async (cluster: Cluster) => {
 		const markers = cluster.getMarkers();
 		const firstMarkerPosition = markers[0]?.getPosition();
 		if (!firstMarkerPosition) return;
@@ -81,7 +83,6 @@ function Map(props: Props) {
 
 		const allMarkerPositionsMatch = markers.every(marker => marker.getPosition()?.equals(firstMarkerPosition));
 		if (allMarkerPositionsMatch) {
-
 			const details = markers
 				.map(marker => saleInfo.find(sale => sale.address === marker.getLabel()))
 				.filter(el => !!el);
@@ -89,18 +90,27 @@ function Map(props: Props) {
 			if (!details.length) return;
 
 			setSalesWithMatchingPositions(details as CoordinateSaleData[]);
-			// keep the map at the same zoom level
+			// automatically open the first sale in details
+			details[0]?.id && await getSaleDetails(details[0].id);
+
 			return;
+		} else {
+			setSalesWithMatchingPositions(null);
 		}
 
 		map.set('zoom', zoom + 1);
 	};
 
-	const onMapLoad = useCallback((map: google.maps.Map) => {
-		mapRef.current = map;
-	}, []);
+	// should only run on mount
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const firstSaleInfo = useMemo(() => saleInfo.find(sale => sale.id.toString() === query?.sale_id) ?? saleInfo[0], []);
 
-	const firstSaleInfo = saleInfo.find(sale => sale.id.toString() === query?.sale_id) ?? saleInfo[0];
+	const onMapLoad = useCallback(async (map: google.maps.Map) => {
+		mapRef.current = map;
+		if (firstSaleInfo) {
+			await getSaleDetails(firstSaleInfo.id);
+		}
+	}, [firstSaleInfo, getSaleDetails]);
 
 	return (isLoaded ? (
 		<div className={styles.mapContainer}>
@@ -135,29 +145,14 @@ function Map(props: Props) {
 					}}
 				</MarkerClustererF>
 				{salesWithMatchingPositions ? (
-					<InfoBoxF
-						position={new google.maps.LatLng(salesWithMatchingPositions[0].coordinates)}
-						options={{ closeBoxURL: '', disableAutoPan: true, boxClass: styles.infoBoxS }}
-					>
-						<div className={styles.infoBoxContainer} >
-							<p>{salesWithMatchingPositions.length} sales in this zipcode without adddress posted</p>
-							<br />
-							<div className={styles.matchingSaleContainer}>
-								{salesWithMatchingPositions.map(sale => {
-									return (
-										<div className={styles.matchingSale} key={sale.id} onClick={async (e) => {
-											e.stopPropagation();
-											await getSaleDetails(sale.id);
-											mapRef.current?.panTo(new google.maps.LatLng({ ...salesWithMatchingPositions[0].coordinates, lat: salesWithMatchingPositions[0].coordinates.lat - 0.00274 }));
-										}}>
-											{sale.address}
-										</div>
-									);
-								})}
-							</div>
-							<button onClick={() => setSalesWithMatchingPositions(null)}>close</button>
-						</div>
-					</InfoBoxF>
+					<InfoBox
+						saleList={salesWithMatchingPositions}
+						onSaleClick={async (id) => {
+							await getSaleDetails(id);
+							mapRef.current?.panTo(new google.maps.LatLng(salesWithMatchingPositions[0].coordinates));
+						}}
+						onClose={() => setSalesWithMatchingPositions(null)}
+					/>
 				) : null}
 				{!isDesktop ? (
 					<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
@@ -166,21 +161,6 @@ function Map(props: Props) {
 			{(saleDetails && isDesktop) ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
 		</div>
 	) : null);
-	// <>
-	// 	{/* {!isDesktop ? (
-	// 		<div className={styles.fakeHeader}><h1>Estate Sale Tracker</h1></div>
-	// 	) : null} */}
-	// 	<div className={styles.mapContainer}>
-	// 		<div ref={mapRef} className={styles.map} >
-	// 			{!isDesktop ? (
-	// 				<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
-	// 			) : null}
-	// 		</div>
-	// 		{(saleDetails && isDesktop) ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
-	// 		{/* <DisplayToggle /> */}
-	// 	</div>
-	// </>
-	// );
 }
 
 export default Map;

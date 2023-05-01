@@ -139,4 +139,73 @@
   max-width: 70%;
   padding: 20px;
 }
+
+.infoBoxS .infoBoxContainer p strong {
+  color: lightgreen;
+}
+
+.infoBoxS .infoBoxContainer .matchingSaleContainer {
+  max-width: 250px;
+}
+
+.infoBoxS .infoBoxContainer .matchingSaleContainer .matchingSale {
+  font-size: 12px;
+  padding: 8px;
+  border: solid green 1px;
+  border-radius: 12px;
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+.infoBoxS .infoBoxContainer .matchingSaleContainer .matchingSale .saleDetailsBtn {
+  font-size: 12px;
+  display: block;
+  margin: auto;
+  background-color: transparent;
+  color: lightgreen;
+  border: none;
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.infoBoxS .infoBoxContainer .matchingSaleContainer .sliderController {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  gap: 10px;
+}
+
+.infoBoxS .infoBoxContainer .matchingSaleContainer .sliderController button {
+  width: 50%;
+  border: 0;
+  border-radius: 8px;
+}
+
+.infoBoxS .infoBoxContainer .matchingSaleContainer .sliderController button:hover {
+  -webkit-transform: scale(1.05);
+          transform: scale(1.05);
+  -webkit-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+          box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.infoBoxS .infoBoxContainer .matchingSaleContainer .sliderController button:active {
+  -webkit-transform: scale(0.95);
+          transform: scale(0.95);
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.infoBoxS .infoBoxContainer .closeBtn {
+  background-color: lightgreen;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 20px;
+  margin-top: 10px;
+  width: 100%;
+  color: white;
+}
 /*# sourceMappingURL=map.module.css.map */
