@@ -21,7 +21,10 @@ function InfoBox(props: Props) {
 	};
 
 	const sliderConfig: Settings = {
-		arrows: false
+		arrows: false,
+		swipeToSlide: false,
+		swipe: false,
+		afterChange: (index) => { onSaleClick(saleList[index].id); }
 	};
 
 	return (
