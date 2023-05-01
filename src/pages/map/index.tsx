@@ -69,7 +69,7 @@ function Map(props: Props) {
 		getSaleDetails(sale.id);
 	};
 
-	const handleClusterClick = (cluster: Cluster) => {
+	const handleClusterClick = async (cluster: Cluster) => {
 		const markers = cluster.getMarkers();
 		const firstMarkerPosition = markers[0]?.getPosition();
 		if (!firstMarkerPosition) return;
@@ -90,7 +90,9 @@ function Map(props: Props) {
 			if (!details.length) return;
 
 			setSalesWithMatchingPositions(details as CoordinateSaleData[]);
-			// keep the map at the same zoom level
+			// automatically open the first sale in details
+			details[0]?.id && await getSaleDetails(details[0].id);
+
 			return;
 		} else {
 			setSalesWithMatchingPositions(null);
