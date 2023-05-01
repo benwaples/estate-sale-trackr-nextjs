@@ -10,7 +10,7 @@ import styles from '../../styles/map.module.scss';
 import useScreenQuery from '@/hooks/use-screen-query';
 import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
 import MobileMapDetailedSale from '@/components/estate-sale/mobile-map-detailed-sale';
-import InfoBox from './infobox';
+import InfoBox from '../../components/estate-sale/infobox';
 
 export const getServerSideProps = async () => {
 	const saleInfo = await allUpcomingSaleIds(true);
