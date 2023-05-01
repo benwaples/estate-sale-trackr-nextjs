@@ -38,7 +38,7 @@ function Map(props: Props) {
 
 	const mapRef = useRef<google.maps.Map | null>();
 
-	const getSaleDetails = async (saleId: number) => {
+	const getSaleDetails = useCallback(async (saleId: number) => {
 		const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${saleId}`);
 		setSaleDetails(_saleDetails);
 
@@ -54,7 +54,7 @@ function Map(props: Props) {
 		if (!isDesktop) {
 			setSaleView(MobileMapSaleViewType.minimized);
 		}
-	};
+	}, [isDesktop]);
 
 	const handleMarkerClick = async (e: google.maps.MapMouseEvent, sale: CoordinateSaleData) => {
 		if (mapRef.current && e.latLng) mapRef.current.panTo(e.latLng);
@@ -92,7 +92,6 @@ function Map(props: Props) {
 			// keep the map at the same zoom level
 			return;
 		} else {
-			console.log('should close window');
 			setSalesWithMatchingPositions(null);
 		}
 
@@ -110,7 +109,7 @@ function Map(props: Props) {
 		}
 	}, [firstSaleInfo, getSaleDetails]);
 
-
+	console.log('salesWithMatching', salesWithMatchingPositions);
 	return (isLoaded ? (
 		<div className={styles.mapContainer}>
 			<GoogleMap
@@ -146,8 +145,7 @@ function Map(props: Props) {
 				{salesWithMatchingPositions ? (
 					<InfoBoxF
 						position={new google.maps.LatLng(salesWithMatchingPositions[0].coordinates)}
-						options={{ closeBoxURL: '', disableAutoPan: true, boxClass: styles.infoBoxS, visible: !!salesWithMatchingPositions }}
-
+						options={{ closeBoxURL: '', disableAutoPan: true, boxClass: styles.infoBoxS, visible: !!salesWithMatchingPositions, alignBottom: true }}
 					>
 						<div className={styles.infoBoxContainer} >
 							<p>{salesWithMatchingPositions.length} sales in this zipcode without adddress posted</p>
