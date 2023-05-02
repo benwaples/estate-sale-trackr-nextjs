@@ -9,6 +9,7 @@ import useFavicon from '@/hooks/useFavicon';
 export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const favicon = useFavicon();
 
+  // used for mobile to set the height to account for the browser navbar
   useEffect(() => {
     const documentHeight = () => {
       const doc = document.documentElement;
