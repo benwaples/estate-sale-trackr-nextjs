@@ -53,7 +53,7 @@ function DetailedSaleCard(props: Props) {
 	const { isMobile, isDesktop } = useScreenQuery();
 	const { saleId, sale, onMouseEnter, onMouseLeave } = props;
 
-	const tabs = Object.keys(sale ?? {}).filter(key => !['id', !isMobile && 'images'].includes(key)).reverse();
+	const tabs = Object.keys(sale ?? {}).filter(key => !['id', 'coordinates', !isMobile && 'images'].includes(key)).reverse();
 	const hasImages = !!sale?.images?.length;
 	const initialDesktopTab = !!sale?.["sale details"] ? "sale details" : tabs[0];
 	const initialMobileTab = (hasImages && isMobile) ? 'images' : undefined;
