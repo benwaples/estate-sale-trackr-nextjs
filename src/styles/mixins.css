@@ -1,1 +1,17 @@
-/* No CSS *//*# sourceMappingURL=mixins.css.map */
+@-webkit-keyframes skeleton-loading {
+  0% {
+    background-color: #3c3939;
+  }
+  100% {
+    background-color: #141414;
+  }
+}
+@keyframes skeleton-loading {
+  0% {
+    background-color: #3c3939;
+  }
+  100% {
+    background-color: #141414;
+  }
+}
+/*# sourceMappingURL=mixins.css.map */

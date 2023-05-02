@@ -7,3 +7,21 @@
     @content;
   }
 }
+
+
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: hsl(0, 2%, 23%);
+  }
+  100% {
+    background-color: hsl(0, 0%, 8%);
+  }
+}
+
+@mixin skeleton($height, $width) {
+  height: $height;
+  width: $width;
+  
+  animation: skeleton-loading 1s linear infinite alternate;
+}

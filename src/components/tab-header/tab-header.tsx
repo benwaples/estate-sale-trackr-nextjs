@@ -6,10 +6,11 @@ interface Props {
 	tabs: string[];
 	onClick: (tab: string) => void;
 	initTab?: string;
+	loading?: boolean;
 }
 
 function TabHeader(props: Props) {
-	const { tabs, onClick, initTab } = props;
+	const { tabs, onClick, initTab, loading } = props;
 
 	const [activeTab, setActiveTab] = useState(initTab ?? tabs[0]);
 
@@ -27,7 +28,7 @@ function TabHeader(props: Props) {
 	};
 
 	return (
-		<div className={styles.tabHeader}><ul>{tabs.map(generateTabButton)}</ul></div>
+		<div className={cn(styles.tabHeader, { [styles.skeleton]: loading })}><ul>{tabs.map(generateTabButton)}</ul></div>
 	);
 }
 
