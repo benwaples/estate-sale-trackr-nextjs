@@ -31,12 +31,17 @@ export async function allUpcomingSaleIds(shouldIncludeLatLng?: boolean): Promise
 
 		const href = link?.attributes.getNamedItem('href');
 		const saleId = href?.textContent?.split('=')[1];
-		let addressText = removeTabsAndNewLines(address?.textContent ?? '');
+
+		let addressText = address?.textContent;
+
+		const addressLink = address?.querySelector('a');
+		if (!!addressLink?.children.length) {
+			addressText = removeTabsAndNewLines(addressLink.innerHTML);
+		} else {
+			addressText = `Region - ${addressText?.slice(3)}`;
+		}
 
 		if (!saleId || !addressText) return;
-		if (addressText.slice(0, 3).toLowerCase() === 'tba') {
-			addressText = `Region - ${addressText.slice(3)}`;
-		}
 		data.push({
 			id: Number(saleId),
 			address: addressText
@@ -121,8 +126,6 @@ async function allUpcomingSales(
 	if (req.method !== 'GET') return res.status(404);
 
 	try {
-		const saleIds = await allUpcomingSaleIds();
-
 		const saleInfo = await allUpcomingSalesHandler();
 
 		res.send(saleInfo);
