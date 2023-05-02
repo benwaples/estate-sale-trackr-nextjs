@@ -11,7 +11,7 @@ export async function parseResponseBodyIntoDom(response: Response): Promise<Docu
 
 export function removeTabsAndNewLines(x: string | undefined): string | null {
 	if (!x) return null;
-	return x.replace(/[\t\n\r]/gm, ' ').trim();
+	return x.replace(/[\t\n\r]|<br>/gm, ' ').trim();
 }
 
 export const monthIndex: Dictionary = {
