@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useMemo, useState, useCallback, useRef, TouchEventHandler } from 'react';
 import cn from 'classnames';
-import { MobileMapSaleViewType, SaleDetailsWithCoordinates } from '@/types';
+import { MobileMapSaleViewType, SaleDetails, } from '@/types';
 import TabHeader from '../tab-header/tab-header';
 import { getAddressContent, getDatesContent } from './detailed-sale-card';
 import Slider, { Settings } from 'react-slick';
@@ -11,7 +11,7 @@ import useScreenQuery from '@/hooks/use-screen-query';
 import styles from '../../styles/map.module.scss';
 
 interface Props {
-	sale: SaleDetailsWithCoordinates | null;
+	sale: SaleDetails | null;
 	view: { type: MobileMapSaleViewType, handleViewChange: React.Dispatch<React.SetStateAction<MobileMapSaleViewType>> };
 }
 
@@ -44,7 +44,7 @@ function MobileMapDetailedSale(props: Props) {
 			return;
 		}
 		if (tab === 'address') {
-			setContent(getAddressContent(sale?.address, sale?.coordinates) ?? '');
+			setContent(getAddressContent(sale?.address) ?? '');
 			return;
 		}
 		setContent(<p>{sale?.[tab]}</p>);

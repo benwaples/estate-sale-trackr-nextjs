@@ -3,7 +3,7 @@ import { GoogleMap, useJsApiLoader, MarkerF, MarkerClustererF, InfoBoxF } from '
 import { Cluster } from '@react-google-maps/marker-clusterer/dist';
 import Router, { useRouter } from 'next/router';
 
-import { CoordinateSaleData, MobileMapSaleViewType, SaleDetailsWithCoordinates } from '@/types';
+import { CoordinateSaleData, MobileMapSaleViewType, SaleDetails } from '@/types';
 import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
 import { getHelper } from '@/utils/utils';
 import styles from '../../styles/map.module.scss';
@@ -25,7 +25,7 @@ interface Props {
 function Map(props: Props) {
 	const { saleInfo } = props;
 
-	const [saleDetails, setSaleDetails] = useState<SaleDetailsWithCoordinates | null>(null);
+	const [saleDetails, setSaleDetails] = useState<SaleDetails | null>(null);
 	const [saleView, setSaleView] = useState<MobileMapSaleViewType>(MobileMapSaleViewType.hidden);
 	const [salesWithMatchingPositions, setSalesWithMatchingPositions] = useState<CoordinateSaleData[] | null>(null);
 
@@ -41,7 +41,7 @@ function Map(props: Props) {
 
 	const getSaleDetails = useCallback(async (saleId: number, coordinates: CoordinateSaleData['coordinates']) => {
 		const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${saleId}`);
-		setSaleDetails({ ..._saleDetails, coordinates });
+		setSaleDetails(_saleDetails);
 		Router.push(
 			{
 				pathname: '',

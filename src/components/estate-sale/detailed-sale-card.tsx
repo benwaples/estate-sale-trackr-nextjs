@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
 import Slider, { Settings } from 'react-slick';
-import { CoordinateSaleData, SaleDetails } from '@/types';
+import { SaleDetails } from '@/types';
 import TabHeader from '../tab-header/tab-header';
 
 import 'slick-carousel/slick/slick.css';
@@ -13,7 +13,7 @@ import FollowSale from '../follow-sale/follow-sale';
 
 interface Props {
 	saleId?: number;
-	sale: (SaleDetails & CoordinateSaleData) | null;
+	sale: SaleDetails | null;
 	onMouseEnter?: () => void;
 	onMouseLeave?: () => void;
 }
@@ -37,15 +37,15 @@ export function getDatesContent(dates: SaleDetails["dates"] | undefined) {
 	);
 }
 
-export function getAddressContent(address: string | undefined, coordinates: CoordinateSaleData['coordinates'] | undefined) {
-	if (!coordinates || !address) return;
+export function getAddressContent(address: string | undefined) {
+	if (!address) return;
 
 	if (address.toLowerCase().includes('region')) {
 		return address;
 	}
 
 	return (
-		<a href={`https://www.google.com/maps/place/${coordinates.lat},${coordinates.lng}`} target='_blank'>{address}</a>
+		<a href={`https://www.google.com/maps/place/?q=${encodeURI(address)}`} target='_blank'>{address}</a>
 	);
 }
 
@@ -82,7 +82,7 @@ function DetailedSaleCard(props: Props) {
 			return;
 		}
 		if (tab === 'address') {
-			setContent(getAddressContent(sale?.address, sale?.coordinates) ?? '');
+			setContent(getAddressContent(sale?.address) ?? '');
 			return;
 		}
 		setContent(<p>{sale?.[tab]}</p>);

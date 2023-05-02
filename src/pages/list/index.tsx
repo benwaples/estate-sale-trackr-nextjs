@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Router, { useRouter } from 'next/router';
 import Slider, { Settings } from 'react-slick';
 import cn from 'classnames';
-import { BaseSaleData, SaleDetails, SaleDetailsWithCoordinates } from '@/types';
+import { BaseSaleData, SaleDetails } from '@/types';
 import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -26,10 +26,9 @@ function EstateSaleList(props: Props) {
 	const { saleInfo } = props;
 	const [canSwipe, setCanSwipe] = useState(true);
 	const [currentSlide, setCurrentSlide] = useState(0);
-	const [detailedSaleMap, setDetailedSaleMap] = useState<{ [key: SaleDetailsWithCoordinates["id"]]: SaleDetailsWithCoordinates } | null>(null);
+	const [detailedSaleMap, setDetailedSaleMap] = useState<{ [key: SaleDetails["id"]]: SaleDetails } | null>(null);
 	const [initialDetailedSlide, setInitialDetailedSlide] = useState<number>(0);
-	const [loadingSale, setLoadingSale] = useState(true);
-	const [swiping, setSwiping] = useState(false);
+	const [, setLoadingSale] = useState(true);
 
 	const detailedSliderRef = useRef<Slider | null>(null);
 	const thumbnailSliderRef = useRef<Slider | null>(null);
