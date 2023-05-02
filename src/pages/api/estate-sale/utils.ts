@@ -53,7 +53,7 @@ export function parseSaleDateString(x: string | undefined) {
 	const [startDayOfWeek, startDayOfMonth, startMonth, startYear, startTimeOfDay, startMeridiem] = start.split(' ').filter(el => el !== 'of');
 	const [endDayOfWeek, endDayOfMonth, endMonth, endYear, endTimeOfDay, endMeridiem] = end.split(' ').filter(el => !!el && el !== 'of');
 
-	// MM DD, YYYY TTT:TT:TT GMT-0700
+	// MM DD, YYYY TTT:TT:TT GMT-0700 -- hard coding PST because no matter where we get the data from, they always send it as it is PST
 	const startTime = new Date(`${monthIndex[startMonth]} ${(startDayOfMonth.slice(0, -2).padStart(2, '0'))}, ${startYear} ${convertTime12to24(startTimeOfDay, startMeridiem)} GMT-0700`).getTime();
 	const endTime = new Date(`${monthIndex[endMonth]} ${(endDayOfMonth.slice(0, -2).padStart(2, '0'))}, ${endYear} ${convertTime12to24(endTimeOfDay, endMeridiem)} GMT-0700`).getTime();
 
