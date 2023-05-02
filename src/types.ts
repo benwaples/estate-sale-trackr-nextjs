@@ -28,6 +28,8 @@ export interface SaleDetails extends Dictionary {
 	images: string[]
 }
 
+export type SaleDetailsWithCoordinates = SaleDetails & CoordinateSaleData
+
 export enum Status {
 	inactive,
 	active

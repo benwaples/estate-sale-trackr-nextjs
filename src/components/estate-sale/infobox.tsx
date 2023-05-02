@@ -6,7 +6,7 @@ import Slider, { Settings } from 'react-slick';
 
 interface Props {
 	saleList: CoordinateSaleData[];
-	onSaleClick: (id: number) => void;
+	onSaleClick: (id: number, coordinates: CoordinateSaleData['coordinates']) => void;
 	onClose: () => void;
 }
 
@@ -15,16 +15,16 @@ function InfoBox(props: Props) {
 
 	const sliderRef = useRef<Slider | null>(null);
 
-	const handleSaleClick: (id: number) => React.MouseEventHandler<HTMLDivElement> = (id) => async (e) => {
+	const handleSaleClick: (id: number, coordinates: CoordinateSaleData['coordinates']) => React.MouseEventHandler<HTMLDivElement> = (id, coordinates) => async (e) => {
 		e.stopPropagation();
-		await onSaleClick(id);
+		await onSaleClick(id, coordinates);
 	};
 
 	const sliderConfig: Settings = {
 		arrows: false,
 		swipeToSlide: false,
 		swipe: false,
-		afterChange: (index) => { onSaleClick(saleList[index].id); }
+		afterChange: (index) => { onSaleClick(saleList[index].id, saleList[index].coordinates); }
 	};
 
 	return (
@@ -39,7 +39,7 @@ function InfoBox(props: Props) {
 					<Slider {...sliderConfig} ref={ref => sliderRef.current = ref}>
 						{saleList.map((sale, i) => {
 							return (
-								<div className={styles.matchingSale} key={sale.id} onClick={handleSaleClick(sale.id)}>
+								<div className={styles.matchingSale} key={sale.id} onClick={handleSaleClick(sale.id, sale.coordinates)}>
 									<strong>{i + 1}.</strong>
 									<br />
 									{sale.address} <button className={styles.saleDetailsBtn}>See Details</button>

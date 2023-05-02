@@ -3,7 +3,7 @@ import { GoogleMap, useJsApiLoader, MarkerF, MarkerClustererF, InfoBoxF } from '
 import { Cluster } from '@react-google-maps/marker-clusterer/dist';
 import Router, { useRouter } from 'next/router';
 
-import { CoordinateSaleData, MobileMapSaleViewType, SaleDetails } from '@/types';
+import { CoordinateSaleData, MobileMapSaleViewType, SaleDetailsWithCoordinates } from '@/types';
 import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
 import { getHelper } from '@/utils/utils';
 import styles from '../../styles/map.module.scss';
@@ -25,7 +25,7 @@ interface Props {
 function Map(props: Props) {
 	const { saleInfo } = props;
 
-	const [saleDetails, setSaleDetails] = useState<SaleDetails | null>(null);
+	const [saleDetails, setSaleDetails] = useState<SaleDetailsWithCoordinates | null>(null);
 	const [saleView, setSaleView] = useState<MobileMapSaleViewType>(MobileMapSaleViewType.hidden);
 	const [salesWithMatchingPositions, setSalesWithMatchingPositions] = useState<CoordinateSaleData[] | null>(null);
 
@@ -39,10 +39,9 @@ function Map(props: Props) {
 
 	const mapRef = useRef<google.maps.Map | null>();
 
-	const getSaleDetails = useCallback(async (saleId: number) => {
+	const getSaleDetails = useCallback(async (saleId: number, coordinates: CoordinateSaleData['coordinates']) => {
 		const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${saleId}`);
-		setSaleDetails(_saleDetails);
-
+		setSaleDetails({ ..._saleDetails, coordinates });
 		Router.push(
 			{
 				pathname: '',
@@ -66,7 +65,7 @@ function Map(props: Props) {
 		if (salesWithMatchingPositions) setSalesWithMatchingPositions(null);
 
 		// show sale details
-		getSaleDetails(sale.id);
+		getSaleDetails(sale.id, sale.coordinates);
 	};
 
 	const handleClusterClick = async (cluster: Cluster) => {
@@ -90,8 +89,12 @@ function Map(props: Props) {
 			if (!details.length) return;
 
 			setSalesWithMatchingPositions(details as CoordinateSaleData[]);
+
 			// automatically open the first sale in details
-			details[0]?.id && await getSaleDetails(details[0].id);
+			const firstSaleDetails = details[0];
+			if (!firstSaleDetails) return;
+
+			details[0]?.id && await getSaleDetails(firstSaleDetails?.id, firstSaleDetails?.coordinates);
 
 			return;
 		} else {
@@ -108,7 +111,7 @@ function Map(props: Props) {
 	const onMapLoad = useCallback(async (map: google.maps.Map) => {
 		mapRef.current = map;
 		if (firstSaleInfo) {
-			await getSaleDetails(firstSaleInfo.id);
+			await getSaleDetails(firstSaleInfo.id, firstSaleInfo.coordinates);
 		}
 	}, [firstSaleInfo, getSaleDetails]);
 
@@ -147,8 +150,8 @@ function Map(props: Props) {
 				{salesWithMatchingPositions ? (
 					<InfoBox
 						saleList={salesWithMatchingPositions}
-						onSaleClick={async (id) => {
-							await getSaleDetails(id);
+						onSaleClick={async (id, coordinates) => {
+							await getSaleDetails(id, coordinates);
 							mapRef.current?.panTo(new google.maps.LatLng(salesWithMatchingPositions[0].coordinates));
 						}}
 						onClose={() => setSalesWithMatchingPositions(null)}
