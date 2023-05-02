@@ -85,9 +85,7 @@ function DetailedSaleCard(props: Props) {
 	return (
 		<div className={styles.saleCard} key={saleId}>
 			<TabHeader loading={!sale} tabs={tabs} initTab={initialTab} onClick={handleTabChange} />
-			{content ? (
-				<div className={cn(styles.content, { [styles.skeleton]: !sale })} key={saleId} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onTouchStart={onMouseEnter} onTouchEnd={onMouseLeave}>{content}</div>
-			) : null}
+			<div className={cn(styles.content, { [styles.skeleton]: !sale })} key={saleId} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onTouchStart={onMouseEnter} onTouchEnd={onMouseLeave}>{content}</div>
 			{(isMobile && !content) || isDesktop ? (
 				sale ? (
 					hasImages ? (
@@ -101,10 +99,10 @@ function DetailedSaleCard(props: Props) {
 						</>
 					) : <NoImage description='Images have not been posted for this sale' />
 				) : (
-					<div className={styles.skeleton} />
+					<div className={styles.skeletonImage} />
 				)
-			) : null}
-			{sale ? <FollowSale {...sale} sale_id={saleId} /> : null}
+			) : <div className={styles.skeletonImage} />}
+			<FollowSale {...sale} sale_id={saleId} />
 		</div>
 	);
 }

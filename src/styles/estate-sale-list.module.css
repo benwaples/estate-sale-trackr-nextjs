@@ -119,6 +119,13 @@
   overflow: auto;
 }
 
+.saleCard .content.skeleton {
+  margin: 10px;
+  height: 20%;
+  -webkit-animation: skeleton-loading 1s linear infinite alternate;
+          animation: skeleton-loading 1s linear infinite alternate;
+}
+
 .saleCard .imageSliderWrapper {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -145,6 +152,13 @@
   aspect-ratio: 16/9;
   -o-object-fit: contain;
      object-fit: contain;
+}
+
+.saleCard .skeletonImage {
+  margin: auto 10px;
+  height: 40%;
+  -webkit-animation: skeleton-loading 1s linear infinite alternate;
+          animation: skeleton-loading 1s linear infinite alternate;
 }
 
 .saleCard .sliderPagination {

@@ -19,9 +19,6 @@
   }
 }
 
-@mixin skeleton($height, $width) {
-  height: $height;
-  width: $width;
-  
+@mixin skeleton() {
   animation: skeleton-loading 1s linear infinite alternate;
 }

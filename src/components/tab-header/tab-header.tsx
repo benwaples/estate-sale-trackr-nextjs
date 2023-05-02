@@ -28,7 +28,15 @@ function TabHeader(props: Props) {
 	};
 
 	return (
-		<div className={cn(styles.tabHeader, { [styles.skeleton]: loading })}><ul>{tabs.map(generateTabButton)}</ul></div>
+		<div className={styles.tabHeader}>
+			{loading ? (
+				<ul>
+					{Array(4).fill('').map((_, i) => <li key={i} className={cn(styles.tabHeaderButton, styles.skeleton)} />)}
+				</ul>
+			) : (
+				<ul>{tabs.map(generateTabButton)}</ul>
+			)}
+		</div>
 	);
 }
 
