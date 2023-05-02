@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import cn from 'classnames';
 import Slider, { Settings } from 'react-slick';
 import { SaleDetails } from '@/types';
 import TabHeader from '../tab-header/tab-header';
@@ -12,8 +12,8 @@ import useScreenQuery from '@/hooks/use-screen-query';
 import FollowSale from '../follow-sale/follow-sale';
 
 interface Props {
-	saleId: number;
-	sale: SaleDetails | undefined;
+	saleId?: number;
+	sale: SaleDetails | null;
 	onMouseEnter?: () => void;
 	onMouseLeave?: () => void;
 }
@@ -82,26 +82,27 @@ function DetailedSaleCard(props: Props) {
 	};
 
 	// TODO: add drag handles
-
 	return (
 		<div className={styles.saleCard} key={saleId}>
-			<TabHeader tabs={tabs} initTab={initialTab} onClick={handleTabChange} />
-			{content ? (
-				<div className={styles.content} key={saleId} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onTouchStart={onMouseEnter} onTouchEnd={onMouseLeave}>{content}</div>
-			) : null}
+			<TabHeader loading={!sale} tabs={tabs} initTab={initialTab} onClick={handleTabChange} />
+			<div className={cn(styles.content, { [styles.skeleton]: !sale })} key={saleId} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onTouchStart={onMouseEnter} onTouchEnd={onMouseLeave}>{content}</div>
 			{(isMobile && !content) || isDesktop ? (
-				hasImages ? (
-					<>
-						<div className={styles.imageSliderWrapper} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-							<Slider {...sliderConfig}>
-								{sale.images.map(img => <img key={img} className={styles.saleImage} src={img} alt="" />)}
-							</Slider>
-						</div>
-						<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
-					</>
-				) : <NoImage description='Images have not been posted for this sale' />
-			) : null}
-			{sale ? <FollowSale {...sale} sale_id={saleId} /> : null}
+				sale ? (
+					hasImages ? (
+						<>
+							<div className={styles.imageSliderWrapper} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+								<Slider {...sliderConfig}>
+									{sale.images.map(img => <img key={img} className={styles.saleImage} src={img} alt="" />)}
+								</Slider>
+							</div>
+							<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
+						</>
+					) : <NoImage description='Images have not been posted for this sale' />
+				) : (
+					<div className={styles.skeletonImage} />
+				)
+			) : <div className={styles.skeletonImage} />}
+			<FollowSale {...sale} sale_id={saleId} />
 		</div>
 	);
 }

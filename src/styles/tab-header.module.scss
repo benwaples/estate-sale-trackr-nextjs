@@ -1,3 +1,5 @@
+@import './mixins.scss';
+
 .tabHeader {
 	ul {
 		list-style: none;
@@ -16,6 +18,12 @@
 			&.activeTab {
 				color: lightgreen;
 				border-bottom: 1px solid lightgreen;
+			}
+
+			&.skeleton {
+				height: 20px;
+				width: 25%;
+				@include skeleton()
 			}
 		}
 

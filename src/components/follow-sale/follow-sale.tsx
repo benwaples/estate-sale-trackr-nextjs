@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import cn from 'classnames';
 import Router, { useRouter } from 'next/router';
 import styles from '../../styles/follow-button.module.scss';
 import { SaleDetails } from '@/types';
@@ -6,8 +7,8 @@ import { postHelper } from '@/utils/utils';
 import { useSession, signIn } from 'next-auth/react';
 import Popover from '../popover/popover';
 
-function FollowSale(props: SaleDetails) {
-	const { id, sale_id, address, dates } = props;
+function FollowSale(props: Partial<SaleDetails>) {
+	const { sale_id, address, dates } = props;
 
 	const { data, update } = useSession();
 	const [loading, setLoading] = useState(false);
@@ -96,7 +97,7 @@ function FollowSale(props: SaleDetails) {
 					<p>To follow a sale, you must be  <button onClick={() => signIn(undefined, { callbackUrl: getCallbackUrl() })}>signed in</button></p>
 				</div>
 			</Popover>
-			<button className={styles.followSale} onClick={handleClick}>{loading ? "Loading..." : buttonText}</button>
+			<button disabled={!sale_id} className={cn(styles.followSale, { [styles.skeleton]: !sale_id })} onClick={handleClick}>{loading ? "Loading..." : buttonText}</button>
 		</>
 	);
 }

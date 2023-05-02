@@ -71,6 +71,12 @@
 		padding: 10px;
 		height: 40%;
 		overflow: auto;
+
+		&.skeleton {
+			margin: 10px;
+			height: 20%;
+			@include skeleton()
+		}
 	}
 
 	.imageSliderWrapper {
@@ -91,6 +97,12 @@
 				object-fit: contain;
 			}
 		}
+	}
+
+	.skeletonImage {
+		margin: auto 10px;
+		height: 40%;
+		@include skeleton()
 	}
 
 	.sliderPagination {

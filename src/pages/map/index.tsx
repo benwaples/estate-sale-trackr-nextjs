@@ -158,7 +158,7 @@ function Map(props: Props) {
 					<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
 				) : null}
 			</GoogleMap>
-			{(saleDetails && isDesktop) ? <DetailedSaleCard key={saleDetails.id} sale={saleDetails} saleId={saleDetails.id} /> : null}
+			{isDesktop ? <DetailedSaleCard key={saleDetails?.id} sale={saleDetails} saleId={saleDetails?.id} /> : null}
 		</div>
 	) : null);
 }
