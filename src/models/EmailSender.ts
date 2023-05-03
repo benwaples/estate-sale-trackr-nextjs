@@ -102,7 +102,7 @@ export class EmailSender {
 		<div class="container">
 			<h1 class="accent">Theres been an Update to a Sale youre following!</h1>
 			<p><span class="accent">${sale.address}</span></p>
-			<a href="https://estate-sale-trackr-nextjs.vercel.app/?sale_id=${sale.sale_id}" class="btn">Go to sale</a>
+			<a href="https://estate-sale-trackr-nextjs.vercel.app/map?sale_id=${sale.sale_id}" class="btn">Go to sale</a>
 		</div>
 		`).join('');
 
