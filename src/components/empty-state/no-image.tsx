@@ -1,6 +1,6 @@
-import Image from 'next/image'
-import cn from 'classnames'
-import styles from '../../styles/no-image.module.scss'
+import Image from 'next/image';
+import cn from 'classnames';
+import styles from '../../styles/no-image.module.scss';
 
 interface Props {
 	description?: string;
@@ -8,7 +8,7 @@ interface Props {
 }
 
 function NoImage(props: Props) {
-	const { description, classname } = props
+	const { description, classname } = props;
 	return (
 		<div className={cn(styles.noImage, classname)}>
 			<div className={styles.imageWrapper}>
@@ -21,7 +21,7 @@ function NoImage(props: Props) {
 			</div>
 			<p className={styles.noImageDescription}>{description ?? 'Image not found'}</p>
 		</div>
-	)
+	);
 }
 
-export default NoImage
+export default NoImage;

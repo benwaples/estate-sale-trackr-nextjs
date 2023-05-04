@@ -125,7 +125,8 @@ function DetailedSaleCard(props: Props) {
 				) : (
 					<div className={styles.skeletonImage} />
 				)
-			) : <div className={styles.skeletonImage} />}
+			) : !sale ? <div className={styles.skeletonImage} /> : null}
+			<FollowSale {...sale} sale_id={saleId} />
 			<h6 className={cn(styles.host, { [styles.skeleton]: !sale })}>
 				{hostUrl ? (
 					<a href={hostUrl} target='_blank'>{host}</a>
@@ -134,7 +135,6 @@ function DetailedSaleCard(props: Props) {
 				)
 				}
 			</h6>
-			<FollowSale {...sale} sale_id={saleId} />
 		</div>
 	);
 }
