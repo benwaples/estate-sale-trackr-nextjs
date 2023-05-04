@@ -40,7 +40,7 @@ function Map(props: Props) {
 	const mapRef = useRef<google.maps.Map | null>();
 	const saleInfoMap: { [id: string]: CoordinateSaleData } = useMemo(() => toMap(saleInfo, 'id'), [saleInfo]);
 
-	const getSaleDetails = useCallback(async (saleId: number, coordinates: CoordinateSaleData['coordinates']) => {
+	const getSaleDetails = useCallback(async (saleId: number, allowViewChange = true) => {
 		const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${saleId}`);
 		setSaleDetails(_saleDetails);
 		Router.push(
@@ -52,7 +52,7 @@ function Map(props: Props) {
 			{ shallow: true }
 		);
 
-		if (!isDesktop) {
+		if (!isDesktop && allowViewChange) {
 			setSaleView(MobileMapSaleViewType.minimized);
 		}
 	}, [isDesktop]);
@@ -66,7 +66,7 @@ function Map(props: Props) {
 		if (salesWithMatchingPositions) setSalesWithMatchingPositions(null);
 
 		// show sale details
-		getSaleDetails(sale.id, sale.coordinates);
+		getSaleDetails(sale.id);
 	};
 
 	const handleClusterClick = async (cluster: Cluster) => {
@@ -95,7 +95,7 @@ function Map(props: Props) {
 			const firstSaleDetails = details[0];
 			if (!firstSaleDetails) return;
 
-			details[0]?.id && await getSaleDetails(firstSaleDetails?.id, firstSaleDetails?.coordinates);
+			details[0]?.id && await getSaleDetails(firstSaleDetails?.id);
 
 			return;
 		} else {
@@ -113,7 +113,7 @@ function Map(props: Props) {
 		mapRef.current = map;
 		if (firstSaleInfo) {
 			setSaleView(MobileMapSaleViewType.minimized);
-			await getSaleDetails(firstSaleInfo.id, firstSaleInfo.coordinates);
+			await getSaleDetails(firstSaleInfo.id, false);
 		}
 	}, [firstSaleInfo, getSaleDetails]);
 
@@ -152,8 +152,8 @@ function Map(props: Props) {
 				{salesWithMatchingPositions ? (
 					<InfoBox
 						saleList={salesWithMatchingPositions}
-						onSaleClick={async (id, coordinates) => {
-							await getSaleDetails(id, coordinates);
+						onSaleClick={async (id) => {
+							await getSaleDetails(id);
 							mapRef.current?.panTo(new google.maps.LatLng(salesWithMatchingPositions[0].coordinates));
 						}}
 						onClose={() => setSalesWithMatchingPositions(null)}
