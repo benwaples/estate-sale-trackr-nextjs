@@ -112,6 +112,7 @@ function Map(props: Props) {
 	const onMapLoad = useCallback(async (map: google.maps.Map) => {
 		mapRef.current = map;
 		if (firstSaleInfo) {
+			setSaleView(MobileMapSaleViewType.minimized);
 			await getSaleDetails(firstSaleInfo.id, firstSaleInfo.coordinates);
 		}
 	}, [firstSaleInfo, getSaleDetails]);
