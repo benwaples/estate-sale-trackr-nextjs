@@ -117,7 +117,7 @@ function MobileMapDetailedSale(props: Props) {
 
 	return (
 		<div className={cn(styles.mapSaleCard, styles[view.type])} key={sale?.id} onTouchStart={handleTouchChange('startY')} onTouchEnd={handleTouchChange('endY')} >
-			<div className={styles.minimizedHeader}>
+			<div className={cn(styles.cardHeader, { [styles.minimized]: !isFullView })}>
 				{isFullView ? (
 					<TabHeader tabs={tabs} initTab={initialTab} onClick={handleTabChange} />
 				) : (

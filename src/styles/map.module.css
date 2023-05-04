@@ -127,13 +127,19 @@
        object-fit: contain;
     max-height: 200px;
   }
-  .mapContainer .map .mapSaleCard .minimizedHeader {
+  .mapContainer .map .mapSaleCard .cardHeader {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     -webkit-box-pack: justify;
         -ms-flex-pack: justify;
             justify-content: space-between;
+  }
+  .mapContainer .map .mapSaleCard .cardHeader.minimized {
+    padding: 0 25px;
+  }
+  .mapContainer .map .mapSaleCard .cardHeader.minimized h3 {
+    text-align: left;
   }
   .mapContainer .map .mapSaleCard .viewToggle {
     background-color: black;

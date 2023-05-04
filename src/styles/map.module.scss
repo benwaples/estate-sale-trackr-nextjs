@@ -108,9 +108,17 @@
 					}
 				}
 
-				.minimizedHeader {
+				.cardHeader {
 					display: flex;
 					justify-content: space-between;
+
+					&.minimized {
+						padding: 0 25px;
+
+						h3 {
+							text-align: left;
+						}
+					}
 				}
 				
 				.viewToggle {
