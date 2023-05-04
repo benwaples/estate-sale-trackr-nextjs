@@ -14,6 +14,8 @@ import FollowSale from '../follow-sale/follow-sale';
 interface Props {
 	saleId?: number;
 	sale: SaleDetails | null;
+	host?: string;
+	hostUrl?: string;
 	onMouseEnter?: () => void;
 	onMouseLeave?: () => void;
 }
@@ -59,7 +61,7 @@ export function getAddressContent(address: string | undefined) {
 
 function DetailedSaleCard(props: Props) {
 	const { isMobile, isDesktop } = useScreenQuery();
-	const { saleId, sale, onMouseEnter, onMouseLeave } = props;
+	const { saleId, sale, host, hostUrl, onMouseEnter, onMouseLeave } = props;
 
 	const tabs = Object.keys(sale ?? {}).filter(key => !['id', 'coordinates', !isMobile && 'images'].includes(key)).reverse();
 	const hasImages = !!sale?.images?.length;
@@ -124,6 +126,14 @@ function DetailedSaleCard(props: Props) {
 					<div className={styles.skeletonImage} />
 				)
 			) : <div className={styles.skeletonImage} />}
+			<h6 className={cn(styles.host, { [styles.skeleton]: !sale })}>
+				{hostUrl ? (
+					<a href={hostUrl} target='_blank'>{host}</a>
+				) : (
+					host
+				)
+				}
+			</h6>
 			<FollowSale {...sale} sale_id={saleId} />
 		</div>
 	);

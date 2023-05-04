@@ -98,16 +98,44 @@
 			}
 		}
 	}
-
 	.skeletonImage {
 		margin: auto 10px;
 		height: 40%;
-		@include skeleton()
-	}
+		position: relative;
+		@include skeleton();
 
+		&:after {
+			content: '';
+			height: 15px;
+			width: 10%;
+			margin-bottom: 10px;
+
+			position: absolute;
+			bottom: -30px;
+			right: 0;
+
+			@include skeleton();
+		}
+	}
+	
 	.sliderPagination {
 		margin-left: auto;
-		padding: 20px
+		padding: 10px;
+	}
+
+	.host {
+		margin-left: auto;
+		padding: 10px;
+
+		a {
+			text-decoration: underline;
+		}
+
+		&.skeleton {
+			width: 30%;
+			margin-bottom: 10px;
+			@include skeleton();
+		}
 	}
 }
 

@@ -157,13 +157,42 @@
 .saleCard .skeletonImage {
   margin: auto 10px;
   height: 40%;
+  position: relative;
+  -webkit-animation: skeleton-loading 1s linear infinite alternate;
+          animation: skeleton-loading 1s linear infinite alternate;
+}
+
+.saleCard .skeletonImage:after {
+  content: '';
+  height: 15px;
+  width: 10%;
+  margin-bottom: 10px;
+  position: absolute;
+  bottom: -30px;
+  right: 0;
   -webkit-animation: skeleton-loading 1s linear infinite alternate;
           animation: skeleton-loading 1s linear infinite alternate;
 }
 
 .saleCard .sliderPagination {
   margin-left: auto;
-  padding: 20px;
+  padding: 10px;
+}
+
+.saleCard .host {
+  margin-left: auto;
+  padding: 10px;
+}
+
+.saleCard .host a {
+  text-decoration: underline;
+}
+
+.saleCard .host.skeleton {
+  width: 30%;
+  margin-bottom: 10px;
+  -webkit-animation: skeleton-loading 1s linear infinite alternate;
+          animation: skeleton-loading 1s linear infinite alternate;
 }
 
 .thumbnailSale {

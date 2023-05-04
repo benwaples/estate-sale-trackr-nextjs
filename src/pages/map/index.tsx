@@ -5,7 +5,7 @@ import Router, { useRouter } from 'next/router';
 
 import { CoordinateSaleData, MobileMapSaleViewType, SaleDetails } from '@/types';
 import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
-import { getHelper } from '@/utils/utils';
+import { getHelper, toMap } from '@/utils/utils';
 import styles from '../../styles/map.module.scss';
 import useScreenQuery from '@/hooks/use-screen-query';
 import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
@@ -38,6 +38,7 @@ function Map(props: Props) {
 	const { isDesktop } = useScreenQuery();
 
 	const mapRef = useRef<google.maps.Map | null>();
+	const saleInfoMap = useMemo(() => toMap(saleInfo, 'id'), [saleInfo]);
 
 	const getSaleDetails = useCallback(async (saleId: number, coordinates: CoordinateSaleData['coordinates']) => {
 		const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${saleId}`);
@@ -161,7 +162,7 @@ function Map(props: Props) {
 					<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
 				) : null}
 			</GoogleMap>
-			{isDesktop ? <DetailedSaleCard key={saleDetails?.id} sale={saleDetails} saleId={saleDetails?.id} /> : null}
+			{isDesktop ? <DetailedSaleCard key={saleDetails?.id} sale={saleDetails} saleId={saleDetails?.id} host={saleDetails?.id ? saleInfoMap[saleDetails.id]?.host : undefined} hostUrl={saleDetails?.id ? saleInfoMap[saleDetails.id]?.hostUrl : undefined} /> : null}
 		</div>
 	) : null);
 }

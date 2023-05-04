@@ -12,6 +12,8 @@ export type NextApiRes<T = {}> = NextApiResponse & T;
 export interface BaseSaleData {
 	id: number;
 	address: string;
+	host?: string;
+	hostUrl?: string;
 }
 
 export interface CoordinateSaleData extends BaseSaleData {

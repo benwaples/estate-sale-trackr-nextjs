@@ -53,7 +53,7 @@ export async function allUpcomingSaleIds(shouldIncludeLatLng?: boolean): Promise
 			id: Number(saleId),
 			address: addressText,
 			host,
-			hostUrl
+			hostUrl: hostUrl ? `https://www.estatesale-finder.com/${hostUrl}` : undefined
 		}));
 
 		data.push(dataPoint);
