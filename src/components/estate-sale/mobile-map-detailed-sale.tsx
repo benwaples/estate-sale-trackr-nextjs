@@ -12,13 +12,15 @@ import styles from '../../styles/map.module.scss';
 
 interface Props {
 	sale: SaleDetails | null;
+	host?: string;
+	hostUrl?: string;
 	view: { type: MobileMapSaleViewType, handleViewChange: React.Dispatch<React.SetStateAction<MobileMapSaleViewType>> };
 }
 
 const defaultTouchPosition = 0;
 
 function MobileMapDetailedSale(props: Props) {
-	const { sale, view } = props;
+	const { sale, view, host, hostUrl } = props;
 
 	const tabs = Object.keys(sale ?? {}).filter(key => !['id', 'images'].includes(key)).reverse();
 	const hasImages = !!sale?.images?.length;
@@ -128,7 +130,7 @@ function MobileMapDetailedSale(props: Props) {
 				<div className={styles.content} key={sale?.id} onTouchMove={() => setTouchYPosition(defaultTouchPosition)} >{content}</div>
 			) : null}
 
-			<div className={styles.imageSliderWrapper}>
+			<div className={cn(styles.imageSliderWrapper, { [styles.hasImages]: hasImages })}>
 				{hasImages ? (
 					<>
 						{memoizedSlider}
@@ -140,6 +142,16 @@ function MobileMapDetailedSale(props: Props) {
 			</div>
 
 			{(sale && isFullView) ? <FollowSale {...sale} sale_id={sale.id} /> : null}
+			{isFullView ? (
+				<h6 className={cn(styles.host, { [styles.skeleton]: !sale })}>
+					Host: &nbsp;
+					{hostUrl ? (
+						<a href={hostUrl} target='_blank'>{host}</a>
+					) : (
+						host
+					)}
+				</h6>
+			) : null}
 		</div>
 	);
 }

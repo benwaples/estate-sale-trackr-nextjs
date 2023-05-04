@@ -1,3 +1,21 @@
+@-webkit-keyframes skeleton-loading {
+  0% {
+    background-color: #3c3939;
+  }
+  100% {
+    background-color: #141414;
+  }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: #3c3939;
+  }
+  100% {
+    background-color: #141414;
+  }
+}
+
 #__next {
   --doc-height: 100%;
 }
@@ -83,7 +101,8 @@
     padding: 0 25px 25px;
   }
   .mapContainer .map .mapSaleCard.full .imageSliderWrapper {
-    margin-bottom: 0;
+    margin-top: auto;
+    margin-bottom: auto;
     max-height: 50%;
   }
   .mapContainer .map .mapSaleCard h3 {
@@ -135,6 +154,19 @@
     margin-top: 10px;
     -webkit-transform: rotate(90deg);
             transform: rotate(90deg);
+  }
+  .mapContainer .map .mapSaleCard .host {
+    margin-left: auto;
+    padding: 0 10px 10px;
+  }
+  .mapContainer .map .mapSaleCard .host a {
+    text-decoration: underline;
+  }
+  .mapContainer .map .mapSaleCard .host.skeleton {
+    width: 30%;
+    margin-bottom: 10px;
+    -webkit-animation: skeleton-loading 1s linear infinite alternate;
+            animation: skeleton-loading 1s linear infinite alternate;
   }
 }
 

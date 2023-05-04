@@ -159,10 +159,23 @@ function Map(props: Props) {
 					/>
 				) : null}
 				{!isDesktop ? (
-					<MobileMapDetailedSale sale={saleDetails} view={{ type: saleView, handleViewChange: setSaleView }} />
+					<MobileMapDetailedSale
+						sale={saleDetails}
+						view={{ type: saleView, handleViewChange: setSaleView }}
+						host={saleDetails?.id ? saleInfoMap[saleDetails.id]?.host : undefined}
+						hostUrl={saleDetails?.id ? saleInfoMap[saleDetails.id]?.hostUrl : undefined}
+					/>
 				) : null}
 			</GoogleMap>
-			{isDesktop ? <DetailedSaleCard key={saleDetails?.id} sale={saleDetails} saleId={saleDetails?.id} host={saleDetails?.id ? saleInfoMap[saleDetails.id]?.host : undefined} hostUrl={saleDetails?.id ? saleInfoMap[saleDetails.id]?.hostUrl : undefined} /> : null}
+			{isDesktop ? (
+				<DetailedSaleCard
+					key={saleDetails?.id}
+					sale={saleDetails}
+					saleId={saleDetails?.id}
+					host={saleDetails?.id ? saleInfoMap[saleDetails.id]?.host : undefined}
+					hostUrl={saleDetails?.id ? saleInfoMap[saleDetails.id]?.hostUrl : undefined}
+				/>
+			) : null}
 		</div>
 	) : null);
 }

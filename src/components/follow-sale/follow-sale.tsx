@@ -88,7 +88,9 @@ function FollowSale(props: Partial<SaleDetails>) {
 
 	const buttonText = isFollowingSale ? 'Unfollow' : 'Follow';
 
-
+	if (data?.user?.email !== 'benwaples@gmail.com') {
+		return null;
+	}
 	return (
 		<>
 			<Popover open={openPopover} onClose={() => setOpenPopover(false)} className={styles.popoverWrapper}>

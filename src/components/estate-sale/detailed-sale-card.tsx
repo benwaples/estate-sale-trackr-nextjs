@@ -33,8 +33,8 @@ export function getDatesContent(dates: SaleDetails["dates"] | undefined) {
 	return (
 		<div className='dates'>
 			<ul>
-				<li>Start: {new Date(dates.startTime).toLocaleString('en-US', dateOptions)}</li>
-				<li>End: {new Date(dates.endTime).toLocaleString('en-US', dateOptions)}</li>
+				<li>Start:&nbsp;{new Date(dates.startTime).toLocaleString('en-US', dateOptions)}</li>
+				<li>End:&nbsp;{new Date(dates.endTime).toLocaleString('en-US', dateOptions)}</li>
 				<br />
 				{dates.dayAndTime.map(day => {
 					return (
@@ -105,11 +105,11 @@ function DetailedSaleCard(props: Props) {
 		arrows: false,
 	};
 
-	// TODO: add drag handles
 	return (
 		<div className={styles.saleCard} key={saleId}>
 			<TabHeader loading={!sale} tabs={tabs} initTab={initialTab} onClick={handleTabChange} />
 			<div className={cn(styles.content, { [styles.skeleton]: !sale })} key={saleId} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onTouchStart={onMouseEnter} onTouchEnd={onMouseLeave}>{content}</div>
+			{/* TODO: this is going to be confusing later, should definitely fix  */}
 			{(isMobile && !content) || isDesktop ? (
 				sale ? (
 					hasImages ? (
