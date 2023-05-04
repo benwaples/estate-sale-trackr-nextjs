@@ -38,7 +38,7 @@ function Map(props: Props) {
 	const { isDesktop } = useScreenQuery();
 
 	const mapRef = useRef<google.maps.Map | null>();
-	const saleInfoMap = useMemo(() => toMap(saleInfo, 'id'), [saleInfo]);
+	const saleInfoMap: { [id: string]: CoordinateSaleData } = useMemo(() => toMap(saleInfo, 'id'), [saleInfo]);
 
 	const getSaleDetails = useCallback(async (saleId: number, coordinates: CoordinateSaleData['coordinates']) => {
 		const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${saleId}`);

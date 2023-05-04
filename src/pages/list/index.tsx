@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Router, { useRouter } from 'next/router';
 import Slider, { Settings } from 'react-slick';
 import cn from 'classnames';
-import { BaseSaleData, SaleDetails } from '@/types';
+import { BaseSaleData, CoordinateSaleData, SaleDetails } from '@/types';
 import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -32,6 +32,8 @@ function EstateSaleList(props: Props) {
 
 	const detailedSliderRef = useRef<Slider | null>(null);
 	const thumbnailSliderRef = useRef<Slider | null>(null);
+
+	const saleInfoMap: { [id: string]: CoordinateSaleData } = useMemo(() => toMap(saleInfo, 'id'), [saleInfo]);
 
 	const { isMobile } = useScreenQuery();
 	const { query } = useRouter();
@@ -148,7 +150,15 @@ function EstateSaleList(props: Props) {
 				<Slider {...detailedSliderConfig} ref={ref => detailedSliderRef.current = ref}>
 					{saleInfo.map(sale => {
 						return (
-							<DetailedSaleCard key={sale.id} saleId={sale.id} sale={detailedSaleMap[sale.id]} onMouseEnter={() => setCanSwipe(false)} onMouseLeave={() => setCanSwipe(true)} />
+							<DetailedSaleCard
+								key={sale.id}
+								saleId={sale.id}
+								sale={detailedSaleMap[sale.id]}
+								onMouseEnter={() => setCanSwipe(false)}
+								onMouseLeave={() => setCanSwipe(true)}
+								host={saleInfoMap[sale.id] ? saleInfoMap[sale.id]?.host : undefined}
+								hostUrl={saleInfoMap[sale.id] ? saleInfoMap[sale.id]?.hostUrl : undefined}
+							/>
 						);
 					})}
 				</Slider>
