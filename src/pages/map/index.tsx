@@ -40,7 +40,15 @@ function Map(props: Props) {
 	const mapRef = useRef<google.maps.Map | null>();
 	const saleInfoMap: { [id: string]: CoordinateSaleData } = useMemo(() => toMap(saleInfo, 'id'), [saleInfo]);
 
-	const getSaleDetails = useCallback(async (saleId: number, allowViewChange = true) => {
+	const getSaleDetails = useCallback(async (saleId: number) => {
+
+		if (!isDesktop) {
+			setSaleView(MobileMapSaleViewType.minimized);
+		}
+
+		if (saleId === saleDetails?.id) return;
+		setSaleDetails(null);
+
 		const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${saleId}`);
 		setSaleDetails(_saleDetails);
 		Router.push(
@@ -52,10 +60,8 @@ function Map(props: Props) {
 			{ shallow: true }
 		);
 
-		if (!isDesktop && allowViewChange) {
-			setSaleView(MobileMapSaleViewType.minimized);
-		}
-	}, [isDesktop]);
+
+	}, [isDesktop, saleDetails?.id]);
 
 	const handleMarkerClick = async (e: google.maps.MapMouseEvent, sale: CoordinateSaleData) => {
 		if (mapRef.current && e.latLng) mapRef.current.panTo(e.latLng);
@@ -112,8 +118,7 @@ function Map(props: Props) {
 	const onMapLoad = useCallback(async (map: google.maps.Map) => {
 		mapRef.current = map;
 		if (firstSaleInfo) {
-			setSaleView(MobileMapSaleViewType.minimized);
-			await getSaleDetails(firstSaleInfo.id, false);
+			await getSaleDetails(firstSaleInfo.id);
 		}
 	}, [firstSaleInfo, getSaleDetails]);
 

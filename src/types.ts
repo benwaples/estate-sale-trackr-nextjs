@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import { NextApiRequest, NextApiResponse } from 'next';
 import User from './models/User';
 export interface Dictionary {
