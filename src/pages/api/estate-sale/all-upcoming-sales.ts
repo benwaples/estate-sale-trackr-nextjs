@@ -6,7 +6,9 @@ import { getHelper } from "@/utils/utils";
 
 interface allUpcomingSalesReturn {
 	id: number;
-	address: string
+	address: string;
+	host?: string | null;
+	hostUrl?: string | null;
 }
 
 async function getLatLngFromAddress(address: string): Promise<{ lat: number, lng: number }> {
@@ -28,9 +30,12 @@ export async function allUpcomingSaleIds(shouldIncludeLatLng?: boolean): Promise
 	saleRows.forEach(row => {
 		const link = row.querySelector('a.view');
 		const address = row.querySelector('.hide-for-small.medium-4.columns p');
+		const hostTitle = row.querySelector('.small-12 h5');
 
 		const href = link?.attributes.getNamedItem('href');
 		const saleId = href?.textContent?.split('=')[1];
+		const host = hostTitle?.textContent;
+		const hostUrl = hostTitle?.querySelector('a')?.getAttribute('href');
 
 		let addressText = address?.textContent;
 
@@ -42,10 +47,16 @@ export async function allUpcomingSaleIds(shouldIncludeLatLng?: boolean): Promise
 		}
 
 		if (!saleId || !addressText) return;
-		data.push({
+
+		// removes any undefined values
+		const dataPoint = JSON.parse(JSON.stringify({
 			id: Number(saleId),
-			address: addressText
-		});
+			address: addressText,
+			host,
+			hostUrl
+		}));
+
+		data.push(dataPoint);
 	});
 
 	if (shouldIncludeLatLng) {
