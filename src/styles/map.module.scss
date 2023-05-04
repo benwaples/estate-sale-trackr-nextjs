@@ -29,11 +29,8 @@
 		align-items: center;
 		flex-direction: column;
 		position: relative;
-		// 120px for header
-		// height: 100%;
 		
 		.map {
-			// height: calc(100% - 80px);
 			height: 100%;
 			width: 100%;
 			margin: unset;
@@ -69,6 +66,13 @@
 					.imageSliderWrapper {
 						margin-top: auto;
 						margin-bottom: auto;
+
+						&.skeleton {
+							width: 70%;
+							height: 70%;
+							margin: auto;
+							@include skeleton;
+						}
 					}
 				}
 
@@ -80,6 +84,25 @@
 						margin-top: auto;
 						margin-bottom: auto;
 						max-height: 50%;
+
+						&.skeleton {
+							width: 70%;
+							height: 40%;
+							margin: auto;
+							position: relative;
+							@include skeleton;
+
+							&:after {
+								content: '';
+								width: 30px;
+								height: 10px;
+								position: absolute;
+								bottom: -20px;
+								left: 50%;
+
+								@include skeleton;
+							}
+						}
 					}
 				}
 
@@ -92,6 +115,13 @@
 					text-align: left;
 					max-height: 40%;
 					overflow-y: scroll;
+
+					&.skeleton {
+						width: 100%;
+						height: 30%;
+						margin: auto;
+						@include skeleton;
+					}
 				}
 
 				.imageSliderWrapper {
@@ -117,6 +147,13 @@
 
 						h3 {
 							text-align: left;
+						}
+
+						.skeletonMiniHeader {
+							@include skeleton;
+							width: 50%;
+							height: 20px;
+							margin: auto;
 						}
 					}
 				}
@@ -149,7 +186,9 @@
 			
 					&.skeleton {
 						width: 30%;
+						height: 20px;
 						margin-bottom: 10px;
+						font-size: 0;
 						@include skeleton();
 					}
 				}

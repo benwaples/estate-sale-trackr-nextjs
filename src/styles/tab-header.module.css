@@ -16,6 +16,10 @@
   }
 }
 
+.tabHeader {
+  width: 100%;
+}
+
 .tabHeader ul {
   list-style: none;
   display: -webkit-box;

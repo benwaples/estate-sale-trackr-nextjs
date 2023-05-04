@@ -101,9 +101,6 @@ function MobileMapDetailedSale(props: Props) {
 		);
 	}, [sale?.images, sliderConfig, view.type]);
 
-	// loading card
-	if (!sale) return <></>;
-
 	// minimized/full view
 	const isFullView = view.type === MobileMapSaleViewType.full;
 
@@ -117,28 +114,34 @@ function MobileMapDetailedSale(props: Props) {
 
 	return (
 		<div className={cn(styles.mapSaleCard, styles[view.type])} key={sale?.id} onTouchStart={handleTouchChange('startY')} onTouchEnd={handleTouchChange('endY')} >
-			<div className={cn(styles.cardHeader, { [styles.minimized]: !isFullView })}>
+			<div className={cn(styles.cardHeader, { [styles.minimized]: !isFullView, [styles.skeleton]: !sale })}>
 				{isFullView ? (
-					<TabHeader tabs={tabs} initTab={initialTab} onClick={handleTabChange} />
+					<TabHeader tabs={tabs} initTab={initialTab} onClick={handleTabChange} loading={!sale} />
 				) : (
-					<h3>{sale?.address}</h3>
+					sale ? (
+						<h3>{sale?.address}</h3>
+					) : (
+						<div className={styles.skeletonMiniHeader} />
+					)
 				)}
 				{viewToggle}
 			</div>
 
-			{(content && isFullView) ? (
-				<div className={styles.content} key={sale?.id} onTouchMove={() => setTouchYPosition(defaultTouchPosition)} >{content}</div>
+			{isFullView ? (
+				<div className={cn(styles.content, { [styles.skeleton]: !sale })} key={sale?.id} onTouchMove={() => setTouchYPosition(defaultTouchPosition)} >{content}</div>
 			) : null}
 
-			<div className={cn(styles.imageSliderWrapper, { [styles.hasImages]: hasImages })}>
-				{hasImages ? (
-					<>
-						{memoizedSlider}
-						{isFullView ? (
-							<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
-						) : null}
-					</>
-				) : <NoImage description='Images have not been posted for this sale' />}
+			<div className={cn(styles.imageSliderWrapper, { [styles.hasImages]: hasImages, [styles.skeleton]: !sale })}>
+				{sale ? (
+					hasImages ? (
+						<>
+							{memoizedSlider}
+							{isFullView ? (
+								<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
+							) : null}
+						</>
+					) : <NoImage description='Images have not been posted for this sale' />
+				) : <div className={styles.skeletonImage} />}
 			</div>
 
 			{(sale && isFullView) ? <FollowSale {...sale} sale_id={sale.id} /> : null}

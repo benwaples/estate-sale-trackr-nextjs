@@ -1,6 +1,7 @@
 @import './mixins.scss';
 
 .tabHeader {
+	width: 100%;
 	ul {
 		list-style: none;
 		display: flex;

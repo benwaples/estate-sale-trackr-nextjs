@@ -96,6 +96,13 @@
     margin-top: auto;
     margin-bottom: auto;
   }
+  .mapContainer .map .mapSaleCard.minimized .imageSliderWrapper.skeleton {
+    width: 70%;
+    height: 70%;
+    margin: auto;
+    -webkit-animation: skeleton-loading 1s linear infinite alternate;
+            animation: skeleton-loading 1s linear infinite alternate;
+  }
   .mapContainer .map .mapSaleCard.full {
     height: 100%;
     padding: 0 25px 25px;
@@ -105,6 +112,24 @@
     margin-bottom: auto;
     max-height: 50%;
   }
+  .mapContainer .map .mapSaleCard.full .imageSliderWrapper.skeleton {
+    width: 70%;
+    height: 40%;
+    margin: auto;
+    position: relative;
+    -webkit-animation: skeleton-loading 1s linear infinite alternate;
+            animation: skeleton-loading 1s linear infinite alternate;
+  }
+  .mapContainer .map .mapSaleCard.full .imageSliderWrapper.skeleton:after {
+    content: '';
+    width: 30px;
+    height: 10px;
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    -webkit-animation: skeleton-loading 1s linear infinite alternate;
+            animation: skeleton-loading 1s linear infinite alternate;
+  }
   .mapContainer .map .mapSaleCard h3 {
     margin-bottom: 10px;
     color: white;
@@ -113,6 +138,13 @@
     text-align: left;
     max-height: 40%;
     overflow-y: scroll;
+  }
+  .mapContainer .map .mapSaleCard .content.skeleton {
+    width: 100%;
+    height: 30%;
+    margin: auto;
+    -webkit-animation: skeleton-loading 1s linear infinite alternate;
+            animation: skeleton-loading 1s linear infinite alternate;
   }
   .mapContainer .map .mapSaleCard .imageSliderWrapper {
     margin-top: auto;
@@ -140,6 +172,13 @@
   }
   .mapContainer .map .mapSaleCard .cardHeader.minimized h3 {
     text-align: left;
+  }
+  .mapContainer .map .mapSaleCard .cardHeader.minimized .skeletonMiniHeader {
+    -webkit-animation: skeleton-loading 1s linear infinite alternate;
+            animation: skeleton-loading 1s linear infinite alternate;
+    width: 50%;
+    height: 20px;
+    margin: auto;
   }
   .mapContainer .map .mapSaleCard .viewToggle {
     background-color: black;
@@ -170,7 +209,9 @@
   }
   .mapContainer .map .mapSaleCard .host.skeleton {
     width: 30%;
+    height: 20px;
     margin-bottom: 10px;
+    font-size: 0;
     -webkit-animation: skeleton-loading 1s linear infinite alternate;
             animation: skeleton-loading 1s linear infinite alternate;
   }
