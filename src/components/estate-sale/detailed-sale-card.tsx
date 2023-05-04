@@ -20,11 +20,19 @@ interface Props {
 
 export function getDatesContent(dates: SaleDetails["dates"] | undefined) {
 	if (!dates) return;
+	const dateOptions: Intl.DateTimeFormatOptions = {
+		weekday: 'long',
+		day: 'numeric',
+		month: 'long',
+		hour: 'numeric',
+		minute: 'numeric',
+		hour12: true
+	};
 	return (
 		<div className='dates'>
 			<ul>
-				<li>Start: {new Date(dates.startTime).toLocaleString()}</li>
-				<li>End: {new Date(dates.endTime).toLocaleString()}</li>
+				<li>Start: {new Date(dates.startTime).toLocaleString('en-US', dateOptions)}</li>
+				<li>End: {new Date(dates.endTime).toLocaleString('en-US', dateOptions)}</li>
 				<br />
 				{dates.dayAndTime.map(day => {
 					return (
