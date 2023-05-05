@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GoogleMap, useJsApiLoader, MarkerF, MarkerClustererF, InfoBoxF } from '@react-google-maps/api';
 import { Cluster } from '@react-google-maps/marker-clusterer/dist';
 import Router, { useRouter } from 'next/router';
+import cn from 'classnames';
 
 import { CoordinateSaleData, MobileMapSaleViewType, SaleDetails } from '@/types';
 import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
@@ -202,6 +203,7 @@ function Map(props: Props) {
 						hostUrl={saleDetails?.id ? saleInfoMap[saleDetails.id]?.hostUrl : undefined}
 					/>
 				) : null}
+				<button className={cn(styles.salesThisWeekBtn, { [styles.active]: query.sales_this_week })} onClick={() => handleSalesThisWeekClick(!query.sales_this_week)}>Sales This Week</button>
 			</GoogleMap>
 			{isDesktop ? (
 				<DetailedSaleCard
@@ -212,7 +214,6 @@ function Map(props: Props) {
 					hostUrl={saleDetails?.id ? saleInfoMap[saleDetails.id]?.hostUrl : undefined}
 				/>
 			) : null}
-			<button onClick={() => handleSalesThisWeekClick(!query.sales_this_week)}>Sales This Week</button>
 		</div>
 	) : null);
 }

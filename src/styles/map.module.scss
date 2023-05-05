@@ -16,6 +16,34 @@
 		margin: auto;
 		height: 600px;
 		width: 800px;
+
+		.salesThisWeekBtn {
+			position: absolute;
+			top: 0;
+			right: 0;	
+			margin: 10px 60px 10px 10px;
+			height: 40px;
+
+			background-color: white;
+			color: rgb(86, 86, 86);
+			padding: 10px 17px;
+			border-radius: 0;
+			border: 0;
+			font-size: 18px;
+			font-family: Roboto, Arial, Helvetica, sans-serif;
+			border-radius: 2px;
+			cursor: pointer;
+			box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+			
+			&.active {
+				color: black;
+				font-weight: 500;
+			}
+			&:hover {
+				background-color: rgb(235, 235, 235);
+				color: black;
+			}
+		}
 	}
 
 	.mapSaleCard {
