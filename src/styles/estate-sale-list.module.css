@@ -16,12 +16,17 @@
   }
 }
 
+#__next {
+  --doc-height: 100%;
+}
+
 .estateSaleList {
   max-width: 1440px;
   margin: auto;
   padding: 20px 80px;
   background-color: black;
   color: white;
+  height: var(--doc-height);
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;

@@ -1,5 +1,9 @@
 @import './mixins.scss';
 
+#__next {
+	--doc-height: 100%;
+}
+
 
 .estateSaleList {
   max-width: 1440px;
@@ -7,6 +11,7 @@
   padding: 20px 80px;
 	background-color: black;
 	color: white;
+	height: var(--doc-height);
 
 	display: flex;
 	justify-content: flex-start;

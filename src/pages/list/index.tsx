@@ -162,7 +162,9 @@ function EstateSaleList(props: Props) {
 						);
 					})}
 				</Slider>
-			) : "Loading..."}
+			) : (
+				<DetailedSaleCard sale={null} />
+			)}
 		</div>
 	);
 }
