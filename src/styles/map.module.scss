@@ -146,6 +146,7 @@
 				.content {
 					text-align: left;
 					max-height: 40%;
+					min-height: 40%;
 					overflow-y: scroll;
 
 					&.skeleton {
