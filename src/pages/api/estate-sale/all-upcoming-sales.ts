@@ -1,15 +1,8 @@
-import { Dictionary, RadarAddressResponse, RadarGeocodeForwardResponse, SaleDetails } from "@/types";
+import { BaseSaleData, Dictionary, RadarAddressResponse, RadarGeocodeForwardResponse, SaleDetails } from "@/types";
 import { parseResponseBodyIntoDom, parseSaleAddress, parseSaleDateString, removeTabsAndNewLines } from "./utils";
 import { NextApiRequest, NextApiResponse } from "next";
 import { checkAuthMiddleware } from "../auth/utils";
 import { getHelper } from "@/utils/utils";
-
-interface allUpcomingSalesReturn {
-	id: number;
-	address: string;
-	host?: string | null;
-	hostUrl?: string | null;
-}
 
 async function getLatLngFromAddress(address: string): Promise<{ lat: number, lng: number }> {
 	const response = await getHelper<RadarGeocodeForwardResponse>(`${process.env.RADAR_API_ENDPOINT}/geocode/forward?query=${address}`, { Authorization: process.env.RADAR_API_KEY });
@@ -19,42 +12,59 @@ async function getLatLngFromAddress(address: string): Promise<{ lat: number, lng
 	return { lat: latitude, lng: longitude };
 }
 
-export async function allUpcomingSaleIds(shouldIncludeLatLng?: boolean): Promise<allUpcomingSalesReturn[]> {
+function getDataFromSaleRow(row: Element, isThisWeek = false): BaseSaleData | undefined {
+	const link = row.querySelector('a.view');
+	const address = row.querySelector('.hide-for-small.medium-4.columns p');
+	const hostTitle = row.querySelector('.small-12 h5');
+
+	const href = link?.attributes.getNamedItem('href');
+	const saleId = href?.textContent?.split('=')[1];
+	const host = hostTitle?.textContent;
+	const hostUrl = hostTitle?.querySelector('a')?.getAttribute('href');
+
+	let addressText = address?.textContent;
+
+	const addressLink = address?.querySelector('a');
+	if (!!addressLink?.children.length) {
+		addressText = removeTabsAndNewLines(addressLink.innerHTML);
+	} else {
+		addressText = `Region - ${addressText?.slice(3)}`;
+	}
+
+	if (!saleId || !addressText) return;
+
+	// removes any undefined values
+	const dataPoint = JSON.parse(JSON.stringify({
+		id: Number(saleId),
+		address: addressText,
+		host,
+		hostUrl: hostUrl ? `https://www.estatesale-finder.com/${hostUrl}` : undefined,
+		isThisWeek
+	}));
+
+	return dataPoint;
+}
+
+export async function allUpcomingSaleIds(shouldIncludeLatLng?: boolean): Promise<BaseSaleData[]> {
 	const response = await fetch('https://www.estatesale-finder.com/all_sales_list.php?saletypeshow=1&regionsshow=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,31,32,33,34,23,24,25,26,27,28,29,35,36,37&proonly=false&todayonly=false');
 	const document = await parseResponseBodyIntoDom(response);
 
 	const saleRows = document.querySelectorAll('.salerow');
+	const salesThisWeek = document.querySelectorAll('.currentsalelist .salerow');
+	const upcomingSales = document.querySelectorAll('.upcomingsalelist .salerow');
 
-	const data: allUpcomingSalesReturn[] = [];
+	const data: BaseSaleData[] = [];
 
-	saleRows.forEach(row => {
-		const link = row.querySelector('a.view');
-		const address = row.querySelector('.hide-for-small.medium-4.columns p');
-		const hostTitle = row.querySelector('.small-12 h5');
+	salesThisWeek.forEach(row => {
+		const dataPoint = getDataFromSaleRow(row);
+		if (!dataPoint) return;
 
-		const href = link?.attributes.getNamedItem('href');
-		const saleId = href?.textContent?.split('=')[1];
-		const host = hostTitle?.textContent;
-		const hostUrl = hostTitle?.querySelector('a')?.getAttribute('href');
+		data.push(dataPoint);
+	});
 
-		let addressText = address?.textContent;
-
-		const addressLink = address?.querySelector('a');
-		if (!!addressLink?.children.length) {
-			addressText = removeTabsAndNewLines(addressLink.innerHTML);
-		} else {
-			addressText = `Region - ${addressText?.slice(3)}`;
-		}
-
-		if (!saleId || !addressText) return;
-
-		// removes any undefined values
-		const dataPoint = JSON.parse(JSON.stringify({
-			id: Number(saleId),
-			address: addressText,
-			host,
-			hostUrl: hostUrl ? `https://www.estatesale-finder.com/${hostUrl}` : undefined
-		}));
+	upcomingSales.forEach(row => {
+		const dataPoint = getDataFromSaleRow(row, true);
+		if (!dataPoint) return;
 
 		data.push(dataPoint);
 	});

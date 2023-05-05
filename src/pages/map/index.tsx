@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GoogleMap, useJsApiLoader, MarkerF, MarkerClustererF, InfoBoxF } from '@react-google-maps/api';
 import { Cluster } from '@react-google-maps/marker-clusterer/dist';
 import Router, { useRouter } from 'next/router';
+import cn from 'classnames';
 
 import { CoordinateSaleData, MobileMapSaleViewType, SaleDetails } from '@/types';
 import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
@@ -28,6 +29,7 @@ function Map(props: Props) {
 	const [saleDetails, setSaleDetails] = useState<SaleDetails | null>(null);
 	const [saleView, setSaleView] = useState<MobileMapSaleViewType>(MobileMapSaleViewType.hidden);
 	const [salesWithMatchingPositions, setSalesWithMatchingPositions] = useState<CoordinateSaleData[] | null>(null);
+	const [displaySales, setDisplaySales] = useState(saleInfo);
 
 	const { isLoaded } = useJsApiLoader({
 		id: 'google-map-script',
@@ -54,14 +56,14 @@ function Map(props: Props) {
 		Router.push(
 			{
 				pathname: '',
-				query: { sale_id: saleId }
+				query: { ...query, sale_id: saleId }
 			},
 			undefined, // AS param is not needed here
 			{ shallow: true }
 		);
 
 
-	}, [isDesktop, saleDetails?.id]);
+	}, [isDesktop, query, saleDetails?.id]);
 
 	const handleMarkerClick = async (e: google.maps.MapMouseEvent, sale: CoordinateSaleData) => {
 		if (mapRef.current && e.latLng) mapRef.current.panTo(e.latLng);
@@ -111,6 +113,37 @@ function Map(props: Props) {
 		map.set('zoom', zoom + 1);
 	};
 
+	const handleSalesThisWeekClick = useCallback((displaySalesThisWeek: boolean) => {
+		if (displaySalesThisWeek) {
+			const salesThisWeek = saleInfo.filter(sale => !sale.isThisWeek);
+			setDisplaySales(saleInfo.filter(sale => !sale.isThisWeek));
+			Router.push(
+				{
+					pathname: '',
+					query: { ...query, sales_this_week: true }
+				},
+				undefined, // AS param is not needed here
+				{ shallow: true }
+			);
+
+			// if currently viewed sale doesnt belong to sales this week lets pan to the first sale in list this week.
+			if (!salesThisWeek.find(sale => sale.id === saleDetails?.id)) mapRef.current?.panTo(salesThisWeek[0].coordinates);
+
+		} else {
+			setDisplaySales(saleInfo);
+			const { sales_this_week, ..._query } = query;
+
+			Router.push(
+				{
+					pathname: '',
+					query: _query
+				},
+				undefined, // AS param is not needed here
+				{ shallow: true }
+			);
+		}
+	}, [query, saleDetails?.id, saleInfo]);
+
 	// should only run on mount
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const firstSaleInfo = useMemo(() => saleInfo.find(sale => sale.id.toString() === query?.sale_id) ?? saleInfo[0], []);
@@ -120,7 +153,11 @@ function Map(props: Props) {
 		if (firstSaleInfo) {
 			await getSaleDetails(firstSaleInfo.id);
 		}
-	}, [firstSaleInfo, getSaleDetails]);
+		if (query.sales_this_week) {
+			// if sales this week filter is on then display sales this week as long as first sale info belongs in this week. 
+			handleSalesThisWeekClick(!saleInfo.find(sale => sale.id === firstSaleInfo.id && sale.isThisWeek));
+		}
+	}, [firstSaleInfo, getSaleDetails, handleSalesThisWeekClick, query.sales_this_week, saleInfo]);
 
 	return (isLoaded ? (
 		<div className={styles.mapContainer}>
@@ -141,7 +178,7 @@ function Map(props: Props) {
 					{(c) => {
 						return (
 							<>
-								{saleInfo.map(sale => (
+								{displaySales.map(sale => (
 									<MarkerF
 										key={sale.id}
 										position={sale.coordinates}
@@ -172,6 +209,7 @@ function Map(props: Props) {
 						hostUrl={saleDetails?.id ? saleInfoMap[saleDetails.id]?.hostUrl : undefined}
 					/>
 				) : null}
+				<button className={cn(styles.salesThisWeekBtn, { [styles.active]: query.sales_this_week })} onClick={() => handleSalesThisWeekClick(!query.sales_this_week)}>Sales This Week</button>
 			</GoogleMap>
 			{isDesktop ? (
 				<DetailedSaleCard

@@ -39,6 +39,35 @@
   width: 800px;
 }
 
+.mapContainer .map .salesThisWeekBtn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 10px 60px 10px 10px;
+  height: 40px;
+  background-color: white;
+  color: #565656;
+  padding: 10px 17px;
+  border-radius: 0;
+  border: 0;
+  font-size: 18px;
+  font-family: Roboto, Arial, Helvetica, sans-serif;
+  border-radius: 2px;
+  cursor: pointer;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+          box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+}
+
+.mapContainer .map .salesThisWeekBtn.active {
+  color: black;
+  font-weight: 500;
+}
+
+.mapContainer .map .salesThisWeekBtn:hover {
+  background-color: #ebebeb;
+  color: black;
+}
+
 .mapContainer .mapSaleCard {
   max-width: 100%;
 }
@@ -63,6 +92,9 @@
     margin: unset;
     margin-top: unset;
     position: relative;
+  }
+  .mapContainer .map .salesThisWeekBtn {
+    margin: 10px;
   }
   .mapContainer .map .mapSaleCard {
     background-color: black;
@@ -137,6 +169,7 @@
   .mapContainer .map .mapSaleCard .content {
     text-align: left;
     max-height: 40%;
+    min-height: 40%;
     overflow-y: scroll;
   }
   .mapContainer .map .mapSaleCard .content.skeleton {
