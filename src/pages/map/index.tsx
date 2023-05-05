@@ -28,6 +28,7 @@ function Map(props: Props) {
 	const [saleDetails, setSaleDetails] = useState<SaleDetails | null>(null);
 	const [saleView, setSaleView] = useState<MobileMapSaleViewType>(MobileMapSaleViewType.hidden);
 	const [salesWithMatchingPositions, setSalesWithMatchingPositions] = useState<CoordinateSaleData[] | null>(null);
+	const [displaySales, setDisplaySales] = useState(saleInfo);
 
 	const { isLoaded } = useJsApiLoader({
 		id: 'google-map-script',
@@ -54,14 +55,14 @@ function Map(props: Props) {
 		Router.push(
 			{
 				pathname: '',
-				query: { sale_id: saleId }
+				query: { ...query, sale_id: saleId }
 			},
 			undefined, // AS param is not needed here
 			{ shallow: true }
 		);
 
 
-	}, [isDesktop, saleDetails?.id]);
+	}, [isDesktop, query, saleDetails?.id]);
 
 	const handleMarkerClick = async (e: google.maps.MapMouseEvent, sale: CoordinateSaleData) => {
 		if (mapRef.current && e.latLng) mapRef.current.panTo(e.latLng);
@@ -111,6 +112,32 @@ function Map(props: Props) {
 		map.set('zoom', zoom + 1);
 	};
 
+	const handleSalesThisWeekClick = useCallback((displaySalesThisWeek: boolean) => {
+		if (displaySalesThisWeek) {
+			setDisplaySales(saleInfo.filter(sale => !sale.isThisWeek));
+			Router.push(
+				{
+					pathname: '',
+					query: { ...query, sales_this_week: true }
+				},
+				undefined, // AS param is not needed here
+				{ shallow: true }
+			);
+		} else {
+			setDisplaySales(saleInfo);
+			const { sales_this_week, ..._query } = query;
+
+			Router.push(
+				{
+					pathname: '',
+					query: _query
+				},
+				undefined, // AS param is not needed here
+				{ shallow: true }
+			);
+		}
+	}, [query, saleInfo]);
+
 	// should only run on mount
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const firstSaleInfo = useMemo(() => saleInfo.find(sale => sale.id.toString() === query?.sale_id) ?? saleInfo[0], []);
@@ -120,7 +147,10 @@ function Map(props: Props) {
 		if (firstSaleInfo) {
 			await getSaleDetails(firstSaleInfo.id);
 		}
-	}, [firstSaleInfo, getSaleDetails]);
+		if (query.sales_this_week) {
+			handleSalesThisWeekClick(true);
+		}
+	}, [firstSaleInfo, getSaleDetails, handleSalesThisWeekClick, query.sales_this_week]);
 
 	return (isLoaded ? (
 		<div className={styles.mapContainer}>
@@ -141,7 +171,7 @@ function Map(props: Props) {
 					{(c) => {
 						return (
 							<>
-								{saleInfo.map(sale => (
+								{displaySales.map(sale => (
 									<MarkerF
 										key={sale.id}
 										position={sale.coordinates}
@@ -182,6 +212,7 @@ function Map(props: Props) {
 					hostUrl={saleDetails?.id ? saleInfoMap[saleDetails.id]?.hostUrl : undefined}
 				/>
 			) : null}
+			<button onClick={() => handleSalesThisWeekClick(!query.sales_this_week)}>Sales This Week</button>
 		</div>
 	) : null);
 }

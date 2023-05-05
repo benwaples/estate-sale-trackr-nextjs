@@ -13,6 +13,7 @@ export interface BaseSaleData {
 	address: string;
 	host?: string;
 	hostUrl?: string;
+	isThisWeek: boolean;
 }
 
 export interface CoordinateSaleData extends BaseSaleData {
