@@ -115,6 +115,7 @@ function Map(props: Props) {
 
 	const handleSalesThisWeekClick = useCallback((displaySalesThisWeek: boolean) => {
 		if (displaySalesThisWeek) {
+			const salesThisWeek = saleInfo.filter(sale => !sale.isThisWeek);
 			setDisplaySales(saleInfo.filter(sale => !sale.isThisWeek));
 			Router.push(
 				{
@@ -124,6 +125,10 @@ function Map(props: Props) {
 				undefined, // AS param is not needed here
 				{ shallow: true }
 			);
+
+			// if currently viewed sale doesnt belong to sales this week lets pan to the first sale in list this week.
+			if (!salesThisWeek.find(sale => sale.id === saleDetails?.id)) mapRef.current?.panTo(salesThisWeek[0].coordinates);
+
 		} else {
 			setDisplaySales(saleInfo);
 			const { sales_this_week, ..._query } = query;
@@ -136,8 +141,10 @@ function Map(props: Props) {
 				undefined, // AS param is not needed here
 				{ shallow: true }
 			);
+
+
 		}
-	}, [query, saleInfo]);
+	}, [query, saleDetails?.id, saleInfo]);
 
 	// should only run on mount
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -149,9 +156,10 @@ function Map(props: Props) {
 			await getSaleDetails(firstSaleInfo.id);
 		}
 		if (query.sales_this_week) {
-			handleSalesThisWeekClick(true);
+			// if sales this week filter is on then display sales this week as long as first sale info belongs in this week. 
+			handleSalesThisWeekClick(!saleInfo.find(sale => sale.id === firstSaleInfo.id && sale.isThisWeek));
 		}
-	}, [firstSaleInfo, getSaleDetails, handleSalesThisWeekClick, query.sales_this_week]);
+	}, [firstSaleInfo, getSaleDetails, handleSalesThisWeekClick, query.sales_this_week, saleInfo]);
 
 	return (isLoaded ? (
 		<div className={styles.mapContainer}>

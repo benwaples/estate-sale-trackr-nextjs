@@ -93,6 +93,9 @@
     margin-top: unset;
     position: relative;
   }
+  .mapContainer .map .salesThisWeekBtn {
+    margin: 10px;
+  }
   .mapContainer .map .mapSaleCard {
     background-color: black;
     color: white;
