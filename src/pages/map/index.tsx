@@ -141,8 +141,6 @@ function Map(props: Props) {
 				undefined, // AS param is not needed here
 				{ shallow: true }
 			);
-
-
 		}
 	}, [query, saleDetails?.id, saleInfo]);
 
