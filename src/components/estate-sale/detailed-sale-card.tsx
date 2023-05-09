@@ -10,6 +10,7 @@ import styles from '../../styles/estate-sale-list.module.scss';
 import NoImage from '../empty-state/no-image';
 import useScreenQuery from '@/hooks/use-screen-query';
 import FollowSale from '../follow-sale/follow-sale';
+import OptionalComponent from '../optional-component';
 
 interface Props {
 	saleId?: number;
@@ -105,36 +106,62 @@ function DetailedSaleCard(props: Props) {
 		arrows: false,
 	};
 
+	const getImages = () => {
+		if ((isMobile && !content) || isDesktop) {
+			if (!sale) {
+				return (
+					<div className={styles.skeletonImage} />
+				);
+			}
+
+			if (!hasImages) {
+				return (
+					<NoImage description='Images have not been posted for this sale' />
+				);
+			}
+
+			return (
+				<>
+					<div className={styles.imageSliderWrapper} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+						<Slider {...sliderConfig}>
+							{sale.images.map(img => <img key={img} className={styles.saleImage} src={img} alt="" />)}
+						</Slider>
+					</div>
+					<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
+				</>
+			);
+		}
+
+		return (
+			<OptionalComponent display={!sale}>
+				<div className={styles.skeletonImage} />
+			</OptionalComponent>
+		);
+	};
+
 	return (
 		<div className={styles.saleCard} key={saleId}>
 			<TabHeader loading={!sale} tabs={tabs} initTab={initialTab} onClick={handleTabChange} />
-			<div className={cn(styles.content, { [styles.skeleton]: !sale })} key={saleId} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onTouchStart={onMouseEnter} onTouchEnd={onMouseLeave}>{content}</div>
-			{/* TODO: this is going to be confusing later, should definitely fix  */}
-			{(isMobile && !content) || isDesktop ? (
-				sale ? (
-					hasImages ? (
-						<>
-							<div className={styles.imageSliderWrapper} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-								<Slider {...sliderConfig}>
-									{sale.images.map(img => <img key={img} className={styles.saleImage} src={img} alt="" />)}
-								</Slider>
-							</div>
-							<p className={styles.sliderPagination}>{`${currentImageIndex}/${sale.images?.length}`}</p>
-						</>
-					) : <NoImage description='Images have not been posted for this sale' />
-				) : (
-					<div className={styles.skeletonImage} />
-				)
-			) : !sale ? <div className={styles.skeletonImage} /> : null}
+			<div
+				key={saleId}
+				className={cn(styles.content, { [styles.skeleton]: !sale })}
+				onMouseEnter={onMouseEnter}
+				onMouseLeave={onMouseLeave}
+				onTouchStart={onMouseEnter}
+				onTouchEnd={onMouseLeave}
+			>
+				{content}
+			</div>
+			{getImages()}
 			<FollowSale {...sale} sale_id={saleId} />
 			<h6 className={cn(styles.host, { [styles.skeleton]: !sale })}>
-				{sale ? (
-					hostUrl ? (
+				<OptionalComponent display={!!sale}>
+					{hostUrl ? (
 						<a href={hostUrl} target='_blank'>{host}</a>
 					) : (
-						host
-					)
-				) : null}
+						<p>{host}</p>
+					)}
+				</OptionalComponent>
 			</h6>
 		</div>
 	);
