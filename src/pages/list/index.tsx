@@ -9,9 +9,9 @@ import 'slick-carousel/slick/slick-theme.css';
 import styles from '../../styles/estate-sale-list.module.scss';
 import ThumbnailSaleCard from '../../components/estate-sale/thumbnail-sale-card';
 import useScreenQuery from '@/hooks/use-screen-query';
-import { getHelper, toMap } from '@/utils/utils';
-import DisplayToggle from '../../components/display-toggle/display-toggle';
+import { toMap } from '@/utils/utils';
 import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
+import { GetSaleDetails } from '@/utils/connection';
 
 export const getServerSideProps = async () => {
 	const saleInfo = await allUpcomingSaleIds(true);
@@ -76,7 +76,9 @@ function EstateSaleList(props: Props) {
 	useEffect(() => {
 		const getSaleDetails = async (saleIds: number[]) => {
 			setLoadingSale(true);
-			const saleDetails = await getHelper(`/api/estate-sale/sale-details${saleIds.map(id => '/' + id).join('')}`);
+			const saleDetails = await GetSaleDetails(saleIds);
+			if (!saleDetails) return;
+
 			const saleMap = toMap(saleDetails, 'id');
 			setLoadingSale(false);
 
