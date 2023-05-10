@@ -49,7 +49,6 @@ export async function allUpcomingSaleIds(shouldIncludeLatLng?: boolean): Promise
 	const response = await fetch(`${process.env.ESTATE_SALE_FINDER_URL}/all_sales_list.php?saletypeshow=1&regionsshow=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,31,32,33,34,23,24,25,26,27,28,29,35,36,37&proonly=false&todayonly=false`);
 	const document = await parseResponseBodyIntoDom(response);
 
-	const saleRows = document.querySelectorAll('.salerow');
 	const salesThisWeek = document.querySelectorAll('.currentsalelist .salerow');
 	const upcomingSales = document.querySelectorAll('.upcomingsalelist .salerow');
 
