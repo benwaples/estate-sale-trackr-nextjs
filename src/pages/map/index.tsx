@@ -12,6 +12,7 @@ import useScreenQuery from '@/hooks/use-screen-query';
 import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
 import MobileMapDetailedSale from '@/components/estate-sale/mobile-map-detailed-sale';
 import InfoBox from '../../components/estate-sale/infobox';
+import { GetSaleDetails } from '@/utils/connection';
 
 export const getServerSideProps = async () => {
 	const saleInfo = await allUpcomingSaleIds(true);
@@ -51,8 +52,10 @@ function Map(props: Props) {
 		if (saleId === saleDetails?.id) return;
 		setSaleDetails(null);
 
-		const [_saleDetails] = await getHelper(`/api/estate-sale/sale-details/${saleId}`);
-		setSaleDetails(_saleDetails);
+		const _saleDetails = await GetSaleDetails([saleId]);
+		if (!_saleDetails) return;
+
+		setSaleDetails(_saleDetails[0]);
 		Router.push(
 			{
 				pathname: '',
