@@ -38,7 +38,7 @@ function getDataFromSaleRow(row: Element, isThisWeek = false): BaseSaleData | un
 		id: Number(saleId),
 		address: addressText,
 		host,
-		hostUrl: hostUrl ? `https://www.estatesale-finder.com/${hostUrl}` : undefined,
+		hostUrl: hostUrl ? `${process.env.ESTATE_SALE_FINDER_URL}/${hostUrl}` : undefined,
 		isThisWeek
 	}));
 
@@ -46,7 +46,7 @@ function getDataFromSaleRow(row: Element, isThisWeek = false): BaseSaleData | un
 }
 
 export async function allUpcomingSaleIds(shouldIncludeLatLng?: boolean): Promise<BaseSaleData[]> {
-	const response = await fetch('https://www.estatesale-finder.com/all_sales_list.php?saletypeshow=1&regionsshow=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,31,32,33,34,23,24,25,26,27,28,29,35,36,37&proonly=false&todayonly=false');
+	const response = await fetch(`${process.env.ESTATE_SALE_FINDER_URL}/all_sales_list.php?saletypeshow=1&regionsshow=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,31,32,33,34,23,24,25,26,27,28,29,35,36,37&proonly=false&todayonly=false`);
 	const document = await parseResponseBodyIntoDom(response);
 
 	const saleRows = document.querySelectorAll('.salerow');
@@ -91,7 +91,7 @@ export async function allUpcomingSaleIds(shouldIncludeLatLng?: boolean): Promise
 }
 
 export async function getSaleInfo(id: number): Promise<SaleDetails> {
-	const saleURL = `https://www.estatesale-finder.com/viewsale.php?saleid=${id}`;
+	const saleURL = `${process.env.ESTATE_SALE_FINDER_URL}/viewsale.php?saleid=${id}`;
 
 	const response = await fetch(saleURL);
 	const document = await parseResponseBodyIntoDom(response);
@@ -122,7 +122,7 @@ export async function getSaleInfo(id: number): Promise<SaleDetails> {
 		const source = image.attributes.getNamedItem('src')?.textContent;
 		if (!source) return;
 
-		const fullSource = `https://www.estatesale-finder.com/${source}`;
+		const fullSource = `${process.env.ESTATE_SALE_FINDER_URL}/${source}`;
 		if (!data.images) {
 			return data.images = [fullSource];
 		} else {
