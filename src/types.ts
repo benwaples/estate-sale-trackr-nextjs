@@ -72,7 +72,7 @@ export interface RadarGeometryResponse {
 	type: string
 	coordinates: number[]
 }
-export interface RadarGeocodeForwardResponse {
+export interface RadarLatLngResponse {
 	meta: RadarMetaResponse
 	addresses: RadarAddressResponse[]
 }

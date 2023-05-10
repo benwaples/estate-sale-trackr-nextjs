@@ -1,14 +1,20 @@
-import { BaseSaleData, Dictionary, RadarAddressResponse, RadarGeocodeForwardResponse, SaleDetails } from "@/types";
+import { BaseSaleData, Dictionary, RadarAddressResponse, RadarLatLngResponse, SaleDetails } from "@/types";
 import { parseResponseBodyIntoDom, parseSaleAddress, parseSaleDateString, removeTabsAndNewLines } from "./utils";
 import { NextApiRequest, NextApiResponse } from "next";
 import { checkAuthMiddleware } from "../auth/utils";
 import { getHelper } from "@/utils/utils";
 
+const PORTLAND_COORDINATES = {
+	lat: 45.533467,
+	lng: -122.650095
+};
+
 async function getLatLngFromAddress(address: string): Promise<{ lat: number, lng: number }> {
-	const response = await getHelper<RadarGeocodeForwardResponse>(`${process.env.RADAR_API_ENDPOINT}/geocode/forward?query=${address}`, { Authorization: process.env.RADAR_API_KEY });
+	const response = await getHelper<RadarLatLngResponse>(`${process.env.RADAR_API_ENDPOINT}/search/autocomplete?query=${address}&near=${PORTLAND_COORDINATES.lat}%2C${PORTLAND_COORDINATES.lng}`, { Authorization: process.env.RADAR_API_KEY });
+
 	//  defaults to generic portland coordinates
-	const latitude = response?.addresses?.[0].latitude ?? 45.533467;
-	const longitude = response?.addresses?.[0].longitude ?? -122.650095;
+	const latitude = response?.addresses?.[0]?.latitude ?? PORTLAND_COORDINATES.lat;
+	const longitude = response?.addresses?.[0]?.longitude ?? PORTLAND_COORDINATES.lng;
 	return { lat: latitude, lng: longitude };
 }
 
