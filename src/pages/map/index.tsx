@@ -6,7 +6,7 @@ import cn from 'classnames';
 
 import { CoordinateSaleData, MobileMapSaleViewType, SaleDetails } from '@/types';
 import DetailedSaleCard from '../../components/estate-sale/detailed-sale-card';
-import { getHelper, toMap } from '@/utils/utils';
+import { toMap } from '@/utils/utils';
 import styles from '../../styles/map.module.scss';
 import useScreenQuery from '@/hooks/use-screen-query';
 import { allUpcomingSaleIds } from '../api/estate-sale/all-upcoming-sales';
