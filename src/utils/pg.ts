@@ -1,4 +1,4 @@
-import { Pool } from 'pg'
+import { Pool } from 'pg';
 require('dotenv').config();
 
 const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID, PGSSLMODE } = process.env;
@@ -12,4 +12,4 @@ const pool = new Pool({
 
 pool.on('connect', () => console.log('Postgres connected'));
 
-export default pool
+export default pool;

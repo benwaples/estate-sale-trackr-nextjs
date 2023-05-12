@@ -23,7 +23,7 @@ export function profileAsToken(user: User) {
 export function checkAuthMiddleware(route: (req: NextApiReq<any>, res: NextApiResponse<{ error: string }>) => any) {
 	return (req: NextApiReq, res: NextApiResponse) => {
 		// middleware
-		const token = req.headers.authorization
+		const token = req.headers.authorization;
 		if (!token) {
 			res.status(401).json({ error: 'no authorization found' });
 			return;
@@ -34,13 +34,13 @@ export function checkAuthMiddleware(route: (req: NextApiReq<any>, res: NextApiRe
 			payload = verify(token);
 		}
 		catch (err) {
-			console.error(err)
+			console.error(err);
 			// this code runs with verify fails
 			res.status(401).json({ error: 'invalid token' });
 			return;
 		}
 
 		req.user = payload;
-		return route(req, res)
-	}
+		return route(req, res);
+	};
 }
