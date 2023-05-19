@@ -96,6 +96,7 @@ function EstateSaleList(props: Props) {
 		setCurrentSlide(i);
 
 		const slideId = saleInfo[i].id;
+		// TODO: make a router helper function to handle this
 		Router.push(
 			{
 				pathname: '',
